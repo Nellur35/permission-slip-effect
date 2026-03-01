@@ -106,6 +106,8 @@ The [`templates/`](templates/) folder contains output templates for each phase �
 | [`.claude/skills/audit/`](.claude/skills/audit/SKILL.md) | `/audit` — scan existing codebase and CI/CD |
 | [`tools/`](tools/) | Standalone prompts that work in any AI model |
 | [`templates/`](templates/) | Phase output templates showing expected shape and depth |
+| [`reasoning-pipeline.md`](reasoning-pipeline.md) | Multi-framework reasoning pipeline — chaining CoT, ToT, RCA, Adversarial, Pre-Mortem |
+| [`experiments/`](experiments/) | Empirical testing — model shootout, pipeline validation |
 
 ---
 

@@ -213,3 +213,9 @@ The value scales with problem complexity:
 ---
 
 *The pipeline does not make the model smarter. It makes the model honest.*
+
+---
+
+## See also
+
+- **[Model Shootout](experiments/model-shootout.md)** — Multi-model benchmark testing which Bedrock models perform best in chained reasoning pipelines, and empirical proof that role-based model assignment (Challenger / Architect / Debugger) produces balanced insight distribution vs. single-model dominance.
