@@ -193,6 +193,7 @@ The [`templates/`](templates/) folder contains output templates for each phase �
 | [`examples/url-shortener/`](examples/url-shortener/) | Worked example — complete Phase 1-5 outputs |
 | [`reasoning-pipeline.md`](reasoning-pipeline.md) | Multi-framework reasoning pipeline — chaining CoT, ToT, RCA, Adversarial, Pre-Mortem |
 | [`experiments/`](experiments/) | Empirical testing — model shootout, pipeline validation |
+| [`pipeline/`](pipeline/) | **Reasoning Pipeline CLI** — automates multi-model review and reasoning. No AWS needed. |
 
 ---
 
