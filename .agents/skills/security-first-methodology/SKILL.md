@@ -78,6 +78,8 @@ For security-critical decisions (auth architecture, data access patterns, IAM po
 
 For the full pipeline, assign additional roles: **Debugger** (implementation-level flaws), **Strategist** (business/operational impact), **Convergence** (synthesize all findings). The key principle: the Challenger must be a different architecture from the Architect. Same-family models share correlated blind spots.
 
+**Automation:** If `pipeline/pipeline.py` is available, run `python pipeline.py review <artifact>` to automate the full Architect → Challenger → Convergence flow. Outputs JSON with ranked risks and navigator decisions needed.
+
 ## Reference
 
 Full methodology with all 8 phases, templates, worked examples, and reasoning pipeline:

@@ -218,7 +218,7 @@ Architecture assumes a cooperative world. Threat modeling injects reality back i
 
 ### What to Examine
 
-| Area | Questions to Ask |
+| Area | What the AI Examines |
 |------|-----------------|
 | Trust Boundaries | Where does control pass between components? Who is trusted? |
 | Data Flows | Where does sensitive data travel? Who can intercept it? |
@@ -472,6 +472,29 @@ If both models agree, it is probably right. If both models disagree, you have a 
 **When to use multi-model review:** Architecture decisions, threat model, CI/CD gate definitions, security-critical components, anything where a mistake is expensive to fix later.
 
 **When not required:** Boilerplate, simple scripts, obvious tasks with clear acceptance criteria.
+
+### Automating the Review
+
+Manual copy-paste between model UIs works but doesn't scale. The `pipeline/` CLI automates the full Architect → Challenger → Convergence flow:
+
+```bash
+# Adversarial review of any artifact
+python pipeline.py review architecture.md
+
+# Full reasoning pipeline on a complex decision
+python pipeline.py reason --pipeline standard "Should we migrate auth to OAuth2?"
+
+# Multi-model: Challenger uses a different provider
+python pipeline.py reason --architect claude --challenger openai "Why do deploys fail?"
+
+# Cheap mode: analysis on Haiku/Flash, convergence on Sonnet (~70% cheaper)
+python pipeline.py reason --cheap "Should we refactor the auth module?"
+
+# CI integration: skip confirmation, output JSON
+python pipeline.py review threat_model.md --yes -o results.json
+```
+
+The CLI runs the reasoning frameworks (First Principles, Root Cause, Adversarial, Tree of Thoughts, Pre-Mortem), feeds each stage's output into the next, and produces a JSON report with ranked risks and navigator decisions needed. See [`pipeline/README.md`](pipeline/README.md) for full documentation.
 
 ---
 

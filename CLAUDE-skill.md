@@ -353,6 +353,8 @@ Give the reviewer an adversarial mandate: find why this is wrong, not whether it
 
 Use for: architecture decisions, threat model, CI/CD gate definitions, security-critical components.
 
+**Automation:** If `pipeline/pipeline.py` is available, the multi-model review can be run from the command line: `python pipeline.py review architecture.md`. This automates the Architect → Challenger → Convergence flow and outputs JSON with ranked risks and navigator decisions needed. See `pipeline/README.md`.
+
 ---
 
 ## The Waiver Pattern

@@ -53,6 +53,18 @@ The output file from each phase is the handoff artifact to the next. Nothing els
 
 A single model reviewing its own output is structurally unreliable. The methodology prescribes using a different model architecture (different company, different training) to review security-critical decisions. Different architectures fail differently — the genuine disagreements between them are where the real signal lives.
 
+### 4. Automated reasoning pipeline
+
+The [`pipeline/`](pipeline/) CLI automates multi-model review from the command line. One command, the AI argues with itself, you read the result:
+
+```bash
+python pipeline.py review architecture.md          # adversarial review
+python pipeline.py reason "migrate to OAuth2?"      # full reasoning pipeline
+python pipeline.py reason --cheap "refactor auth"   # 70% cheaper with --cheap
+```
+
+8 reasoning frameworks, 6 pipeline variants, JSON output for CI integration. No AWS account needed — works with any LLM API key.
+
 ---
 
 ## The phases

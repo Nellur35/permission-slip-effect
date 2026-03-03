@@ -13,47 +13,82 @@ This power extends Kiro's spec-driven workflow (requirements → design → task
 
 Kiro already handles requirements, design, and task planning well. This power fills the gaps:
 
-1. **Threat model phase** — After design.md, before tasks.md. Kiro's design phase produces architecture; this power makes you attack it before writing code.
+1. **Threat model phase** — After design.md, before tasks.md. Kiro's design phase produces architecture; this power adds adversarial security analysis before any code is written.
 2. **Gate questions at every transition** — Exit criteria that must be satisfied before moving to the next spec phase. Not "does this look good?" but "can I answer these specific questions with evidence?"
 3. **Security-aware requirements patterns** — Scope exclusions, explicit non-goals, and testability checks that Kiro's EARS-notation user stories don't naturally produce.
-4. **Adversarial cross-model review** — Use a different model to attack security-critical design decisions. Kiro supports multiple models; use that.
+4. **Adversarial cross-model review** — A different model attacks security-critical design decisions. Kiro supports multiple models; the power uses that.
 5. **Reasoning pipeline** — For complex architectural or organizational decisions where Kiro's design phase needs deeper analysis.
+6. **Automated pipeline CLI** — Run `python pipeline.py review design.md` for multi-model adversarial review from the command line.
 
 ## How to Use With Kiro Specs
 
 ### During Requirements (requirements.md)
 
-After Kiro generates user stories, check:
-- Is every requirement testable? (Not "the system should be secure" — what does secure mean, specifically?)
-- What is explicitly out of scope? Add a "Non-goals" section.
-- What are the trust boundaries? Who talks to whom?
+After Kiro generates user stories, load the security-requirements steering file:
+
+```
+Load the security-requirements steering file and apply it to requirements.md
+```
+
+Kiro will add testability checks, explicit scope exclusions, trust boundary identification, and non-goals. Review the additions — confirm what's in scope and what's not.
 
 ### During Design (design.md)
 
 After Kiro generates the architecture, load the threat modeling steering file:
-- Examine every trust boundary in the design
-- For each boundary: what's the worst thing an adversary can do?
-- Are secrets hardcoded anywhere? How are they rotated?
-- What's the IAM blast radius if a credential leaks?
-
-### Between Design and Tasks — The Missing Phase
-
-**Before clicking "Move to implementation plan"**, create a threat model:
 
 ```
 Load the threat-model steering file and run it against design.md
 ```
 
-This produces a threat_model.md alongside Kiro's existing spec files. The threat model should inform which tasks exist — security mitigations become tasks, not afterthoughts.
+Kiro will examine every trust boundary, map IAM blast radius, check for hardcoded secrets, and analyze data flows. Review the findings — challenge anything that looks too optimistic.
+
+### Between Design and Tasks — The Missing Phase
+
+**Before clicking "Move to implementation plan"**, generate a threat model:
+
+```
+Load the threat-model steering file and produce threat_model.md from design.md
+```
+
+Kiro produces `threat_model.md` alongside the existing spec files. The threat model informs which tasks exist — security mitigations become tasks, not afterthoughts. Review the threat model before proceeding.
+
+Or run from the command line for multi-model review:
+
+```bash
+python pipeline.py review design.md --cheap -o threat-review.json
+```
 
 ### During Tasks (tasks.md)
 
 **Phase 4 establishes the threat model. Every subsequent phase applies it.** Security review is not a phase you pass through and leave behind — it is embedded in everything after.
 
-After Kiro generates the task list:
-- Does every security mitigation from the threat model map to a task?
-- Which CI/CD gate validates each task?
-- Are there tasks without validation criteria?
+After Kiro generates the task list, load the gate-check steering file:
+
+```
+Load the gate-check steering file and verify tasks.md against threat_model.md
+```
+
+Kiro will check that every security mitigation maps to a task, every task has a validation criterion, and CI/CD gates cover the threat model findings. Review any gaps it identifies.
+
+## The Pipeline CLI
+
+For automated multi-model review without manual copy-paste between models:
+
+```bash
+# Adversarial review of any artifact
+python pipeline.py review design.md
+
+# Full reasoning pipeline on a complex decision
+python pipeline.py reason --pipeline standard "Should we migrate auth to OAuth2?"
+
+# Cheap mode — analysis on Haiku/Flash, convergence on Sonnet
+python pipeline.py review architecture.md --cheap
+
+# Skip confirmation for CI integration
+python pipeline.py review threat_model.md --yes -o results.json
+```
+
+The pipeline automates the Architect → Challenger → Convergence flow. You run a command, the AI argues with itself, you read the JSON output. See `pipeline/README.md` for full documentation.
 
 ## Two Unbreakable Rules
 
