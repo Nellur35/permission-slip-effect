@@ -61,10 +61,21 @@ If you skip something, know what risk you are accepting. Skipping without awaren
 
 ## Installation
 
-### As a Claude Code skill (recommended)
+### Quick start: Just give the AI the URL
+
+Point your AI coding tool at this repo and let it read the methodology:
+
+```
+Read https://github.com/Nellur35/security-first-ai-dev-methodology and use it to build [your project]
+```
+
+This works with Claude Code, Kiro, Cursor, ChatGPT, Gemini, or any tool that can read URLs or clone repos. The AI extracts the phases, tools, and templates — no manual setup required.
+
+### As a Claude Code skill (persistent)
+
+For automatic activation on every project:
 
 ```bash
-# Clone into your personal skills directory
 git clone https://github.com/Nellur35/security-first-ai-dev-methodology.git \
   ~/.claude/skills/security-first-methodology
 ```
@@ -72,7 +83,6 @@ git clone https://github.com/Nellur35/security-first-ai-dev-methodology.git \
 Or copy into a specific project:
 
 ```bash
-# Copy into your project's skills directory
 mkdir -p .claude/skills/methodology
 cp security-first-ai-dev-methodology/.claude/skills/methodology/SKILL.md \
   .claude/skills/methodology/SKILL.md

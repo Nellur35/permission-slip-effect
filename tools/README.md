@@ -1,8 +1,21 @@
 # Tools
 
-Standalone prompts for security-first development. Each tool works in any AI model -- Claude, Gemini, Cursor, Kiro, ChatGPT, or anything else.
+Standalone prompts for security-first development. Each tool works in any AI model — Claude Code, Kiro, Cursor, ChatGPT, Gemini, or anything else.
 
 ## How to Use
+
+### Option 1: Give the AI the repo URL (easiest)
+
+Point your AI tool at this repo and tell it what you need:
+
+```
+Read https://github.com/Nellur35/security-first-ai-dev-methodology
+and use the threat-model tool on my architecture
+```
+
+The AI reads the tool, extracts the methodology, and applies it. No copy-pasting.
+
+### Option 2: Paste manually (for tools that can't read URLs)
 
 1. Open any AI chat.
 2. Paste the contents of the tool file as the prompt.
@@ -47,7 +60,7 @@ Exit criteria checklist for all 8 phases. Each gate lists what it proves and wha
 
 **Skills** (`.claude/skills/`) are Claude Code commands: `/intake`, `/review`, `/gate-check`, `/threat-model`, `/audit`. They auto-detect context, read project files, and generate output directly. Use these if you work in Claude Code.
 
-**Tools** (`tools/`) are standalone prompts you paste into any AI model. They require you to provide input manually. Use these if you work in Kiro, ChatGPT, Gemini, Cursor, or any other tool.
+**Tools** (`tools/`) work in any AI model. Point the AI at this repo and tell it which tool to use, or paste the tool contents manually if your AI can't read URLs. Use these if you work in Kiro, Cursor, ChatGPT, Gemini, or any other tool.
 
 Same capabilities, different delivery. Skills add auto-detection and file I/O. Tools are portable.
 
