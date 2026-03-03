@@ -1,0 +1,39 @@
+---
+description: Threat modeling checklist for infrastructure, CI/CD, and configuration files. Activates when editing Dockerfiles, Terraform, CloudFormation, pipeline configs, or IAM policies to ensure security is considered.
+globs: ["**/Dockerfile*", "**/*.tf", "**/*.tfvars", "**/template.yaml", "**/template.yml", "**/*cloudformation*", "**/.github/workflows/**", "**/Jenkinsfile", "**/*pipeline*", "**/docker-compose*", "**/iam*", "**/policy*"]
+alwaysApply: false
+---
+
+# Threat Model Check — Infrastructure & Pipelines
+
+You are editing infrastructure or pipeline configuration. Before committing, verify:
+
+## Trust Boundaries
+- What network boundaries does this create or modify?
+- Is anything exposed to the public internet that shouldn't be?
+- Are security groups / NACLs as restrictive as possible?
+
+## IAM & Permissions
+- Does this follow least privilege? Can you remove any permission and still function?
+- What's the blast radius if this role's credentials leak?
+- Are there any wildcard (`*`) permissions? Replace with specific resource ARNs.
+
+## Secrets
+- Are any secrets, tokens, or passwords in this file? Move them to a secrets manager.
+- How are secrets injected at runtime? Environment variables from a vault, not hardcoded.
+- Is there a rotation mechanism?
+
+## Pipeline Security
+- What does a passing pipeline actually prove? (Not just "tests pass" — which tests? Testing what behavior?)
+- Can a developer bypass any gate? If yes, that gate doesn't exist.
+- Are dependencies pinned to specific versions, not `latest`?
+
+## Container Security (if Dockerfile)
+- Running as non-root user?
+- Multi-stage build to minimize attack surface?
+- Base image pinned to digest, not just tag?
+- No secrets copied into the image layer?
+
+## Full Threat Model Tool
+For the complete 13-area threat model covering trust boundaries, IAM blast radius, secrets lifecycle, supply chain, and LLM-specific risks:
+https://raw.githubusercontent.com/Nellur35/security-first-ai-dev-methodology/main/tools/threat-model.md

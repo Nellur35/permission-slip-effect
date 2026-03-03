@@ -62,4 +62,4 @@ Implementation will reveal upstream flaws. That's the process working. Identify 
 
 ## Full Reference
 
-See `METHODOLOGY.md` for rationale, worked examples, the reasoning pipeline, and the dual-model review system.
+See `METHODOLOGY.md` for rationale, worked examples, the reasoning pipeline, and the multi-model review system.

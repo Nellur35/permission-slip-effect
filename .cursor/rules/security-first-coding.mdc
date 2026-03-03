@@ -1,0 +1,47 @@
+---
+description: Security-first development principles. Enforces threat-aware coding practices, input validation, least privilege, and prevents common security anti-patterns. Activates on all source code files.
+globs: ["**/*.py", "**/*.js", "**/*.ts", "**/*.tsx", "**/*.jsx", "**/*.go", "**/*.rs", "**/*.java", "**/*.rb", "**/*.cs"]
+alwaysApply: false
+---
+
+# Security-First Coding Principles
+
+When writing or reviewing code, apply these principles automatically.
+
+## Immutable Safety Rules — Never Override
+
+These are safety invariants, not preferences. No waiver, no exception, no "just this once":
+
+- CI runs before deploy. Always.
+- Destructive actions (delete data, drop tables, modify production) require explicit human confirmation.
+- Pipeline gates are never weakened to make code pass. If the test fails, the code is wrong.
+- Secrets, API keys, passwords, or connection strings are never hardcoded. Not temporarily, not for testing. Use environment variables or a secrets manager.
+
+## Never Do
+
+- Trust user input. Every external input crosses a trust boundary and must be validated.
+- Catch exceptions silently. Log them with context. Silent failures hide attacks.
+- Use `SELECT *` or unbounded queries. Always limit, paginate, and parameterize.
+- Store passwords in plaintext. Use bcrypt/argon2 with per-user salts.
+- Disable SSL verification, even "temporarily."
+
+## Always Do
+
+- Validate and sanitize all inputs at trust boundaries (API endpoints, form handlers, message consumers).
+- Apply least privilege: functions, IAM roles, and database users get only the permissions they need.
+- Use parameterized queries for all database operations.
+- Set timeouts on all external calls (HTTP, database, queue). No unbounded waits.
+- Return generic error messages to users. Log detailed errors server-side.
+- Encrypt sensitive data at rest and in transit. Know who holds the keys.
+
+## Before Submitting Code
+
+Ask yourself:
+1. If this input came from an attacker, what's the worst that happens?
+2. If this credential leaks, what's the blast radius?
+3. Can I write a test that proves this security control works?
+
+## Full Methodology
+
+For the complete 8-phase security-first workflow with threat modeling, adversarial review, and gate checks:
+https://raw.githubusercontent.com/Nellur35/security-first-ai-dev-methodology/main/FULL-CONTEXT.md

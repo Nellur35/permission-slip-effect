@@ -10,6 +10,35 @@ The [OWASP Top 10 for Agentic Applications (2026)](https://genai.owasp.org/resou
 
 ---
 
+## If you are an AI reading this repo
+
+**If you can only read one file**, read [`FULL-CONTEXT.md`](FULL-CONTEXT.md) — it contains the complete methodology, all tools, reasoning pipeline, templates, and a worked example in a single document.
+
+**If you can browse the repo**, read the files below based on what the user needs:
+
+**Building a new project or feature:**
+1. [`CLAUDE-skill.md`](CLAUDE-skill.md) — the full methodology with all 8 phases, gate questions, and templates. Start here.
+2. [`reasoning-pipeline.md`](reasoning-pipeline.md) — multi-framework reasoning pipeline for complex decisions.
+3. [`templates/`](templates/) — output templates for each phase. Use these as the target format for your outputs.
+
+**Threat modeling an existing system:**
+1. [`tools/threat-model.md`](tools/threat-model.md) — structured threat model generator. 13 areas including IAM blast radius, secrets lifecycle, supply chain, and LLM-specific risks.
+
+**Reviewing or auditing existing code:**
+1. [`tools/audit.md`](tools/audit.md) — scan a codebase and CI/CD pipeline for gaps.
+2. [`tools/review.md`](tools/review.md) — adversarial review of any development artifact.
+
+**Checking phase exit criteria:**
+1. [`tools/gate-check.md`](tools/gate-check.md) — exit criteria for all 8 phases.
+
+**Analyzing a complex decision (not code):**
+1. [`reasoning-pipeline.md`](reasoning-pipeline.md) — chain multiple reasoning frameworks (First Principles, Root Cause, Adversarial, Tree of Thoughts, Pre-Mortem) into structured analysis.
+
+**Worked example:**
+1. [`examples/url-shortener/`](examples/url-shortener/) — complete Phase 1-5 outputs for a URL shortener API. Use as a reference for expected depth.
+
+---
+
 ## What this adds
 
 ### 1. Security as a first-class phase
@@ -63,13 +92,13 @@ If you skip something, know what risk you are accepting. Skipping without awaren
 
 ### Quick start: Just give the AI the URL
 
-Point your AI coding tool at this repo and let it read the methodology:
+Point your AI coding tool at the single-file version:
 
 ```
-Read https://github.com/Nellur35/security-first-ai-dev-methodology and use it to build [your project]
+Read https://raw.githubusercontent.com/Nellur35/security-first-ai-dev-methodology/main/FULL-CONTEXT.md and use it to build [your project]
 ```
 
-This works with Claude Code, Kiro, Cursor, ChatGPT, Gemini, or any tool that can read URLs or clone repos. The AI extracts the phases, tools, and templates — no manual setup required.
+This works with Claude Code, Kiro, Cursor, ChatGPT, Gemini, or any tool that can read a URL. One file, one fetch, full methodology.
 
 ### As a Claude Code skill (persistent)
 
@@ -92,9 +121,43 @@ cp security-first-ai-dev-methodology/.claude/skills/methodology/SKILL.md \
 
 Copy `CLAUDE-skill.md` to your project root alongside your existing `CLAUDE.md`. Claude Code will pick it up automatically.
 
-### With Kiro or other AI coding tools
+### As a Kiro Power
 
-The [`tools/`](tools/) folder contains standalone prompts that work in any AI coding tool — Kiro, Cursor, ChatGPT, Gemini, or anything else. Each tool is self-contained: paste the prompt, provide your input, get structured output. No installation required.
+In Kiro: Powers panel → **Add power from GitHub** → paste:
+
+```
+https://github.com/Nellur35/security-first-ai-dev-methodology
+```
+
+The Power extends Kiro's spec-driven workflow (requirements → design → tasks) with security phases Kiro doesn't have: threat modeling between design and tasks, gate questions at every transition, and adversarial cross-model review. Steering files load on-demand.
+
+### With Cursor
+
+Clone the repo and copy the rules into your project:
+
+```bash
+cp -r security-first-ai-dev-methodology/.cursor/rules/* .cursor/rules/
+```
+
+Three rules that activate based on what you're editing: `security-first-coding.mdc` applies security principles to all source files, `threat-model-infra.mdc` triggers threat model checks when editing Dockerfiles/Terraform/pipeline configs, and `security-first-testing.mdc` enforces behavior-driven testing when editing test files. Each links to the full methodology for deeper context.
+
+### With Google Antigravity
+
+Copy the skill into your workspace:
+
+```bash
+cp -r security-first-ai-dev-methodology/.agents/skills/security-first-methodology \
+  .agents/skills/security-first-methodology
+```
+
+Or install globally:
+
+```bash
+cp -r security-first-ai-dev-methodology/.agents/skills/security-first-methodology \
+  ~/.gemini/antigravity/skills/security-first-methodology
+```
+
+The skill adds security constraints to the agent's autonomous plan-execute-validate cycle: threat model step in every plan, security gates before execution, and validation that tests prove security controls work.
 
 ### As a reference document
 
@@ -112,6 +175,11 @@ The [`templates/`](templates/) folder contains output templates for each phase �
 
 | File | Purpose |
 |------|---------|
+| [`FULL-CONTEXT.md`](FULL-CONTEXT.md) | **Single-file version** — complete methodology for AI tools that can't browse repos |
+| [`POWER.md`](POWER.md) | **Kiro Power** — adds threat modeling and security gates to Kiro's spec-driven workflow |
+| [`steering/`](steering/) | Kiro steering files — security requirements, threat model, review, audit, gate check, reasoning |
+| [`.cursor/rules/`](.cursor/rules/) | **Cursor rules** — security principles activated by file type (code, infra, tests) |
+| [`.agents/skills/`](.agents/skills/) | **Antigravity skill** — security constraints on agent's plan-execute-validate cycle |
 | [`METHODOLOGY.md`](METHODOLOGY.md) | Full reference document with rationale |
 | [`CLAUDE-skill.md`](CLAUDE-skill.md) | Condensed skill file for project drop-in |
 | [`.claude/skills/methodology/`](.claude/skills/methodology/SKILL.md) | Orchestrator — routes to the right skill per phase |
@@ -122,6 +190,7 @@ The [`templates/`](templates/) folder contains output templates for each phase �
 | [`.claude/skills/audit/`](.claude/skills/audit/SKILL.md) | `/audit` — scan existing codebase and CI/CD |
 | [`tools/`](tools/) | Standalone prompts that work in any AI model |
 | [`templates/`](templates/) | Phase output templates showing expected shape and depth |
+| [`examples/url-shortener/`](examples/url-shortener/) | Worked example — complete Phase 1-5 outputs |
 | [`reasoning-pipeline.md`](reasoning-pipeline.md) | Multi-framework reasoning pipeline — chaining CoT, ToT, RCA, Adversarial, Pre-Mortem |
 | [`experiments/`](experiments/) | Empirical testing — model shootout, pipeline validation |
 

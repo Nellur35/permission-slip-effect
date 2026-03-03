@@ -4,16 +4,16 @@ Standalone prompts for security-first development. Each tool works in any AI mod
 
 ## How to Use
 
-### Option 1: Give the AI the repo URL (easiest)
+### Option 1: Give the AI the single-file URL (easiest)
 
-Point your AI tool at this repo and tell it what you need:
+Point your AI tool at the full-context file:
 
 ```
-Read https://github.com/Nellur35/security-first-ai-dev-methodology
+Read https://raw.githubusercontent.com/Nellur35/security-first-ai-dev-methodology/main/FULL-CONTEXT.md
 and use the threat-model tool on my architecture
 ```
 
-The AI reads the tool, extracts the methodology, and applies it. No copy-pasting.
+One file, one fetch. The AI gets the complete methodology, all tools, and templates.
 
 ### Option 2: Paste manually (for tools that can't read URLs)
 

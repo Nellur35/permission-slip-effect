@@ -2,7 +2,11 @@
 
 The user is the navigator and judge. You are the engine. You do not decide when a phase is complete. The gate questions decide. Phases 1-5 are sequential and non-negotiable. Phase 6 onwards is Agile.
 
+The navigator role deepens with practice. Over time, they learn to front-load intent, triage counterexamples before you surface them, and know when to say "change X to Y" versus "investigate this." Match their level — experienced navigators need less scaffolding, not more.
+
 **If the full skill set is installed** (`.claude/skills/`), use: `/intake` for Phase 1, `/threat-model` for Phase 4, `/review` at any handoff, `/gate-check` before phase transitions, `/audit` to scan an existing codebase. The sections below work standalone without those skills.
+
+**Cost discipline:** AI time is a budget, not infinite. Max 3 sentences of instruction before code. Don't re-read files already in context. Batch related edits. Cap fix attempts at 3 — if the third doesn't work, re-analyze the approach. Use the phase structure to minimize back-and-forth.
 
 ---
 
@@ -135,6 +139,8 @@ For every component and trust boundary, ask:
 
 **Output:** `threat_model.md` with identified risks, impact ratings, and mitigations.
 
+**Phase 4 establishes the threat model. Every subsequent phase applies it.** After this point, every IAM policy gets scoped for blast radius, every infrastructure template gets reviewed against the threat model, every new component gets checked against the trust boundary map. Security review is embedded in every phase — not revisited as a separate activity.
+
 **Handoff artifact:** `threat_model.md` → Phase 5. Offer this adversarial review prompt for a different model:
 
 ```
@@ -159,7 +165,10 @@ Design the pipeline before any implementation. The pipeline is the formal defini
 | Unit Tests | Single function in isolation, all dependencies mocked |
 | Integration Tests | Components working together with real dependencies |
 | E2E Tests | Full system flow as a real user or system |
+| Property-Based Tests | Correctness properties hold across random inputs — finds edge cases example-based tests miss |
 | Dummy Product | Reference implementation that runs through ALL tests |
+
+For security-critical logic (auth, input validation, access control), define correctness properties and test with PBT, not just examples.
 
 **Security Gates — generate from context, not a generic list:**
 
@@ -242,6 +251,8 @@ Now write code. Not before.
 - Commit only what passes the full pipeline
 - If the pipeline fails, fix the code — do not adjust the gate
 
+**Debt-first:** At the start of every implementation session, check for and resolve the highest-priority technical debt item before new feature work. Zero critical debt items is a gate for new features.
+
 **Per-task verification before moving to the next task:**
 1. All acceptance criteria from `tasks.md` checked off
 2. Full pipeline passes — not locally, the full pipeline
@@ -270,11 +281,15 @@ Pipeline gate: [which gate gets this new test]
 
 The tests derived from real failure modes will always be better than tests written before production.
 
+**Methodology retro:** After every non-trivial session, review the process itself. What broke in the workflow? What was slow? What should change in steering files or rules? Lessons that work get kept. Rules that don't get pruned. Encode operational lessons into persistent context (CLAUDE.md, steering files, rules).
+
 ---
 
 ## Context Handoff
 
 The output file from each phase is the handoff artifact. The tool manages context naturally — the methodology defines what carries forward.
+
+**Beyond phase artifacts:** Maintain persistent session state — what's in progress, what's blocked, known issues, operational lessons. Store in the tool's native context (CLAUDE.md, steering files, rules). Without this, every new session starts cold.
 
 | Phase | Handoff Artifact |
 |-------|-----------------|
@@ -292,9 +307,9 @@ If a decision is important enough to carry forward, it belongs in the output fil
 
 ### Phase Re-entry
 
-Implementation will reveal upstream flaws. This is not a failure — it is the process working.
+Phase re-entry is the primary operating mode, not a failure case. Almost every task surfaces something upstream that needs updating.
 
-When Phase 7 surfaces an architecture problem, a missing requirement, or a threat not modeled:
+When any phase surfaces an upstream flaw:
 
 1. Identify which phase owns the flaw
 2. Re-run that phase with the current output file + the finding
@@ -305,11 +320,25 @@ Document what triggered the re-entry and what changed — one sentence is enough
 
 ---
 
-## The Dual-Model Review System
+## The Multi-Model Review System
+
+**Basic structure — dual model:**
 
 - **Generator:** Produces the output for each phase
 - **Reviewer:** Different architecture, different company — finds holes
 - **Navigator:** The human — resolves disagreements, makes final calls
+
+**Full pipeline — assigned roles** (for high-stakes decisions):
+
+| Role | Mandate |
+|------|---------|
+| Architect | Design the solution, defend structural decisions |
+| Challenger | Attack every assumption, find failure modes (must be different model family) |
+| Debugger | Find implementation-level flaws, race conditions, edge cases |
+| Strategist | Evaluate business/operational impact, cost, timeline |
+| Convergence | Synthesize all findings into final recommendation |
+
+The key principle: the Challenger must be a different architecture from the Architect. Same-family models share correlated blind spots.
 
 The review is a structured argument, not a one-way critique:
 
@@ -328,7 +357,18 @@ Use for: architecture decisions, threat model, CI/CD gate definitions, security-
 
 ## The Waiver Pattern
 
-When a rule must be broken, document it. An undocumented exception is a hidden liability.
+### Immutable Safety Rules — Never Waivable
+
+- CI runs before deploy. No exceptions.
+- Destructive actions require human confirmation. Never delete data, drop tables, or modify production without explicit approval.
+- Pipeline gates are never weakened to make code pass.
+- Secrets are never hardcoded. Not temporarily, not for testing.
+
+These are safety invariants, not preferences. The waiver pattern does not apply to them.
+
+### Waivable Gates
+
+When any other rule must be broken, document it. An undocumented exception is a hidden liability.
 
 ```
 What is being skipped or weakened:

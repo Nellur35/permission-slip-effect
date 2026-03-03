@@ -1,0 +1,38 @@
+---
+description: Security-first testing principles. Activates when writing or editing test files. Ensures tests verify behavior against requirements, not just execute code paths.
+globs: ["**/*test*", "**/*spec*", "**/__tests__/**", "**/tests/**", "**/test_*"]
+alwaysApply: false
+---
+
+# Security-First Testing Principles
+
+## The Core Rule
+
+Tests verify behavior against requirements — not execute lines of code. A test that executes a function without asserting meaningful behavior is theater.
+
+## Before Writing a Test
+
+Ask: "What requirement does this test prove is met?" If you can't name the requirement, don't write the test.
+
+## Test Patterns to Follow
+
+- **Test the boundary, not the implementation.** If the API contract says "return 401 for unauthenticated requests," test that. Don't test internal middleware wiring.
+- **Test the sad path.** What happens with malformed input? Missing auth? Oversized payloads? Expired tokens?
+- **Test security controls explicitly.** If you added input validation, write a test that sends malicious input and proves it's rejected.
+- **Assert specific error conditions.** Not just "it throws an error" — which error? With what message? What status code?
+- **Use property-based testing for security-critical logic.** For auth, input validation, and access control, define correctness properties and test with PBT (Hypothesis, fast-check, gopter). PBT finds the edge cases hand-picked examples miss.
+
+## Anti-Patterns to Avoid
+
+- **Mock everything.** If your test mocks the database, the auth layer, and the external API, what are you actually testing?
+- **Coverage-driven tests.** Writing a test just to hit a line is worse than no test — it gives false confidence.
+- **Weakening tests to make them pass.** If the test fails, the code is wrong. Never loosen assertions to get green.
+- **Testing only the happy path.** An attacker never sends valid input.
+
+## Pipeline Gate Principle
+
+Every CI/CD gate should prove something meaningful. "Tests pass" means nothing unless you can answer: which tests? Testing what behavior? Against which requirements?
+
+## Full Gate Check Tool
+For exit criteria across all 8 development phases:
+https://raw.githubusercontent.com/Nellur35/security-first-ai-dev-methodology/main/tools/gate-check.md

@@ -14,13 +14,13 @@
 | 2. Requirements | Define what the system does and doesn't do | `requirements.md` | Is every requirement testable? What is out of scope? |
 | 3. Architecture | Design components, boundaries, interfaces | `architecture.md` | Can every component be tested in isolation? |
 | 3.5 Spike | Test unverified assumptions (optional) | Updated `architecture.md` | Was the assumption validated or disproven? |
-| 4. Threat Model | Attack every trust boundary | `threat_model.md` | What is the worst an adversary can do here? |
-| 5. CI/CD | Build the pipeline that defines "done" | Pipeline config + dummy product | What does a passing pipeline actually prove? |
+| 4. Threat Model | Attack every trust boundary — then apply continuously | `threat_model.md` | What is the worst an adversary can do here? |
+| 5. CI/CD | Build the pipeline that defines "done" — includes PBT for security logic | Pipeline config + dummy product | What does a passing pipeline actually prove? |
 | 6. Tasks | Break work into pipeline-validatable units | `tasks.md` | Which gate validates each task? |
-| 7. Implementation | Write code — tests alongside, not after | Working code | Does the full pipeline pass? |
-| 8. Production | Deploy, monitor, feed failures back | Live system + new tests | What did production catch that the pipeline missed? |
+| 7. Implementation | Resolve debt first, then write code — tests alongside, not after | Working code | Does the full pipeline pass? Zero critical debt? |
+| 8. Production | Deploy, monitor, feed failures back, retro the methodology | Live system + new tests + updated steering | What did production catch? What should the process change? |
 
-Phases 1-5 are sequential and non-negotiable. Phase 6 onwards is Agile. The output file from each phase is the only context that carries forward.
+Phases 1-5 are sequential and non-negotiable. Phase 6 onwards is Agile. The output file from each phase is the only context that carries forward. Phase re-entry is the norm — going back is the process working, not failing. Some rules are waivable with documentation; safety invariants (CI before deploy, no hardcoded secrets, gates never weakened, destructive actions need human confirmation) are never waivable.
 
 ---
 
@@ -71,6 +71,8 @@ Models guess what you probably want to hear. They're good at it — good enough 
 
 Your role is navigator and judge. Not coder.
 
+This role deepens with practice. Over time you learn to front-load intent ("build X with constraint Y" instead of "build X" then correcting), triage counterexamples yourself before the model surfaces them, and know when to say "change X to Y" versus "investigate this." The methodology accelerates this — each phase teaches you what to look for in the next one. The navigator is not a static role. It is a skill that compounds.
+
 ---
 
 ## On Methodology, Speed, and the Waterfall Objection
@@ -92,6 +94,18 @@ The second objection: this is too slow for modern development.
 This confuses the methodology with a human team executing it manually. Two models running in parallel — one generating, one reviewing — compress the foundation phases dramatically. Architecture design with a simultaneous adversarial reviewer takes hours, not weeks. Threat modeling with dual-model review produces a more rigorous output in an afternoon than a human security review that takes a week to schedule.
 
 The real question is whether skipping the foundation is faster in total. It never is. Time saved by skipping architecture is spent debugging. Time saved by skipping threat modeling is spent in incident response.
+
+### On Cost
+
+AI-assisted development costs real money. Context window tokens, API calls, and compute are a budget — not infinite. The methodology should be efficient:
+
+- Max 3 sentences of instruction before code generation. Front-load intent, don't over-explain.
+- Don't re-read files the model already has in context. If it just generated the file, it knows what's in it.
+- Batch related edits into single requests. Five small fixes cost 5x the tokens of one combined fix.
+- Cap fix attempts. If the third attempt doesn't work, the approach is wrong — stop and re-analyze instead of burning more tokens on the same bad path.
+- Use the right model tier. Not every task needs the most expensive model. Boilerplate and simple fixes can run on cheaper, faster models.
+
+The methodology's phase structure helps here: clear inputs and gate questions mean less back-and-forth, fewer wasted iterations, and less context pollution.
 
 ---
 
@@ -243,6 +257,8 @@ These risks exist *because* you're using AI to write the code. A methodology for
 
 **Output:** `threat_model.md` with identified risks, impact ratings, and mitigations.
 
+**Phase 4 establishes the threat model. Every subsequent phase applies it.** Security is not a phase you pass through and leave behind. After Phase 4, every IAM policy gets scoped for blast radius, every infrastructure template gets reviewed against the threat model, every new component gets checked against the trust boundary map. The threat model is a living reference — not an artifact you filed and forgot.
+
 ---
 
 ## Phase 5 — CI/CD Pipeline Design
@@ -258,7 +274,10 @@ The pipeline shape follows from the architecture and threat model. Don't use tem
 | Unit Tests | Single function in isolation, all dependencies mocked | pytest, jest, go test |
 | Integration Tests | Components working together with real dependencies | Docker containers, test DBs |
 | E2E Tests | Full system flow as a real user or system | Playwright, Cypress, Postman |
+| Property-Based Tests | Correctness properties hold across random inputs — finds edge cases example-based tests miss | Hypothesis (Python), fast-check (JS/TS), gopter (Go) |
 | Dummy Product | A reference implementation that runs through ALL tests | Same stack as production |
+
+For security-critical logic (auth, input validation, cryptography, access control), define correctness properties and test them with property-based testing, not just example cases. Example: "for any input string, the sanitizer output never contains executable SQL." PBT finds the edge cases that hand-picked examples miss.
 
 ### Security Gates
 
@@ -351,6 +370,8 @@ Now the model writes code. Not before.
 - Each task is verified by the pipeline before moving to the next
 - If the pipeline fails, fix the code — do not adjust the gate
 
+**Debt-first:** At the start of every implementation session, check for and resolve the highest-priority technical debt item before starting new feature work. Zero critical debt items is a gate — new features cannot begin while critical debt exists. Debt is not an optional backlog. It is a liability that compounds, and AI-generated code accumulates it faster than human-written code because the model optimizes for the immediate task, not the codebase trajectory.
+
 **Per-task verification before moving to the next task:**
 
 1. All acceptance criteria from `tasks.md` checked off
@@ -381,19 +402,44 @@ Pipeline gate: [which gate gets this new test]
 
 Do this. The tests you write before production will never be as good as the tests derived from real failure modes.
 
+### Methodology Retro
+
+After every non-trivial session, review the process itself — not just the code:
+- What broke in the workflow? Which phase was underspecified?
+- What was slow? Which gate added friction without catching real issues?
+- What should change in your steering files, rules, or templates?
+
+Lessons that work get kept. Rules that don't get pruned. The methodology is a living document — not a reference manual. Encode operational lessons (environment quirks, CI gotchas, cost-saving patterns) into your tool's persistent context: steering files (Kiro), CLAUDE.md (Claude Code), rules (Cursor), or knowledge base (Antigravity).
+
 ---
 
-## The Dual-Model Review System
+## The Multi-Model Review System
 
 A single model reviewing its own output is unreliable. Self-critique is structurally weak. Use adversarial collaboration instead.
 
-### Structure
+### Basic Structure — Dual Model
 
 | Role | What | Mandate |
 |------|------|---------|
 | Generator | The model producing the phase output | Produce the output for each phase |
 | Reviewer | A different model architecture (different company, different training) | Find holes in logic, security, completeness |
-| Judge | You | Resolve genuine disagreements, make final calls |
+| Navigator | You | Resolve genuine disagreements, make final calls |
+
+This is the minimum. For security-critical decisions, use the full pipeline below.
+
+### Full Pipeline — Assigned Roles
+
+For high-stakes decisions (auth architecture, data access patterns, infrastructure design), assign specific roles to different models:
+
+| Role | Mandate | Best Model For |
+|------|---------|---------------|
+| Architect | Design the solution, defend structural decisions | Strong reasoning model (Claude, o1) |
+| Challenger | Attack every assumption, find failure modes | Adversarial-strong model (different family from Architect) |
+| Debugger | Find implementation-level flaws, race conditions, edge cases | Code-focused model (Claude, Codex) |
+| Strategist | Evaluate business and operational impact, cost, timeline | Generalist model with broad context |
+| Convergence | Synthesize findings, produce final recommendation | Same model as Architect, given all inputs |
+
+You don't need all roles for every decision. The key principle: the Challenger must be a different architecture from the Architect. Same-family models share correlated blind spots.
 
 ### Why Different Architectures
 
@@ -423,7 +469,7 @@ If both models agree, it is probably right. If both models disagree, you have a 
 - Do not automatically side with either model. Both can be wrong.
 - You are the final judge. Make the call, document the reasoning, move on.
 
-**When to use dual-model:** Architecture decisions, threat model, CI/CD gate definitions, security-critical components, anything where a mistake is expensive to fix later.
+**When to use multi-model review:** Architecture decisions, threat model, CI/CD gate definitions, security-critical components, anything where a mistake is expensive to fix later.
 
 **When not required:** Boilerplate, simple scripts, obvious tasks with clear acceptance criteria.
 
@@ -433,7 +479,7 @@ If both models agree, it is probably right. If both models disagree, you have a 
 
 When facing ambiguous or high-stakes decisions at any phase, apply structured reasoning before prompting.
 
-The full reasoning pipeline reference -- including framework descriptions, pipeline variants, selection logic, and testing findings -- is in [`reasoning-pipeline.md`](./reasoning-pipeline.md).
+The full reasoning pipeline reference -- including framework descriptions, pipeline variants, selection logic, and testing findings -- is in [`reasoning-pipeline.md`](./reasoning-pipeline.md). Empirical validation of multi-model pipeline performance is in [`experiments/model-shootout.md`](./experiments/model-shootout.md).
 
 ### Quick Reference
 
@@ -470,6 +516,16 @@ For simple problems the pipeline produces the same answer at 3x the cost. For co
 
 The output file from each phase is the handoff artifact to the next phase. Modern agentic tools (Claude Code, Cursor, Kiro, and others) manage context naturally — through compaction, file-based context, or session architecture. The methodology does not prescribe how your tool manages sessions. It defines what carries forward.
 
+### Beyond Phase Artifacts — Session State
+
+Real projects need persistent context beyond phase outputs. Between sessions, maintain:
+
+- **What's in progress** — current phase, current task, blockers
+- **Known issues** — bugs found but not yet fixed, debt items queued
+- **Operational lessons** — environment quirks, CI gotchas, cost-saving patterns, things that worked and things that didn't
+
+Store this in your tool's native persistent context: `CLAUDE.md` (Claude Code), steering files (Kiro), rules (Cursor), or knowledge base (Antigravity). The methodology doesn't prescribe the format — but it prescribes that the context exists. Without it, every new session starts cold and re-discovers problems you already solved.
+
 ### Handoff Artifacts
 
 | Phase | Handoff Artifact |
@@ -486,9 +542,9 @@ Phase 6 takes multiple inputs because task acceptance criteria must trace back t
 
 ### Phase Re-entry
 
-Implementation will reveal upstream flaws. This is not a failure — it is the process working.
+Phase re-entry is the primary operating mode, not a failure case. In practice, almost every task surfaces something upstream that needs updating — a missing requirement, an architecture assumption that doesn't hold, a threat not modeled. This is the process working.
 
-When Phase 7 surfaces an architecture problem, a missing requirement, or a threat not modeled:
+When any phase surfaces an upstream flaw:
 
 1. Identify which phase owns the flaw (e.g., architecture → Phase 3, missing requirement → Phase 2)
 2. Re-run that phase with the current output file + the finding
@@ -527,6 +583,21 @@ Context Anchoring — feeding a growing Decision Log into every prompt — sound
 Silent violations destroy pipeline reliability. But deadlines exist. Constraints exist. The problem is never breaking a rule — it's breaking one without acknowledging it.
 
 An undocumented exception is the only true violation.
+
+### Immutable Safety Rules
+
+Not all rules are waivable. These are load-bearing safety rules that can never be bypassed by the AI and can only be changed by direct human edit:
+
+- **CI runs before deploy.** No exceptions. No "just this once."
+- **Destructive actions require human confirmation.** The model never deletes data, drops tables, or modifies production without explicit human approval.
+- **Pipeline gates are never weakened to make code pass.** If the gate fails, the code is wrong.
+- **Secrets are never hardcoded.** Not temporarily, not for testing, not "just to get it working."
+
+These are not methodology preferences — they are safety invariants. The Waiver Pattern below does not apply to them. If you need to change one, it requires a deliberate human decision, documented with rationale, not an AI-initiated override.
+
+### Waivable Gates
+
+Everything else can be waived — with documentation. The problem is never breaking a rule. It's breaking one without acknowledging it.
 
 ### When to Use a Waiver
 
