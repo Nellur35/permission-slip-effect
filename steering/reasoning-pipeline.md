@@ -218,4 +218,4 @@ The value scales with problem complexity:
 
 ## See also
 
-- **[Model Shootout](experiments/model-shootout.md)** — Multi-model benchmark testing which Bedrock models perform best in chained reasoning pipelines, and empirical proof that role-based model assignment (Challenger / Architect / Debugger) produces balanced insight distribution vs. single-model dominance.
+- **[Model Shootout](../experiments/model-shootout.md)** — Multi-model benchmark testing which Bedrock models perform best in chained reasoning pipelines, and empirical proof that role-based model assignment (Challenger / Architect / Debugger) produces balanced insight distribution vs. single-model dominance.
