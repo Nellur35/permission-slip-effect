@@ -179,11 +179,91 @@ PROVIDERS = {
     "bedrock": BedrockProvider,
 }
 
+# Cheap model overrides — used with --cheap flag
+# Maps provider name to a cheaper/faster model for analysis stages
+CHEAP_MODELS = {
+    "claude": "claude-haiku-4-5-20251001",
+    "openai": "gpt-4o-mini",
+    "google": "gemini-2.0-flash",
+    "bedrock": "anthropic.claude-haiku-4-5-20251001-v1:0",
+}
 
-def get_provider(name: str) -> Provider:
+# Cost estimates per 1K tokens (input, output) — USD, approximate
+# Used for pre-run estimates only, not billing. Update as prices change.
+MODEL_COSTS = {
+    # Anthropic
+    "claude-sonnet-4-20250514": (0.003, 0.015),
+    "claude-haiku-4-5-20251001": (0.0008, 0.004),
+    "claude-opus-4-20250514": (0.015, 0.075),
+    # OpenAI
+    "gpt-4o": (0.0025, 0.010),
+    "gpt-4o-mini": (0.00015, 0.0006),
+    "o1": (0.015, 0.060),
+    # Google
+    "gemini-2.5-flash": (0.00015, 0.0006),
+    "gemini-2.5-pro": (0.00125, 0.010),
+    # Defaults for unknown models
+    "_default": (0.003, 0.015),
+}
+
+
+def estimate_cost(pipeline_key: str, architect_model: str, challenger_model: str = None) -> dict:
+    """Estimate token usage and cost for a pipeline run."""
+    stages = PIPELINES[pipeline_key]["stages"]
+    num_stages = len(stages)
+
+    # Estimates based on typical runs
+    avg_input_per_stage = 800   # grows with accumulated context
+    avg_output_per_stage = 1500
+    context_growth = 1200       # accumulated context grows per stage
+
+    total_input = 0
+    total_output = 0
+    for i in range(num_stages):
+        stage_input = avg_input_per_stage + (context_growth * i)
+        total_input += stage_input
+        total_output += avg_output_per_stage
+
+    # Convergence stage
+    total_input += num_stages * context_growth  # reads all findings
+    total_output += 1500
+
+    # Cost calculation
+    arch_costs = MODEL_COSTS.get(architect_model, MODEL_COSTS["_default"])
+    chal_model = challenger_model or architect_model
+    chal_costs = MODEL_COSTS.get(chal_model, MODEL_COSTS["_default"])
+
+    # Assume challenger handles ~1 stage (AdR), architect handles rest
+    has_challenger = "AdR" in stages and challenger_model
+    if has_challenger:
+        arch_stages = num_stages  # convergence counts as architect
+        chal_stages = 1
+        arch_input = total_input - avg_input_per_stage - (context_growth * stages.index("AdR"))
+        chal_input = total_input - arch_input
+        cost = (
+            (arch_input / 1000 * arch_costs[0]) + (total_output * (arch_stages / (num_stages + 1)) / 1000 * arch_costs[1]) +
+            (chal_input / 1000 * chal_costs[0]) + (total_output * (chal_stages / (num_stages + 1)) / 1000 * chal_costs[1])
+        )
+    else:
+        cost = (total_input / 1000 * arch_costs[0]) + (total_output / 1000 * arch_costs[1])
+
+    return {
+        "stages": num_stages + 1,  # +1 for convergence
+        "estimated_input_tokens": total_input,
+        "estimated_output_tokens": total_output,
+        "estimated_total_tokens": total_input + total_output,
+        "estimated_cost_usd": round(cost, 4),
+        "architect_model": architect_model,
+        "challenger_model": chal_model,
+    }
+
+
+def get_provider(name: str, model_override: str = None) -> Provider:
     if name not in PROVIDERS:
         print(f"Unknown provider: {name}. Available: {', '.join(PROVIDERS.keys())}", file=sys.stderr)
         sys.exit(1)
+    if model_override:
+        return PROVIDERS[name](model=model_override)
     return PROVIDERS[name]()
 
 
@@ -576,8 +656,13 @@ def run_pipeline(
     problem: str,
     architect: Provider,
     challenger: Optional[Provider] = None,
+    convergence_provider: Optional[Provider] = None,
 ) -> PipelineResult:
-    """Run a full reasoning pipeline."""
+    """Run a full reasoning pipeline.
+    
+    In cheap mode, convergence_provider is the full-price model used only for
+    the final synthesis. Analysis stages use the (cheaper) architect.
+    """
     pipeline_def = PIPELINES[pipeline_key]
     result = PipelineResult(
         pipeline=pipeline_def["name"],
@@ -608,9 +693,10 @@ def run_pipeline(
         elif stage_result.raw:
             accumulated += f"\n\n## {stage_result.framework} findings:\n{stage_result.raw}"
 
-    # Convergence
-    print(f"  [convergence] Synthesizing ({architect.name})...", file=sys.stderr)
-    result.convergence = run_convergence(architect, result.stages, problem)
+    # Convergence — use full-price model in cheap mode
+    synth = convergence_provider or architect
+    print(f"  [convergence] Synthesizing ({synth.name}: {synth.model})...", file=sys.stderr)
+    result.convergence = run_convergence(synth, result.stages, problem)
     result.total_duration_seconds = round(time.time() - start, 2)
 
     return result
@@ -624,11 +710,12 @@ def run_review(
     artifact_path: str,
     architect: Provider,
     challenger: Optional[Provider] = None,
+    convergence_provider: Optional[Provider] = None,
 ) -> PipelineResult:
     """Adversarial review of an existing artifact (architecture.md, threat_model.md, etc.)."""
     artifact = Path(artifact_path).read_text()
     problem = f"Review this artifact with an adversarial mandate. Find what is wrong, not whether it is good.\n\n{artifact}"
-    return run_pipeline("review", problem, architect, challenger)
+    return run_pipeline("review", problem, architect, challenger, convergence_provider)
 
 
 # ============================================================
@@ -649,6 +736,8 @@ def main():
     reason_parser.add_argument("--pipeline", "-p", default="standard", choices=PIPELINES.keys())
     reason_parser.add_argument("--architect", "-a", default=os.environ.get("PIPELINE_ARCHITECT", "claude"))
     reason_parser.add_argument("--challenger", "-c", default=os.environ.get("PIPELINE_CHALLENGER", None))
+    reason_parser.add_argument("--cheap", action="store_true", help="Use cheaper models for analysis, expensive only for convergence")
+    reason_parser.add_argument("--yes", "-y", action="store_true", help="Skip cost confirmation")
     reason_parser.add_argument("--output", "-o", help="Output file (default: stdout)")
 
     # -- review command --
@@ -656,6 +745,8 @@ def main():
     review_parser.add_argument("file", help="Path to artifact (architecture.md, threat_model.md, etc.)")
     review_parser.add_argument("--architect", "-a", default=os.environ.get("PIPELINE_ARCHITECT", "claude"))
     review_parser.add_argument("--challenger", "-c", default=os.environ.get("PIPELINE_CHALLENGER", None))
+    review_parser.add_argument("--cheap", action="store_true", help="Use cheaper models for analysis, expensive only for convergence")
+    review_parser.add_argument("--yes", "-y", action="store_true", help="Skip cost confirmation")
     review_parser.add_argument("--output", "-o", help="Output file (default: stdout)")
 
     # -- pipelines command --
@@ -680,16 +771,34 @@ def main():
         return
 
     # Build providers
-    architect = get_provider(args.architect)
+    cheap_mode = getattr(args, 'cheap', False)
+    skip_confirm = getattr(args, 'yes', False)
+
+    # In cheap mode: analysis stages use cheap models, convergence uses the full model
+    arch_model = CHEAP_MODELS.get(args.architect) if cheap_mode else None
+    architect = get_provider(args.architect, model_override=arch_model)
     challenger = get_provider(args.challenger) if args.challenger else None
+
+    # For cheap mode, we also need the full-price architect for convergence
+    convergence_provider = get_provider(args.architect) if cheap_mode else None
 
     if args.command == "review":
         if not Path(args.file).exists():
             print(f"File not found: {args.file}", file=sys.stderr)
             sys.exit(1)
+        pipeline_key = "review"
+        est = estimate_cost(pipeline_key, architect.model, challenger.model if challenger else None)
         print(f"Adversarial review: {args.file}", file=sys.stderr)
-        print(f"Architect: {args.architect}, Challenger: {args.challenger or args.architect}", file=sys.stderr)
-        result = run_review(args.file, architect, challenger)
+        print(f"Architect: {architect.model}, Challenger: {(challenger.model if challenger else architect.model)}", file=sys.stderr)
+        if cheap_mode:
+            print(f"Cheap mode: analysis on {architect.model}, convergence on {convergence_provider.model}", file=sys.stderr)
+        print(f"Estimated: ~{est['estimated_total_tokens']:,} tokens, ~${est['estimated_cost_usd']:.4f}", file=sys.stderr)
+        if not skip_confirm:
+            confirm = input("Proceed? [Y/n] ").strip().lower()
+            if confirm and confirm != "y":
+                print("Aborted.", file=sys.stderr)
+                sys.exit(0)
+        result = run_review(args.file, architect, challenger, convergence_provider)
 
     elif args.command == "reason":
         problem = args.problem
@@ -700,9 +809,19 @@ def main():
             print("No problem provided.", file=sys.stderr)
             sys.exit(1)
 
-        print(f"Pipeline: {PIPELINES[args.pipeline]['name']}", file=sys.stderr)
-        print(f"Architect: {args.architect}, Challenger: {args.challenger or args.architect}", file=sys.stderr)
-        result = run_pipeline(args.pipeline, problem, architect, challenger)
+        pipeline_key = args.pipeline
+        est = estimate_cost(pipeline_key, architect.model, challenger.model if challenger else None)
+        print(f"Pipeline: {PIPELINES[pipeline_key]['name']}", file=sys.stderr)
+        print(f"Architect: {architect.model}, Challenger: {(challenger.model if challenger else architect.model)}", file=sys.stderr)
+        if cheap_mode:
+            print(f"Cheap mode: analysis on {architect.model}, convergence on {convergence_provider.model}", file=sys.stderr)
+        print(f"Estimated: ~{est['estimated_total_tokens']:,} tokens, ~${est['estimated_cost_usd']:.4f}", file=sys.stderr)
+        if not skip_confirm:
+            confirm = input("Proceed? [Y/n] ").strip().lower()
+            if confirm and confirm != "y":
+                print("Aborted.", file=sys.stderr)
+                sys.exit(0)
+        result = run_pipeline(pipeline_key, problem, architect, challenger, convergence_provider)
 
     # Output JSON
     output = json.dumps(asdict(result), indent=2, default=str)
