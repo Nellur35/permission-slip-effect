@@ -57,16 +57,16 @@ A single model reviewing its own output is structurally unreliable. The methodol
 
 ## The phases
 
-| Phase | Output | Gate question |
-|-------|--------|---------------|
-| 1. Problem Definition | Problem statement | What breaks if this isn't built? Why is code the right solution? |
-| 2. Requirements | `requirements.md` | Is every requirement testable? What is explicitly out of scope? |
-| 3. Architecture | `architecture.md` | Can every component be tested in isolation? |
-| 4. Threat Model | `threat_model.md` | What is the worst thing an adversary can do at each trust boundary? |
-| 5. CI/CD + Dummy Product | Pipeline config | What does a passing pipeline actually prove? |
-| 6. Task Breakdown | `tasks.md` | Which pipeline gate validates each task? |
-| 7. Implementation | Working code | Does the full pipeline pass? |
-| 8. Production Feedback | Live system + new tests | What failures did production surface that the pipeline missed? |
+| Phase | What the AI Does | What You Do | Output |
+|-------|-----------------|------------|--------|
+| 1. Problem Definition | Probes assumptions, surfaces edge cases | State the need in 2-3 sentences | Problem statement |
+| 2. Requirements | Generates requirements, identifies scope gaps | Review, confirm scope | `requirements.md` |
+| 3. Architecture | Designs components, boundaries, interfaces | Evaluate tradeoffs | `architecture.md` |
+| 4. Threat Model | Attacks every trust boundary, maps blast radius | Review findings, challenge optimism | `threat_model.md` |
+| 5. CI/CD + Dummy Product | Builds pipeline and dummy product from threat model | Verify gates catch what they claim | Pipeline config |
+| 6. Task Breakdown | Breaks work into pipeline-validatable units | Confirm order and dependencies | `tasks.md` |
+| 7. Implementation | Writes code + tests, resolves debt first | Review, steer, approve | Working code |
+| 8. Production Feedback | Deploys, monitors, generates tests from failures | Retro the methodology, update steering | Live system + new tests |
 
 Phases 1-5 are load-bearing walls — sequential and non-negotiable. Phase 6 onwards is Agile.
 

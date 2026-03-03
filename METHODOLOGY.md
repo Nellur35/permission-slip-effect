@@ -1,6 +1,6 @@
 # LLM-Assisted Development
 
-*A Structured Methodology for Building Real Products*
+*A Structured Methodology for Building Real Products with AI*
 
 **Asaf Yashayev**
 
@@ -8,17 +8,17 @@
 
 ## Quick Reference
 
-| Phase | What You Do | Output | Gate Question |
-|-------|------------|--------|---------------|
-| 1. Problem | Define the real-world need | Problem statement (2-3 sentences) | What breaks if this isn't built? Why is code the right solution? |
-| 2. Requirements | Define what the system does and doesn't do | `requirements.md` | Is every requirement testable? What is out of scope? |
-| 3. Architecture | Design components, boundaries, interfaces | `architecture.md` | Can every component be tested in isolation? |
-| 3.5 Spike | Test unverified assumptions (optional) | Updated `architecture.md` | Was the assumption validated or disproven? |
-| 4. Threat Model | Attack every trust boundary — then apply continuously | `threat_model.md` | What is the worst an adversary can do here? |
-| 5. CI/CD | Build the pipeline that defines "done" — includes PBT for security logic | Pipeline config + dummy product | What does a passing pipeline actually prove? |
-| 6. Tasks | Break work into pipeline-validatable units | `tasks.md` | Which gate validates each task? |
-| 7. Implementation | Resolve debt first, then write code — tests alongside, not after | Working code | Does the full pipeline pass? Zero critical debt? |
-| 8. Production | Deploy, monitor, feed failures back, retro the methodology | Live system + new tests + updated steering | What did production catch? What should the process change? |
+| Phase | What the AI Does | What You Do | Output | Gate Question |
+|-------|-----------------|------------|--------|---------------|
+| 1. Problem | Probes assumptions, surfaces edge cases | State the real-world need | Problem statement (2-3 sentences) | What breaks if this isn't built? Why is code the right solution? |
+| 2. Requirements | Generates requirements, identifies scope gaps | Review, adjust, confirm scope | `requirements.md` | Is every requirement testable? What is out of scope? |
+| 3. Architecture | Designs components, boundaries, interfaces | Evaluate design tradeoffs | `architecture.md` | Can every component be tested in isolation? |
+| 3.5 Spike | Builds throwaway test of assumptions (optional) | Read the result, update architecture | Updated `architecture.md` | Was the assumption validated or disproven? |
+| 4. Threat Model | Attacks every trust boundary, maps blast radius | Review findings, accept or challenge | `threat_model.md` | What is the worst an adversary can do here? |
+| 5. CI/CD | Builds pipeline + dummy product, includes PBT for security logic | Verify gates match threat model | Pipeline config + dummy product | What does a passing pipeline actually prove? |
+| 6. Tasks | Breaks work into pipeline-validatable units | Confirm task order and dependencies | `tasks.md` | Which gate validates each task? |
+| 7. Implementation | Resolves debt first, writes code + tests | Review, steer, approve | Working code | Does the full pipeline pass? Zero critical debt? |
+| 8. Production | Deploys, monitors, generates new tests from failures | Retro the methodology, update steering | Live system + new tests + updated steering | What did production catch? What should the process change? |
 
 Phases 1-5 are sequential and non-negotiable. Phase 6 onwards is Agile. The output file from each phase is the only context that carries forward. Phase re-entry is the norm — going back is the process working, not failing. Some rules are waivable with documentation; safety invariants (CI before deploy, no hardcoded secrets, gates never weakened, destructive actions need human confirmation) are never waivable.
 
@@ -44,24 +44,34 @@ Skip the rest if you need to. But know what risk you're accepting. Layer in the 
 
 Try the methodology on a trivial project before reading the full document. This proves it works before asking for your time.
 
-**Project:** A URL shortener API.
+**Project:** A URL shortener API. You provide one sentence per phase. The AI does the rest.
 
-**Phase 1 — Problem (2 min):**
-> "What problem does a URL shortener solve? What breaks without it? Why is code the right solution?"
+**Phase 1 — Problem (1 min):** You say:
+> "I need a URL shortener API. Define the problem — what breaks without it, why code is the right solution."
 
-**Phase 2 — Requirements (3 min):**
-> "Generate requirements.md for a URL shortener API. Include: functional requirements, non-functional requirements, explicit exclusions, definition of done. Add a Decisions & Rejected Alternatives section."
+The AI produces a problem statement. You read it, confirm it's right.
 
-**Phase 3 — Architecture (3 min):**
-> "Based on this requirements.md, design the architecture. Component diagram, interfaces, dependency injection boundaries. Every component must be testable in isolation. Include Decisions & Rejected Alternatives."
+**Phase 2 — Requirements (2 min):** You say:
+> "Generate requirements.md. Include functional, non-functional, explicit exclusions, definition of done, and Decisions & Rejected Alternatives."
 
-**Phase 4 — Threat Model (3 min):**
-> "Based on this architecture.md, threat model every trust boundary. What can an adversary do? What is the blast radius? How do you mitigate?"
+The AI produces `requirements.md`. You review scope and exclusions.
 
-**Phase 5 — CI/CD (4 min):**
-> "Based on this architecture.md and threat_model.md, generate a CI/CD pipeline config. Map each security gate to a specific threat. Build a dummy product that passes every gate."
+**Phase 3 — Architecture (2 min):** You say:
+> "Based on this requirements.md, design the architecture. Every component must be testable in isolation."
 
-**Result:** You now have a problem statement, requirements, architecture, threat model, pipeline, and dummy product — all in 15 minutes. See [`examples/url-shortener/`](examples/url-shortener/) for what the actual outputs look like. Now read the full methodology below to understand the guardrails that prevent the 10 ways this usually goes wrong.
+The AI produces `architecture.md`. You check the design makes sense.
+
+**Phase 4 — Threat Model (3 min):** You say:
+> "Based on this architecture.md, threat model every trust boundary. What's the blast radius? How do you mitigate?"
+
+The AI produces `threat_model.md`. You review findings, challenge anything too optimistic.
+
+**Phase 5 — CI/CD (3 min):** You say:
+> "Based on architecture.md and threat_model.md, generate a CI/CD pipeline. Map each gate to a specific threat. Build a dummy product."
+
+The AI produces pipeline config + dummy product. You verify the gates match the threats.
+
+**Result:** Problem statement, requirements, architecture, threat model, pipeline, and dummy product — all in 15 minutes. You wrote 5 sentences. The AI wrote everything else. See [`examples/url-shortener/`](examples/url-shortener/) for what the actual outputs look like.
 
 ---
 
@@ -69,7 +79,7 @@ Try the methodology on a trivial project before reading the full document. This 
 
 Models guess what you probably want to hear. They're good at it — good enough to fool you. Left alone, they'll produce code that looks correct, tests that pass, and pipelines that appear green — while building the wrong thing correctly. That's what this methodology is for.
 
-Your role is navigator and judge. Not coder.
+**The AI does the work. You make the decisions.** The AI generates the architecture, writes the threat model, builds the pipeline, produces the code. You review what it produces, steer when it drifts, and rule on disagreements between models. You are the navigator — not the engine. The AI is fast but uncritical. You are slow but have judgment.
 
 This role deepens with practice. Over time you learn to front-load intent ("build X with constraint Y" instead of "build X" then correcting), triage counterexamples yourself before the model surfaces them, and know when to say "change X to Y" versus "investigate this." The methodology accelerates this — each phase teaches you what to look for in the next one. The navigator is not a static role. It is a skill that compounds.
 
@@ -111,7 +121,9 @@ The methodology's phase structure helps here: clear inputs and gate questions me
 
 ## Phase 1 — Define the Problem
 
-Before writing a single prompt about code, answer two questions:
+Before any other work, the AI needs a clear problem statement from you. This is the one phase where you provide the primary input — 2-3 sentences about what breaks in the real world and why code solves it. The AI will probe your assumptions, surface edge cases, and help you refine the statement. But the problem itself must come from you.
+
+Two questions must be answered before proceeding:
 
 - What is the actual problem?
 - Why does code solve it better than another approach?
@@ -128,14 +140,9 @@ Everyone thinks they can skip this. Then the model optimizes beautifully for the
 
 ## Phase 2 — Product Requirements
 
-Define what the product must do, not how it will do it. Requirements are the translation layer between reality and code. Every requirement that is missing or ambiguous becomes a bug later.
+The AI generates the requirements document from your problem statement. It covers functional requirements, non-functional requirements, explicit exclusions, and definition of done. Your job: review what it produced, catch missing requirements, and confirm what's in scope vs. out of scope.
 
-- **Functional requirements:** what the system does
-- **Non-functional requirements:** performance, security, reliability
-- **Explicit exclusions:** what the system deliberately does NOT do
-- **Definition of done:** what does success look like in reality, not on a dashboard
-
-**Critical:** If requirements are unclear, stop and resolve them. You'll pay for it later. You always do.
+Every requirement that is missing or ambiguous becomes a bug later. If requirements are unclear, stop and resolve them before proceeding.
 
 **Gate questions — do not proceed until answered:**
 - Is every requirement testable? If you cannot write a test for it, it is not a requirement.
@@ -148,11 +155,11 @@ Define what the product must do, not how it will do it. Requirements are the tra
 
 ## Phase 3 — Architecture & Design
 
-Design the system structure before any code is written. The architecture must reflect the problem domain, not convenience.
+The AI designs the system architecture from `requirements.md` — component boundaries, interfaces, dependencies, and injection points. Your job: evaluate whether the design reflects the problem domain or just what was easy to build. Check that every component can be tested in isolation.
 
 ### Design for Testability
 
-If you can't test it in isolation, you can't know if it works.
+If it can't be tested in isolation, you can't know if it works.
 
 - Clean component boundaries
 - Dependency injection over hardcoded dependencies
@@ -205,14 +212,9 @@ Pretending a technical control exists when it's actually a cultural norm is secu
 
 ## Phase 4 — Threat Modeling
 
-Architecture assumes a cooperative world. Threat modeling injects reality back in. For every component and trust boundary, ask:
+The AI takes `architecture.md` and attacks every trust boundary, data flow, and dependency. It produces a threat model covering 13 areas — from IAM blast radius to supply chain risks to LLM-specific threats. Your job: review the findings, challenge anything that looks too optimistic, and confirm the mitigations are real.
 
-- What does an adversary see here?
-- What can they manipulate?
-- What is the worst possible outcome?
-- How would this component be abused at scale?
-
-Security controls designed at this stage cost a fraction of what they cost after implementation. Most vulnerabilities aren't code bugs. They're architecture decisions nobody attacked on paper first.
+Architecture assumes a cooperative world. Threat modeling injects reality back in. Security controls designed at this stage cost a fraction of what they cost after implementation.
 
 ### What to Examine
 
@@ -263,9 +265,7 @@ These risks exist *because* you're using AI to write the code. A methodology for
 
 ## Phase 5 — CI/CD Pipeline Design
 
-Design the pipeline before any implementation begins. The pipeline tells you whether what you built matches what you said you'd build.
-
-The pipeline shape follows from the architecture and threat model. Don't use templates or defaults. Build it to match what you are actually building.
+The AI builds the pipeline before any implementation begins — security gates derived from the threat model, quality gates from the architecture, and a dummy product that proves the pipeline works end-to-end. Your job: verify that the gates actually catch what they claim to catch, and that the pipeline shape matches your specific architecture, not a generic template.
 
 ### Test Strategy
 
@@ -336,7 +336,7 @@ Build a minimal reference product that exercises every component and passes ever
 
 ## Phase 6 — Task Breakdown
 
-Only after Phases 1-5 are complete do you break work into implementation tasks. Each task must:
+Only after Phases 1-5 are complete does the AI break work into implementation tasks. Your job: confirm the task order, check that every security mitigation from the threat model maps to a task, and verify that no task lacks a validation criterion. Each task must:
 
 - Produce a component that the pipeline can validate
 - Have clear acceptance criteria tied to pipeline gates
@@ -363,7 +363,7 @@ Order tasks so that foundational components (shared interfaces, data models, cor
 
 ## Phase 7 — Implementation
 
-Now the model writes code. Not before.
+Now the AI writes code. Not before. Your job: review what it produces, steer when it drifts, and never let it weaken a gate to make code pass.
 
 - Write tests alongside code, never after
 - Commit only what passes the full pipeline
@@ -382,7 +382,7 @@ Now the model writes code. Not before.
 
 ## Phase 8 — Production Feedback Loop
 
-Passing the CI pipeline is not the end. It is the beginning of a feedback loop.
+Passing the CI pipeline is not the end. It is the beginning of a feedback loop. The AI deploys, monitors, and generates new test cases from real failure patterns. Your job: decide which failures matter, confirm the new tests, and retro the methodology itself.
 
 1. Deploy to a live environment
 2. Monitor for failures the pipeline did not catch
