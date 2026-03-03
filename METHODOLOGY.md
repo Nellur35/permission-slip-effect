@@ -439,15 +439,9 @@ For high-stakes decisions (auth architecture, data access patterns, infrastructu
 | Strategist | Evaluate business and operational impact, cost, timeline | Generalist model with broad context |
 | Convergence | Synthesize findings, produce final recommendation | Same model as Architect, given all inputs |
 
-You don't need all roles for every decision. The key principle: the Challenger must be a different architecture from the Architect. Same-family models share correlated blind spots.
-
-### Why Different Architectures
-
-Two models from the same family share correlated blind spots. Different architectures fail differently. Models from different companies will surface more genuine disagreements than two instances of the same model.
+You don't need all roles for every decision. The key principle: the Challenger must be a different architecture from the Architect. Same-family models share correlated blind spots — different companies surface more genuine disagreements than two instances of the same model.
 
 ### The Review Loop
-
-The review is a structured argument. Both models make their case. You decide.
 
 ```
 1. Generator produces phase output
@@ -457,81 +451,34 @@ The review is a structured argument. Both models make their case. You decide.
 5. Generator incorporates the rulings and produces corrected output
 ```
 
-Neither model should accept the other's position without arguing its case first. The Generator should defend sound decisions against the Reviewer's criticism. The Reviewer should not back down when the Generator pushes back if the finding is valid. The genuine disagreements — where both models have reasonable arguments — are where your judgment as navigator matters most.
+Give the reviewer an explicitly adversarial mandate. Don't tell it what to look for. Feed findings back to the generator and let it argue. Neither model should cave immediately — if one does, the review wasn't adversarial enough. If both agree, probably right. If both disagree, you have a real decision. Make the call, document the reasoning, move on.
 
-If both models agree, it is probably right. If both models disagree, you have a real decision to make. If one model caves immediately, the review was not adversarial enough.
-
-### How to Use the Reviewer
-
-- Give the reviewer an explicitly adversarial mandate: find why this is wrong, not whether it is good.
-- Do not tell the reviewer what to look for. Let it find what the generator missed.
-- Feed the reviewer's findings back to the generator. Let the generator argue back.
-- Do not automatically side with either model. Both can be wrong.
-- You are the final judge. Make the call, document the reasoning, move on.
-
-**When to use multi-model review:** Architecture decisions, threat model, CI/CD gate definitions, security-critical components, anything where a mistake is expensive to fix later.
-
-**When not required:** Boilerplate, simple scripts, obvious tasks with clear acceptance criteria.
+**When to use:** Architecture, threat model, CI/CD gates, security-critical components — anything expensive to fix later.
+**When not required:** Boilerplate, simple scripts, obvious tasks.
 
 ### Automating the Review
 
-Manual copy-paste between model UIs works but doesn't scale. The `pipeline/` CLI automates the full Architect → Challenger → Convergence flow:
+The `pipeline/` CLI automates the full Architect → Challenger → Convergence flow:
 
 ```bash
-# Adversarial review of any artifact
-python pipeline.py review architecture.md
-
-# Full reasoning pipeline on a complex decision
-python pipeline.py reason --pipeline standard "Should we migrate auth to OAuth2?"
-
-# Multi-model: Challenger uses a different provider
-python pipeline.py reason --architect claude --challenger openai "Why do deploys fail?"
-
-# Cheap mode: analysis on Haiku/Flash, convergence on Sonnet (~70% cheaper)
-python pipeline.py reason --cheap "Should we refactor the auth module?"
-
-# CI integration: skip confirmation, output JSON
-python pipeline.py review threat_model.md --yes -o results.json
+python pipeline.py review architecture.md                              # adversarial review
+python pipeline.py reason --architect claude --challenger openai "..."  # multi-model reasoning
+python pipeline.py reason --cheap "..."                                 # ~70% cheaper
 ```
 
-The CLI runs the reasoning frameworks (First Principles, Root Cause, Adversarial, Tree of Thoughts, Pre-Mortem), feeds each stage's output into the next, and produces a JSON report with ranked risks and navigator decisions needed. See [`pipeline/README.md`](pipeline/README.md) for full documentation.
+JSON output, CI-friendly with `--yes`. See [`pipeline/README.md`](pipeline/README.md) for full documentation.
 
 ---
 
 ## Reasoning Pipeline for Complex Decisions
 
-When facing ambiguous or high-stakes decisions at any phase, apply structured reasoning before prompting.
+When facing ambiguous or high-stakes decisions, apply structured reasoning. The pipeline chains frameworks (First Principles, Root Cause, Adversarial, Tree of Thoughts, Pre-Mortem) where each stage analyzes from a different angle and feeds into the next. The CLI automates this — `python pipeline.py pipelines` lists all variants.
 
-The full reasoning pipeline reference -- including framework descriptions, pipeline variants, selection logic, and testing findings -- is in [`reasoning-pipeline.md`](./reasoning-pipeline.md). Empirical validation of multi-model pipeline performance is in [`experiments/model-shootout.md`](./experiments/model-shootout.md).
+**Key finding:** Pre-Mortem and Adversarial stages structurally bypass model agreeableness. In testing, critical insights like flawed premises and stakeholder conflicts appeared **only** in variants that included these stages. The pipeline doesn't make the model smarter — it gives it permission to say what it already knows.
 
-### Quick Reference
+**When to use:** No pipeline for simple problems (same answer at 3x cost). Light (3 stages) for moderate decisions. Standard (5 stages) for complex or multi-stakeholder problems where it's transformative.
 
-**Light pipeline** (moderate decisions, clear framing):
-```
-RCAR -> ToT -> PMR
-```
-
-**Standard pipeline** (complex decisions, ambiguous framing):
-```
-FPR -> RCAR -> AdR -> ToT -> PMR
-```
-
-**Multi-stakeholder pipeline:**
-```
-FPR -> SMR -> AdR -> ToT -> PMR
-```
-
-### Key Finding: The Permission Slip Effect
-
-Pre-Mortem and Adversarial stages are not just analytical tools -- they structurally bypass the model's default agreeableness. Models suppress uncomfortable truths unless explicitly given permission to surface them. Naming a stage "Pre-Mortem" or "Adversarial Reasoning" provides that permission. In testing, critical insights like flawed premises and stakeholder conflicts appeared **only** in pipeline variants that included these stages.
-
-### When to Use
-
-- **No pipeline:** Simple, well-defined problems with clear solutions.
-- **Light (3 stages):** Moderate decisions where you need structured options and risk identification.
-- **Standard (5 stages):** Complex decisions with ambiguity, competing stakeholders, or where the brief itself might be wrong.
-
-For simple problems the pipeline produces the same answer at 3x the cost. For complex multi-stakeholder problems it is transformative.
+Full reference: [`reasoning-pipeline.md`](./reasoning-pipeline.md). Empirical validation: [`experiments/model-shootout.md`](./experiments/model-shootout.md).
 
 ---
 
@@ -578,26 +525,18 @@ Re-entry is not a waiver. It does not need justification. Document what triggere
 
 ### Cross-Model Review at Handoff Points
 
-The handoff between Phases 3→4, 4→5, and 5→6 is the natural point for cross-model review. Before starting the next phase, paste the output file into a different model with an adversarial prompt. This takes 60 seconds and catches blind spots the generator cannot see.
+The handoff between Phases 3→4, 4→5, and 5→6 is the natural point for cross-model review. Paste the output into a different model with an adversarial mandate, or use the CLI:
 
-Ready-to-use review prompts:
+```bash
+python pipeline.py review architecture.md    # after Phase 3
+python pipeline.py review threat_model.md    # after Phase 4
+```
 
-**After Phase 3 (Architecture):**
-> Review this architecture with an adversarial mandate. Find what is wrong, not whether it is good. Check: testability of every component, hidden dependencies, missing interfaces, whether the architecture reflects the problem domain or what was easy to build. For each finding: state the issue, the impact, and what should change. `[paste architecture.md]`
-
-**After Phase 4 (Threat Model):**
-> Review this threat model with an adversarial mandate. Find what is missing, not whether it is complete. Check: every trust boundary in the architecture, IAM blast radius, IaC configuration, supply chain risks, error handling information leakage. What would an attacker target first? What is the worst case the model didn't consider? `[paste threat_model.md]`
-
-**After Phase 5 (CI/CD):**
-> Review this CI/CD pipeline with an adversarial mandate. For each gate: does it actually catch what it claims to catch? What failure modes slip through? Are the custom security gates sufficient for the threat model risks? Is the dummy product exercising every component or just the happy path? `[paste pipeline config]`
-
-Feed the reviewer's findings back to the generator and let it defend or acknowledge. You are the navigator — you decide which findings to incorporate.
+Ready-to-use manual review prompts are in [`tools/review.md`](tools/review.md).
 
 ### Why Handoff Artifacts, Not Decision Logs
 
-Context Anchoring — feeding a growing Decision Log into every prompt — sounds like a solution to context drift but becomes the problem it tries to solve. A log that grows with every phase eventually consumes the context window. Don't fight the context window. Use it. Handoff artifacts carry forward only what matters.
-
-**Rule:** If a decision is important enough to carry forward, it belongs in the output file. If it is not in the output file, it does not carry forward.
+A growing Decision Log eventually consumes the context window. Handoff artifacts carry forward only what matters. If a decision is important enough to carry forward, it belongs in the output file. If it's not in the output file, it doesn't carry forward.
 
 ---
 
