@@ -370,7 +370,7 @@ RCAR → ToT → PMR
 FPR → RCAR → AdR → ToT → PMR
 ```
 
-**Political / organizational pipeline:**
+**Multi-stakeholder pipeline:**
 ```
 FPR → SMR → AdR → ToT → PMR
 ```
@@ -381,7 +381,7 @@ FPR → SMR → AdR → ToT → PMR
 | Chain of Thought | CoT | Need to establish what happened |
 | Root Cause Analysis / 5 Whys | RCAR | Surface solutions keep failing |
 | Graph of Thoughts | GoT | Interconnected elements; feedback loops |
-| Stakeholder Mapping | SMR | Organizational politics; coalitions |
+| Stakeholder Mapping | SMR | Competing interests; coalitions; multiple parties |
 | Adversarial Reasoning | AdR | Hidden incentives; conflict; resistance |
 | Tree of Thoughts | ToT | Multiple strategic options to compare |
 | Pre-Mortem | PMR | Test strategy before committing (always recommended) |

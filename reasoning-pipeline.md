@@ -30,7 +30,7 @@ The pipeline does not make the model smarter. It gives the model permission to s
 | **Chain of Thought** | CoT | Establishes facts, timeline, sequential logic | You need to understand what actually happened |
 | **Root Cause Analysis** | RCAR / 5 Whys | Finds structural causes, not symptoms | Surface solutions keep failing; recurring problems |
 | **Graph of Thoughts** | GoT | Maps systemic interconnections and feedback loops | Multiple interconnected elements; situation is stuck |
-| **Stakeholder Mapping** | SMR | Maps power and interest for each player | Organizational politics; need to build coalitions |
+| **Stakeholder Mapping** | SMR | Maps power and interest for each player | Competing interests; multiple parties optimizing for different outcomes |
 | **Adversarial Reasoning** | AdR | Models what each party is protecting and optimizing for | Conflict, resistance, hidden incentives |
 | **Tree of Thoughts** | ToT | Generates and compares multiple strategic options with tradeoffs | Designing interventions; high-stakes decisions with multiple paths |
 | **Pre-Mortem** | PMR | Assumes failure, works backward to identify why | Before committing to any major strategy |
@@ -80,9 +80,9 @@ For complex decisions where the facts need to be established before analysis. Us
 CoT -> RCAR -> AdR -> ToT -> PMR
 ```
 
-### Political / Organizational Pipeline (5 stages)
+### Multi-Stakeholder Pipeline (5 stages)
 
-For decisions dominated by organizational dynamics and stakeholder management.
+For decisions with competing interests, power dynamics, or multiple parties optimizing for different outcomes — organizational, commercial, cross-team, or political.
 
 ```
 FPR -> SMR -> AdR -> ToT -> PMR
@@ -104,7 +104,7 @@ FPR -> RCAR -> GoT -> ToT -> PMR
 Simple, well-defined problem    -> No pipeline. Direct prompt.
 Moderate, familiar problem      -> Light (3 stages)
 Complex, multi-angle            -> Standard (5 stages)
-High-stakes, deeply political   -> Political or full custom (5-7 stages)
+High-stakes, multi-stakeholder    -> Multi-Stakeholder or full custom (5-7 stages)
 ```
 
 ### Selection Logic
@@ -115,7 +115,7 @@ Start with these questions:
 2. **Do you need to establish what happened?** Add Chain of Thought.
 3. **Are surface solutions failing?** Add Root Cause (5 Whys).
 4. **Multiple interconnected elements?** Add Graph of Thoughts.
-5. **Organizational politics involved?** Add Stakeholder Mapping + Adversarial.
+5. **Multiple parties with competing interests?** Add Stakeholder Mapping + Adversarial.
 6. **Hidden incentives or conflict?** Add Adversarial Reasoning.
 7. **Multiple possible approaches?** Add Tree of Thoughts.
 8. **High stakes?** Add Pre-Mortem. (Always recommended.)
@@ -124,7 +124,7 @@ Start with these questions:
 
 ## First Principles vs Chain of Thought as Opener
 
-Testing showed that **First Principles is the stronger opener for ambiguous or politically complex problems** -- it catches flawed premises before you invest in detailed analysis.
+Testing showed that **First Principles is the stronger opener for ambiguous or multi-stakeholder problems** -- it catches flawed premises before you invest in detailed analysis.
 
 However, this is not universal. CoT as opener occasionally generates unique tactical solutions that FPR misses, because establishing the full fact pattern sometimes reveals options that assumption-checking does not.
 

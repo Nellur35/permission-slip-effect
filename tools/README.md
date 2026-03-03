@@ -47,7 +47,7 @@ Exit criteria checklist for all 8 phases. Each gate lists what it proves and wha
 
 **Skills** (`.claude/skills/`) are Claude Code commands: `/intake`, `/review`, `/gate-check`, `/threat-model`, `/audit`. They auto-detect context, read project files, and generate output directly. Use these if you work in Claude Code.
 
-**Tools** (`tools/`) are standalone prompts you paste into any AI model. They require you to provide input manually. Use these if you work in ChatGPT, Gemini, Cursor, or any other tool.
+**Tools** (`tools/`) are standalone prompts you paste into any AI model. They require you to provide input manually. Use these if you work in Kiro, ChatGPT, Gemini, Cursor, or any other tool.
 
 Same capabilities, different delivery. Skills add auto-detection and file I/O. Tools are portable.
 

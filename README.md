@@ -6,6 +6,8 @@ Most LLM development methodologies focus on spec-first workflows, phase gates, a
 
 The [OWASP Top 10 for Agentic Applications (2026)](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) identifies agent goal hijacking, rogue agents, and cascading failures as top risks — and recommends the principle of **least agency** as the foundational defense. Here's how that works in practice: models are the engine, you are the navigator.
 
+**How it works:** The AI does the analysis, threat modeling, architecture review, and gate verification at every phase — not you. Gate questions are exit criteria the AI must satisfy before it proceeds. Your job is to review the AI's output, steer when it drifts, and make the final call. You don't write the threat model. You read the threat model the AI wrote and decide if it's good enough.
+
 ---
 
 ## What this adds
@@ -80,6 +82,10 @@ cp security-first-ai-dev-methodology/.claude/skills/methodology/SKILL.md \
 
 Copy `CLAUDE-skill.md` to your project root alongside your existing `CLAUDE.md`. Claude Code will pick it up automatically.
 
+### With Kiro or other AI coding tools
+
+The [`tools/`](tools/) folder contains standalone prompts that work in any AI coding tool — Kiro, Cursor, ChatGPT, Gemini, or anything else. Each tool is self-contained: paste the prompt, provide your input, get structured output. No installation required.
+
 ### As a reference document
 
 Read [`METHODOLOGY.md`](METHODOLOGY.md) — starts with a 15-minute Quick Start and full reference with worked rationale for every decision.
@@ -88,7 +94,7 @@ Read [`METHODOLOGY.md`](METHODOLOGY.md) — starts with a 15-minute Quick Start 
 
 ## Templates
 
-The [`templates/`](templates/) folder contains output templates for each phase — the expected shape and depth at each gate. Copy a template, fill in the placeholders, answer the gate questions, and the completed file becomes the input to the next phase's conversation.
+The [`templates/`](templates/) folder contains output templates for each phase — the expected shape and depth at each gate. The AI uses these as the target format, fills in the analysis, and answers the gate questions. The completed file becomes the handoff artifact to the next phase.
 
 ---
 

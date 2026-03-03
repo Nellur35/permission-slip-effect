@@ -447,7 +447,7 @@ RCAR -> ToT -> PMR
 FPR -> RCAR -> AdR -> ToT -> PMR
 ```
 
-**Political / organizational pipeline:**
+**Multi-stakeholder pipeline:**
 ```
 FPR -> SMR -> AdR -> ToT -> PMR
 ```

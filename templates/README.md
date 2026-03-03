@@ -16,10 +16,10 @@ These templates show the expected shape and depth for each phase's output file. 
 
 ## How to use these
 
-1. Copy the template for the phase you're working on
-2. Replace the bracketed placeholders with your project's specifics
-3. Answer every gate question before moving to the next phase
-4. The completed file becomes the handoff artifact to the next phase
+1. The AI copies the template for the current phase
+2. The AI replaces the bracketed placeholders with project-specific analysis
+3. The AI answers every gate question before moving to the next phase
+4. You review the output and steer — the completed file becomes the handoff artifact to the next phase
 
 ## The key principle
 
