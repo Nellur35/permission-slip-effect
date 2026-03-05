@@ -65,6 +65,12 @@ python pipeline.py reason --cheap "refactor auth"   # 70% cheaper with --cheap
 
 8 reasoning frameworks, 6 pipeline variants, JSON output for CI integration. No AWS account needed — works with any LLM API key.
 
+### 5. Multi-agent evolution through project evidence
+
+Every framework tells you how to run multiple agents. None tell you **when you should** or **which roles your project actually needs**. This methodology does.
+
+The AI auto-logs a structured diary of every change. Over time, `pipeline.py emerge diary.md` analyzes the diary using Graph of Thoughts to surface patterns — which concerns dominate, what keeps recurring, where deferred items accumulate. Agent roles emerge from your project's own history, not from a predefined catalog. [Full reference →](multi-agent/MULTI-AGENT.md)
+
 ---
 
 ## The phases
@@ -206,6 +212,7 @@ The [`templates/`](templates/) folder contains output templates for each phase �
 | [`reasoning-pipeline.md`](reasoning-pipeline.md) | Multi-framework reasoning pipeline — chaining CoT, ToT, RCA, Adversarial, Pre-Mortem |
 | [`experiments/`](experiments/) | Empirical testing — model shootout, pipeline validation |
 | [`pipeline/`](pipeline/) | **Reasoning Pipeline CLI** — automates multi-model review and reasoning. No AWS needed. |
+| [`multi-agent/`](multi-agent/) | **Multi-Agent Evolution** — diary-driven role emergence, platform configs, analysis pipeline. |
 
 ---
 
