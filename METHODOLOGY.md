@@ -484,24 +484,22 @@ Full reference: [`reasoning-pipeline.md`](./reasoning-pipeline.md). Empirical va
 
 ## Multi-Agent Evolution
 
-The methodology handles one navigator and one AI. Multi-agent is the next evolution — but it's not triggered by project size. It's triggered by accumulated context richness.
+One navigator plus one AI handles most projects. Multi-agent becomes worth it when the project's accumulated knowledge — threat model, architecture decisions, debt items, operational lessons — exceeds what a single agent can hold in context while still making good decisions.
 
-Every session, the AI automatically logs a structured diary entry for each meaningful change — what changed, why, which concern drove it, what was deferred. The navigator doesn't write or manage the diary. Steering files and hooks handle collection. Over weeks, this log becomes the project's operational memory.
+Every session, the AI logs a structured diary entry for each meaningful change: what changed, why, which concern drove it, what was deferred. Steering files and hooks handle collection — you don't write or manage it.
 
-Periodically, the diary is analyzed using Graph of Thoughts (`pipeline.py emerge diary.md`) to identify patterns: which concerns dominate, what keeps recurring, where deferred items pile up. When patterns are strong enough, they reveal where specialized agent roles would reduce navigator load. Roles emerge from evidence, not assumption.
-
-**Three tiers of AI collaboration:**
+Run `pipeline.py emerge diary.md` when you want to know if multi-agent is justified. The pipeline uses Graph of Thoughts to cluster diary entries by concern, find recurring patterns, and identify where a dedicated agent would actually help. Roles emerge from the data. You decide whether to act.
 
 | Tier | What | When |
 |------|------|------|
 | 0: Single Agent | One navigator + one AI. Diary auto-collects. | Default — where the knowledge layer gets built |
-| 1: Pipeline Mode | Multi-model reasoning via `pipeline.py` | Ad hoc, any time — no threshold needed |
-| 2: Session Subagents | Specialized agents earned through diary evidence | When diary analysis shows clear role candidates |
-| 3: Persistent Agents | Autonomous agents across sessions | Rare — requires decision authority, multi-repo scope, durable artifacts |
+| 1: Pipeline Mode | Multi-model reasoning via `pipeline.py` | Any time — no threshold needed |
+| 2: Session Subagents | Specialized agents earned through diary evidence | When the analysis shows clear role candidates |
+| 3: Persistent Agents | Autonomous agents across sessions | Rare — multi-repo, decision authority, durable artifacts |
 
-**Key principle:** An agent without context is a generic prompt wearing a costume. A "Security Agent" without a populated threat model produces the same generic advice as any model. The diary tells you when context is rich enough for specialization to matter.
+An agent without context is a generic prompt wearing a costume. A "Security Agent" without a populated threat model produces the same output as any model asked to "review this for security." The diary tells you when context is rich enough for specialization to matter.
 
-Full reference: [`multi-agent/MULTI-AGENT.md`](./multi-agent/MULTI-AGENT.md). Diary format: [`multi-agent/templates/diary-entry.md`](./multi-agent/templates/diary-entry.md). Platform steering configs: [`multi-agent/steering/`](./multi-agent/steering/). Enforcement hooks: [`multi-agent/hooks/`](./multi-agent/hooks/).
+Full reference: [`multi-agent/MULTI-AGENT.md`](./multi-agent/MULTI-AGENT.md). Diary format: [`multi-agent/templates/diary-entry.md`](./multi-agent/templates/diary-entry.md). Platform configs: [`multi-agent/steering/`](./multi-agent/steering/). Hooks: [`multi-agent/hooks/`](./multi-agent/hooks/).
 
 ---
 

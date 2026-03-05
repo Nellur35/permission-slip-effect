@@ -1,6 +1,6 @@
 # Diary Auto-Collection — Steering Configurations
 
-> **Purpose:** One-line (or small block) additions to your existing steering files that instruct the AI to auto-write diary entries. Add the relevant block to your platform config. That's it.
+One-line additions to your existing steering files. Add the block for your platform. That's it.
 
 ---
 
@@ -112,7 +112,7 @@ Use the full structured format. Just log what happened. Tag [RECURRING] [PATTERN
 
 - **All platforms:** The diary instruction works because it's a simple, repeatable task the AI does well. It doesn't require special tooling — just a steering instruction that says "after you change something, write down what and why."
 
-- **If the AI forgets:** Platform hooks (next file) catch the gap. But in practice, steering file instructions are reliably followed. The hook is a safety net, not the primary mechanism.
+- **If the AI forgets:** Platform hooks catch the gap. On platforms with hook support (Kiro, Claude Code), hooks are the primary mechanism. On platforms without hooks (Cursor, Windsurf), steering is all you have — it works most of the time but drifts in long sessions.
 
 - **Diary location:** Default is `diary.md` at project root. For monorepos, you might want `docs/diary.md` or per-package diaries. Adjust the path in the steering instruction.
 
