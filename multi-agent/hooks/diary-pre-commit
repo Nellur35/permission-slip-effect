@@ -1,0 +1,20 @@
+#!/bin/bash
+# diary-pre-commit — Advisory check for diary coverage
+# Install: cp hooks/diary-pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+
+# Check if non-diary files were modified
+CODE_CHANGES=$(git diff --cached --name-only | grep -v diary.md | grep -E '\.(ts|js|py|go|rs|md|yaml|json|toml)$' | wc -l)
+
+# Check if diary.md was modified
+DIARY_UPDATED=$(git diff --cached --name-only | grep -c diary.md)
+
+if [ "$CODE_CHANGES" -gt 0 ] && [ "$DIARY_UPDATED" -eq 0 ]; then
+    echo ""
+    echo "⚠️  Code changed but diary.md was not updated."
+    echo "   Consider adding a diary entry for this change."
+    echo "   (This is a warning, not a block. Commit proceeds.)"
+    echo ""
+fi
+
+# Always allow — advisory only
+exit 0
