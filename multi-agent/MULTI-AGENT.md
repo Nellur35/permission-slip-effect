@@ -61,11 +61,11 @@ Specialized subagents within a working session. You delegate scoped tasks to age
 
 2. **Analyze.** Run `pipeline.py emerge diary.md`. The pipeline reads every entry, builds a graph of concern relationships, identifies clusters, surfaces candidates.
 
-3. **Read the output.** It might show: security concerns in 28% of entries, always cross-referencing threat model with implementation. Or dependency conflicts recurring 5 times. Or architecture reviews requested in 40% of sessions but only 10% resulting in changes.
+3. **Read the output.** Concern distribution, recurring clusters, deferred item accumulation, bottleneck markers. Each role candidate comes with the diary entries that support it and the knowledge artifact it would need.
 
 4. **Decide.** For each candidate: Does this pattern consume disproportionate time? Would a dedicated context window improve quality? Is the knowledge artifact rich enough to ground the agent? If you remove this concern from the main agent, does it get better at everything else?
 
-5. **Configure.** Create the agent definition on your platform, referencing the knowledge artifacts the role requires.
+5. **Configure.** Create the agent definition on your platform, referencing the knowledge artifacts the role requires. See [`templates/agent-configs.md`](templates/agent-configs.md) for per-platform examples.
 
 ### Readiness Signals
 

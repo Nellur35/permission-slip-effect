@@ -1,6 +1,6 @@
 # Diary Enforcement Hooks
 
-> **Purpose:** Safety net. The steering file is the primary collection mechanism. These hooks catch gaps — sessions where the AI made changes but didn't write a diary entry.
+Hooks are the primary collection mechanism — they fire deterministically regardless of whether the AI follows the steering instruction. Steering is the fallback for platforms without hook support.
 
 ---
 
@@ -51,9 +51,7 @@ Claude Code supports custom hooks for tool execution events. Add to your hooks c
 }
 ```
 
-This is a soft reminder rather than enforcement. Claude Code's steering via CLAUDE.md is the primary mechanism. The hook serves as a nudge if the AI gets deep into implementation and forgets to log.
-
-For stronger enforcement, use a session-end hook:
+Claude Code's hook system is less deterministic than Kiro's — these are reminders, not triggers. For stronger enforcement, use the session-end hook:
 
 ```json
 {
