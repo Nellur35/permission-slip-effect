@@ -67,9 +67,7 @@ python pipeline.py reason --cheap "refactor auth"   # 70% cheaper with --cheap
 
 ### 5. Multi-agent evolution through project evidence
 
-Every framework tells you how to run multiple agents. None tell you **when you should** or **which roles your project actually needs**. This methodology does.
-
-The AI auto-logs a structured diary of every change. Over time, `pipeline.py emerge diary.md` analyzes the diary using Graph of Thoughts to surface patterns — which concerns dominate, what keeps recurring, where deferred items accumulate. Agent roles emerge from your project's own history, not from a predefined catalog. [Full reference →](multi-agent/MULTI-AGENT.md)
+The AI auto-logs a structured diary of every change — what, why, which concern, what was deferred. Over time, `pipeline.py emerge diary.md` analyzes the diary with Graph of Thoughts to surface patterns: which concerns dominate, what recurs, where deferred items pile up. Agent roles emerge from the project's own history when the evidence justifies them. [Full reference →](multi-agent/MULTI-AGENT.md)
 
 ---
 
