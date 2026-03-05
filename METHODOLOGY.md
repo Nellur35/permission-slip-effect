@@ -482,6 +482,29 @@ Full reference: [`reasoning-pipeline.md`](./reasoning-pipeline.md). Empirical va
 
 ---
 
+## Multi-Agent Evolution
+
+The methodology handles one navigator and one AI. Multi-agent is the next evolution — but it's not triggered by project size. It's triggered by accumulated context richness.
+
+Every session, the AI automatically logs a structured diary entry for each meaningful change — what changed, why, which concern drove it, what was deferred. The navigator doesn't write or manage the diary. Steering files and hooks handle collection. Over weeks, this log becomes the project's operational memory.
+
+Periodically, the diary is analyzed using Graph of Thoughts (`pipeline.py emerge diary.md`) to identify patterns: which concerns dominate, what keeps recurring, where deferred items pile up. When patterns are strong enough, they reveal where specialized agent roles would reduce navigator load. Roles emerge from evidence, not assumption.
+
+**Three tiers of AI collaboration:**
+
+| Tier | What | When |
+|------|------|------|
+| 0: Single Agent | One navigator + one AI. Diary auto-collects. | Default — where the knowledge layer gets built |
+| 1: Pipeline Mode | Multi-model reasoning via `pipeline.py` | Ad hoc, any time — no threshold needed |
+| 2: Session Subagents | Specialized agents earned through diary evidence | When diary analysis shows clear role candidates |
+| 3: Persistent Agents | Autonomous agents across sessions | Rare — requires decision authority, multi-repo scope, durable artifacts |
+
+**Key principle:** An agent without context is a generic prompt wearing a costume. A "Security Agent" without a populated threat model produces the same generic advice as any model. The diary tells you when context is rich enough for specialization to matter.
+
+Full reference: [`multi-agent/MULTI-AGENT.md`](./multi-agent/MULTI-AGENT.md). Diary format: [`multi-agent/templates/diary-entry.md`](./multi-agent/templates/diary-entry.md). Platform steering configs: [`multi-agent/steering/`](./multi-agent/steering/). Enforcement hooks: [`multi-agent/hooks/`](./multi-agent/hooks/).
+
+---
+
 ## Context Handoff
 
 The output file from each phase is the handoff artifact to the next phase. Modern agentic tools (Claude Code, Cursor, Kiro, and others) manage context naturally — through compaction, file-based context, or session architecture. The methodology does not prescribe how your tool manages sessions. It defines what carries forward.
