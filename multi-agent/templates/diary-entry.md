@@ -1,10 +1,10 @@
 # Project Diary — Entry Format
 
-> **Who writes this:** The AI, automatically, as part of every session. The steering file instructs the AI to append a diary entry after each meaningful change. The navigator does not write, edit, or manage this file.
->
-> **Where it lives:** `diary.md` at project root (or `docs/diary.md` — configurable via steering).
->
-> **Quality expectation:** Good enough, not perfect. The AI captures what it knows. The navigator corrects only if something is obviously wrong. Pattern analysis tolerates noise.
+**Written by:** the AI, automatically. The steering file instructs the AI to append an entry after each meaningful change. You don't write, edit, or manage this file.
+
+**Location:** `diary.md` at project root (configurable via steering).
+
+**Quality:** Good enough, not perfect. Pattern analysis tolerates noise.
 
 ---
 
