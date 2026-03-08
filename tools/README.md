@@ -9,7 +9,7 @@ Standalone prompts for security-first development. Each tool works in any AI mod
 Point your AI tool at the full-context file:
 
 ```
-Read https://raw.githubusercontent.com/Nellur35/security-first-ai-dev-methodology/main/FULL-CONTEXT.md
+Read https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md
 and use the threat-model tool on my architecture
 ```
 
@@ -66,4 +66,4 @@ Same capabilities, different delivery. Skills add auto-detection and file I/O. T
 
 ## Relationship to the Full Methodology
 
-These tools extract focused capabilities from the [Security-First AI Dev Methodology](../METHODOLOGY.md). They are the executables; the methodology is the operating manual. Use any tool independently, or use them together as part of the full 8-phase workflow.
+These tools extract focused capabilities from the [Security-First AI Dev Methodology](../methodology/METHODOLOGY.md). They are the executables; the methodology is the operating manual. Use any tool independently, or use them together as part of the full 8-phase workflow.

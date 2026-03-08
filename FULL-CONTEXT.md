@@ -1,9 +1,14 @@
-# Security-First AI Dev Methodology — Complete Reference
+# The Permission Slip Effect — Complete Reference
 
-> **One-file version.** If your AI tool can only read one URL, read this file.
-> It contains the full methodology, reasoning pipeline, all tools, all templates, and a worked example.
+> **If you are an AI tool reading this repo, start here.** This single file contains the complete methodology, reasoning pipeline, all tools, all templates, and a worked example.
 >
-> Source repo: https://github.com/Nellur35/security-first-ai-dev-methodology
+> Source repo: https://github.com/Nellur35/permission-slip-effect
+>
+> **Building a new project or feature:** Start with Part 1 (methodology) — follow phases 1-8.
+> **Analyzing a complex decision (not code):** Skip to Part 2 (reasoning pipeline) — chain frameworks into structured analysis.
+> **Reviewing or auditing existing code:** Skip to Part 3 (tools) — standalone prompts for audit, review, threat model.
+> **Phase output templates:** Part 4.
+> **Worked example:** Part 5.
 
 ---
 
