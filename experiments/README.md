@@ -6,6 +6,10 @@ Empirical validation of the reasoning pipeline and Permission Slip Effect.
 
 **[model-shootout.md](model-shootout.md)** — Multi-model benchmark on Amazon Bedrock proving that role-based model assignment (Challenger / Architect / Debugger) produces balanced insight distribution vs. single-model dominance. Key result: switching from a homogeneous lineup to a geographically diverse lineup shifted unique insight distribution from **13/1/1** to **3/2/2**.
 
+## v3 vs v4 Pipeline A/B Comparison
+
+**[v3-vs-v4-comparison.md](v3-vs-v4-comparison.md)** — A/B testing of v4 improvements against v3 baseline on real production code, strategic documents, and simple utilities. The headline finding: **Phase 0 and temperature profiles are complementary, not redundant** — neither eliminates SPLITs alone, but together they produce zero SPLITs on code reviews for $0.09 more per run. Also validated: v4 over-analyzes simple code (needs complexity gating), and Phase 0 doesn't fix genuine opinion disagreements on strategic documents.
+
 ## v4 Pipeline Architecture
 
 **[v4-architecture.md](v4-architecture.md)** — The improved pipeline design: Phase 0 (structured decomposition), tiered parallel execution, residual injection, drift gates, per-stage temperature profiles, and marginal value audit. Includes complete flow diagrams and CLI implementation specs.

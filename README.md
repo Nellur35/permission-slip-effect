@@ -53,6 +53,20 @@ Models from different labs and geographies (US/Chinese/European) surface differe
 
 **[Full model shootout →](experiments/model-shootout.md)**
 
+### v3 vs v4 pipeline comparison
+
+A/B testing the v4 architectural improvements (Phase 0 decomposition, per-stage temperature profiles, drift gates) against v3 baseline on real production code:
+
+| Configuration | SPLITs | Cost | What happened |
+|--------------|--------|------|---------------|
+| v3 baseline | 5 | $0.62 | Reviewers disagreed on problem definition 5 times |
+| Phase 0 only (no temp profiles) | 6 | $0.75 | Same disagreements — Phase 0 alone doesn't fix it |
+| v4 full (Phase 0 + temp profiles) | **0** | $0.71 | Zero disagreements on problem definition |
+
+The headline: **Phase 0 and temperature profiles are complementary, not redundant.** Neither eliminates SPLITs alone. Together they produce zero. Phase 0 gives shared structure. Temperature profiles give distinct cognitive modes. The interaction is the mechanism, not either component.
+
+**[Full A/B comparison →](experiments/v3-vs-v4-comparison.md)**
+
 ---
 
 ## The reasoning pipeline
