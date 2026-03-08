@@ -252,4 +252,18 @@ Phase 0 + residual injection are the highest-impact, lowest-effort changes. Star
 
 ---
 
+## Empirical Validation
+
+A/B testing of v4 against v3 on real production code produced three key findings that update the architecture:
+
+**1. The Interaction Effect.** Phase 0 alone does not eliminate SPLITs (6 in isolation vs 5 in v3 baseline). Temperature profiles alone were not tested. But Phase 0 + temperature profiles together produce zero SPLITs. The mechanisms are complementary — Phase 0 gives shared structure (more consensus), temperature profiles give distinct cognitive modes (less overlap). Together they eliminate disagreements about what the problem is. Separately, neither does. This means the architecture cannot be simplified — both mechanisms are required.
+
+**2. Domain Boundary.** v4 does not reduce SPLITs on strategic/policy documents (6 vs 6). Phase 0 solves "reviewers parsed the code differently" but cannot solve "reviewers genuinely disagree on policy." The Permission Slip Effect still works on strategic problems (uncomfortable truths surface in both versions), but SPLIT elimination is a code-domain benefit.
+
+**3. Scaling Principle Confirmed.** v4 over-analyzes simple code — finding a CRITICAL on a 12-line utility function. This validates the P6 scaling concern and means the Phase 0 complexity score must gate pipeline depth. Score below 10 should skip to the light variant.
+
+**[Full comparison data →](v3-vs-v4-comparison.md)**
+
+---
+
 *The v3 pipeline works because of good prompt engineering and the Permission Slip insight. v4 adds the architectural constraints that prevent it from degrading at scale — input representation, drift prevention, value measurement, and parameter tuning. These are the same mechanisms that took LLMs from "technically capable" to "reliably useful."*
