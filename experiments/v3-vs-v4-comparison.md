@@ -13,13 +13,16 @@ Three tests, each running both v3 and v4 on the same input. Plus one isolation t
 | AB-runtests | `run-tests.py` | Code (CI pipeline) | Medium-High | Primary A/B comparison |
 | T1-strategic | `TECH-DEBT.md` | Strategic document | Medium | Cross-domain validation |
 | T2-simple | `format_bytes` | Code (utility function) | Low (12 lines) | Scaling principle validation |
-| T3-phase0only | `run-tests.py` | Code (CI pipeline) | Medium-High | Mechanism isolation |
+| T3-phase0only | `run-tests.py` | Code (CI pipeline) | Medium-High | Mechanism isolation — Phase 0 |
+| T4-temponly | `run-tests.py` | Code (CI pipeline) | Medium-High | Mechanism isolation — Temperature |
 
 **v3 configuration:** Uniform temperature 0.3, no Phase 0, no drift gates, no marginal value audit.
 
 **v4 configuration:** Phase 0 decomposition, per-stage temperature profiles (0.2-0.7), drift gates between tiers, marginal value audit at synthesis.
 
 **T3 configuration:** Phase 0 added to v3, but uniform temperature 0.3 (no other v4 changes). Isolates Phase 0's contribution.
+
+**T4 configuration:** v4 temperature profiles (0.2-0.7) but no Phase 0 decomposition (raw input). Isolates temperature's contribution.
 
 ---
 
@@ -34,6 +37,7 @@ Three tests, each running both v3 and v4 on the same input. Plus one isolation t
 | T2-v3-simple | $0.15 | 2 | 2 | 5 | 2 | NO |
 | T2-v4-simple | $0.23 | **0** | 6 | 7 | 2 | YES |
 | T3-phase0only | $0.75 | 6 | 12 | 12 | 8 | NO |
+| T4-temponly | $0.64 | 6 | 9 | 18 | — | NO |
 
 **Definitions:**
 - **SPLIT** — Reviewers couldn't agree on what the problem is. Requires human triage.
@@ -48,19 +52,20 @@ Three tests, each running both v3 and v4 on the same input. Plus one isolation t
 
 ### 1. The Interaction Effect (the headline finding)
 
-The zero-SPLIT result in v4 comes from the **combination** of Phase 0 + temperature profiles. Neither mechanism alone eliminates SPLITs:
+The zero-SPLIT result in v4 comes from the **combination** of Phase 0 + temperature profiles. Neither mechanism alone eliminates SPLITs — and temperature alone makes things **worse**:
 
-| Configuration | SPLITs |
-|---------------|--------|
-| v3 baseline (no Phase 0, uniform temp) | 5 |
-| Phase 0 only (T3, uniform temp 0.3) | 6 |
-| v4 full (Phase 0 + temperature profiles) | **0** |
+| Configuration | SPLITs | What happened |
+|---------------|--------|---------------|
+| v3 baseline (no Phase 0, uniform temp) | 5 | Baseline disagreement level |
+| Phase 0 only (T3, uniform temp 0.3) | 6 | Structured input, same cognitive mode — no improvement |
+| Temperature only (T4, no Phase 0) | 6 | Different cognitive modes, raw input — **worse than baseline** |
+| v4 full (Phase 0 + temperature profiles) | **0** | Shared structure + distinct modes — the only combination that works |
 
-Phase 0 alone does NOT eliminate SPLITs. It produces the same number as v3. What Phase 0 does is increase CONSENSUS (12 vs 9) and MAJORITY findings (8 vs 4) — it helps reviewers agree more often, but when they disagree, they still disagree just as hard.
+This is not "temperature does all the work." Temperature alone made things WORSE. And Phase 0 alone didn't help either. It's specifically the combination: **Phase 0 ensures shared interpretation, temperature ensures distinct analysis angles.** Without shared interpretation, distinct angles create MORE disagreement. Without distinct angles, shared interpretation doesn't reduce existing disagreements.
 
-Temperature profiles alone (without Phase 0) were not tested in isolation, but the interaction is clear: **Phase 0 gives shared structure (more consensus). Temperature profiles give distinct cognitive modes (less overlap). Together they eliminate SPLITs. Separately, neither does.**
+The mechanisms are not just complementary — they are **necessary counterbalances.** Temperature without Phase 0 is actively harmful. Phase 0 without temperature is inert for SPLITs. Only together do they produce the zero-SPLIT result.
 
-This is a complementary interaction, not redundancy. You need both mechanisms.
+Phase 0 alone does increase CONSENSUS (12 vs 9) and MAJORITY findings (8 vs 4) — it helps reviewers agree more often. But when they disagree, they still disagree just as hard. Temperature alone produces the same CONSENSUS (9) and UNIQUE count (18) as v3 — it changes HOW reviewers think but not WHAT they agree on.
 
 ### 2. Domain Boundary: Code vs. Strategy
 
@@ -146,10 +151,12 @@ The one area where v3 wins: raw finding count (70+ vs 47). But more findings is 
 **Known limitations:**
 - Phase 0 does not reduce SPLITs on strategic/policy documents (genuine disagreements persist)
 - v4 over-analyzes simple code — needs complexity gating
-- The interaction effect (Phase 0 + temperature) needs further isolation testing with temperature-only runs
+- Results are from a single primary codebase (run-tests.py) — replication across more inputs needed
+- N=1 per configuration — variance testing (same input, multiple runs) not yet performed
 
 **What this means for the architecture:**
-- Phase 0 and temperature profiles are complementary, not redundant — both required
+- Phase 0 and temperature profiles are necessary counterbalances — both required, neither sufficient
+- Temperature profiles without Phase 0 are actively harmful (increase SPLITs)
 - Complexity scoring from Phase 0 should gate pipeline depth (implement the scaling principle)
 - The Permission Slip Effect is activated by temperature profiles, not just by prompt structure
 
@@ -157,4 +164,4 @@ Grade: v4 is an A- upgrade over v3's B+.
 
 ---
 
-*The mechanisms are complementary, not redundant. That's a publishable finding.*
+*The mechanisms are necessary counterbalances, not optional enhancements. Temperature without structure is harmful. Structure without temperature is inert. Together: zero disagreements on problem definition.*

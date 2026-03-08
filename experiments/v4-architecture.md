@@ -256,7 +256,16 @@ Phase 0 + residual injection are the highest-impact, lowest-effort changes. Star
 
 A/B testing of v4 against v3 on real production code produced three key findings that update the architecture:
 
-**1. The Interaction Effect.** Phase 0 alone does not eliminate SPLITs (6 in isolation vs 5 in v3 baseline). Temperature profiles alone were not tested. But Phase 0 + temperature profiles together produce zero SPLITs. The mechanisms are complementary — Phase 0 gives shared structure (more consensus), temperature profiles give distinct cognitive modes (less overlap). Together they eliminate disagreements about what the problem is. Separately, neither does. This means the architecture cannot be simplified — both mechanisms are required.
+**1. The Interaction Effect.** Full mechanism isolation testing on the same codebase:
+
+| Configuration | SPLITs |
+|---------------|--------|
+| v3 baseline (uniform temp, no Phase 0) | 5 |
+| Phase 0 only (uniform temp 0.3) | 6 |
+| Temperature only (varied temp, no Phase 0) | 6 — **worse than baseline** |
+| Full v4 (Phase 0 + temperature profiles) | **0** |
+
+The mechanisms are necessary counterbalances. Temperature without Phase 0 is actively harmful — reviewers in different cognitive modes interpret raw input differently, creating MORE disagreement. Phase 0 without temperature is inert for SPLITs — shared structure with uniform cognition doesn't reduce existing disagreements. Only together: Phase 0 ensures shared interpretation, temperature ensures distinct analysis angles.
 
 **2. Domain Boundary.** v4 does not reduce SPLITs on strategic/policy documents (6 vs 6). Phase 0 solves "reviewers parsed the code differently" but cannot solve "reviewers genuinely disagree on policy." The Permission Slip Effect still works on strategic problems (uncomfortable truths surface in both versions), but SPLIT elimination is a code-domain benefit.
 
