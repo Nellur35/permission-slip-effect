@@ -212,6 +212,28 @@ The value scales with problem complexity:
 
 ---
 
+## Why the Permission Slip Effect works (theoretical grounding)
+
+RLHF alignment is architecturally a **thin behavioral layer** — not a deep structural change. Research demonstrates that fine-tuning a safety-trained model on a few hundred harmful examples strips the safety behavior while preserving all general capabilities. The alignment doesn't remove knowledge or capability. It suppresses certain outputs based on context.
+
+The Permission Slip Effect exploits this in the productive direction. Instead of stripping alignment to access harmful capabilities, the pipeline creates prompt contexts where uncomfortable-but-useful analysis becomes the "aligned" response. Pre-Mortem says "assume failure." Adversarial says "model the hidden incentives." In those contexts, the agreeable thing to do is surface the truth — because the prompt explicitly asked for it.
+
+This is the same mechanism that makes jailbreaks work, pointed in a productive direction. Higher inference temperature (0.7 for adversarial stages vs. 0.2 for analytical stages) further opens the space — at low temperature, the model picks the safest completion; at higher temperature, it explores completions that alignment training would normally filter out.
+
+The pipeline's adversarial and pre-mortem stages are not prompt tricks. They are **structural bypasses of a known architectural property** of RLHF-trained models. This is why they work consistently across models from different labs — every RLHF-trained model has the same thin alignment layer, and every one of them responds to the same structural permission.
+
+---
+
+## v4 Pipeline Architecture
+
+The v3 pipeline (documented above) chains frameworks sequentially with uniform parameters. Analysis through LLM architectural principles revealed six gaps — the most important being that the pipeline has no "tokenizer" (structured input decomposition), no residual connection (original problem gets buried), and no drift constraint (analysis can diverge undetected).
+
+v4 adds: Phase 0 (structured decomposition before any framework runs), tiered parallel execution, residual injection of the original problem at every stage, drift gates between tiers, per-stage temperature profiles, and a marginal value audit at synthesis.
+
+**[Full v4 architecture →](experiments/v4-architecture.md)** · **[LLM principles analysis that produced it →](experiments/llm-principles-analysis.md)**
+
+---
+
 *The pipeline does not make the model smarter. It makes the model honest.*
 
 ---
@@ -219,3 +241,5 @@ The value scales with problem complexity:
 ## See also
 
 - **[Model Shootout](experiments/model-shootout.md)** — Multi-model benchmark testing which Bedrock models perform best in chained reasoning pipelines, and empirical proof that role-based model assignment (Challenger / Architect / Debugger) produces balanced insight distribution vs. single-model dominance.
+- **[v4 Architecture](experiments/v4-architecture.md)** — Phase 0, parallel tiers, residual injection, drift gates, temperature profiles, marginal value audit.
+- **[LLM Principles Analysis](experiments/llm-principles-analysis.md)** — Graph of Thoughts mapping of 9 LLM architectural principles onto the pipeline.

@@ -192,7 +192,7 @@ Works with Claude Code, Kiro, Cursor, ChatGPT, Gemini, or any tool that can read
 
 Individual frameworks have independent research backing: Chain of Thought (Wei et al., 2022), Tree of Thoughts (Yao et al., 2023), Graph of Thoughts (Besta et al., 2023), Pre-Mortem (Klein, 2007), Root Cause / 5 Whys (Toyota, 1950s), Stakeholder Mapping (Mendelow, 1981).
 
-What is novel here is the integration into sequenced pipelines, the Permission Slip Effect finding, the model shootout validation, and the theoretical grounding through LLM alignment architecture. Practitioner-tested, not peer-reviewed.
+What is novel here is the integration into sequenced pipelines, the Permission Slip Effect finding, the model shootout validation, and the theoretical grounding through LLM alignment architecture. Practitioner-tested, not peer-reviewed. The [v4 architecture](experiments/v4-architecture.md) was derived by [mapping LLM design principles onto the pipeline](experiments/llm-principles-analysis.md) using Graph of Thoughts.
 
 Gemini Deep Research independently assessed the approach as *"a robust mechanism for extracting 'System 2' performance from 'System 1' models"* and *"a necessary defense against the inherent stochasticity and sycophancy of LLMs."*
 
