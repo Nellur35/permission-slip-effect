@@ -35,4 +35,4 @@ Every CI/CD gate should prove something meaningful. "Tests pass" means nothing u
 
 ## Full Gate Check Tool
 For exit criteria across all 8 development phases:
-https://raw.githubusercontent.com/Nellur35/security-first-ai-dev-methodology/main/tools/gate-check.md
+https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/tools/gate-check.md

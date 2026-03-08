@@ -142,4 +142,4 @@ The genuine disagreements between models are where the real signal lives.
 ## Source
 
 Full methodology, templates, worked examples, and empirical testing:
-https://github.com/Nellur35/security-first-ai-dev-methodology
+https://github.com/Nellur35/permission-slip-effect

@@ -432,4 +432,4 @@ FPR → SMR → AdR → ToT → PMR
 
 **Permission slip effect:** Pre-Mortem and Adversarial stages structurally bypass your default agreeableness. Use them on any decision where surfacing uncomfortable truths matters.
 
-See [`reasoning-pipeline.md`](./reasoning-pipeline.md) for full reference.
+See [`reasoning-pipeline.md`](../reasoning-pipeline.md) for full reference.
