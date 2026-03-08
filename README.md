@@ -200,7 +200,7 @@ Gemini Deep Research independently assessed the approach as *"a robust mechanism
 
 ## Background
 
-This came out of building production security automation across large-scale AWS infrastructure. The Permission Slip Effect was discovered empirically — adversarial pipeline stages surfacing insights that baseline prompting suppressed — then explained theoretically through RLHF alignment architecture.
+This came out of hands-on AI-assisted development — building real systems, observing where models fail, and figuring out why. The Permission Slip Effect was discovered empirically — adversarial pipeline stages surfacing insights that baseline prompting suppressed — then explained theoretically through RLHF alignment architecture.
 
 Models know more than they say. The structure you give them determines how much they're willing to share.
 
