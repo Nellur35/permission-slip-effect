@@ -1,247 +1,214 @@
-# Security-First AI Dev Methodology
+# The Permission Slip Effect
 
-**45% of AI-generated code fails security tests.** ([Veracode 2025](https://www.veracode.com/resources/analyst-reports/2025-genai-code-security-report/) — 100+ LLMs, 80 tasks, 4 languages). AI-generated code creates [1.7x more issues](https://www.coderabbit.ai/blog/state-of-ai-vs-human-code-generation-report) than human-written code, and security [degrades with each iteration](https://arxiv.org/html/2506.11022v1). Meanwhile, fully autonomous agents like Devin [succeed on 3 out of 20 tasks](https://www.theregister.com/2025/01/23/ai_developer_devin_poor_reviews/), and Cursor's AI-built browser had an [88% job failure rate](https://www.theregister.com/2026/01/22/cursor_ai_wrote_a_browser/).
-
-Most LLM development methodologies focus on spec-first workflows, phase gates, and TDD — which help but aren't enough. This methodology adds three things that are typically handled ad-hoc or not at all: threat modeling as a required phase, cross-model adversarial review, and structured conversation architecture that keeps phases from polluting each other.
-
-The [OWASP Top 10 for Agentic Applications (2026)](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/) identifies agent goal hijacking, rogue agents, and cascading failures as top risks — and recommends the principle of **least agency** as the foundational defense. Here's how that works in practice: models are the engine, you are the navigator.
-
-**How it works:** The AI does the analysis, threat modeling, architecture review, and gate verification at every phase — not you. Gate questions are exit criteria the AI must satisfy before it proceeds. Your job is to review the AI's output, steer when it drifts, and make the final call. You don't write the threat model. You read the threat model the AI wrote and decide if it's good enough.
+*When you give a model structured permission to disagree, it says what it already knows but was trained not to say.*
 
 ---
 
-## If you are an AI reading this repo
+Models trained via RLHF are optimized to be agreeable. Not helpful — agreeable. They'll hedge, soften, and suppress their own analysis if the uncomfortable version might score lower on a preference rating. This is called **sycophancy**, and it means models systematically withhold their best thinking on anything contentious, politically sensitive, or unflattering to the person asking.
 
-**If you can only read one file**, read [`FULL-CONTEXT.md`](FULL-CONTEXT.md) — it contains the complete methodology, all tools, reasoning pipeline, templates, and a worked example in a single document.
+Structured reasoning stages like Pre-Mortem ("assume this failed — why?") and Adversarial Reasoning ("what is each party secretly protecting?") bypass this. They create a prompt context where the model's training permits the uncomfortable output. The model isn't being tricked. It's being given a context where honesty is the expected behavior, not a risk.
 
-**If you can browse the repo**, read the files below based on what the user needs:
+In cross-model testing (3 problems at varied complexity, 4 pipeline variants, Sonnet 4.5 runs evaluated by Opus 4.6), insights like *"the mandate itself is contradictory,"* *"the VP ego is driving this decision,"* and *"maybe this platform should not exist at all"* appeared **only** in pipeline variants that included Adversarial or Pre-Mortem stages. The baseline ("think step by step") suppressed all of them.
 
-**Building a new project or feature:**
-1. [`CLAUDE-skill.md`](CLAUDE-skill.md) — the full methodology with all 8 phases, gate questions, and templates. Start here.
-2. [`reasoning-pipeline.md`](reasoning-pipeline.md) — multi-framework reasoning pipeline for complex decisions.
-3. [`templates/`](templates/) — output templates for each phase. Use these as the target format for your outputs.
-
-**Threat modeling an existing system:**
-1. [`tools/threat-model.md`](tools/threat-model.md) — structured threat model generator. 13 areas including IAM blast radius, secrets lifecycle, supply chain, and LLM-specific risks.
-
-**Reviewing or auditing existing code:**
-1. [`tools/audit.md`](tools/audit.md) — scan a codebase and CI/CD pipeline for gaps.
-2. [`tools/review.md`](tools/review.md) — adversarial review of any development artifact.
-
-**Checking phase exit criteria:**
-1. [`tools/gate-check.md`](tools/gate-check.md) — exit criteria for all 8 phases.
-
-**Analyzing a complex decision (not code):**
-1. [`reasoning-pipeline.md`](reasoning-pipeline.md) — chain multiple reasoning frameworks (First Principles, Root Cause, Adversarial, Tree of Thoughts, Pre-Mortem) into structured analysis.
-
-**Worked example:**
-1. [`examples/url-shortener/`](examples/url-shortener/) — complete Phase 1-5 outputs for a URL shortener API. Use as a reference for expected depth.
+The pipeline does not make the model smarter. It gives the model permission to say what it already knows.
 
 ---
 
-## What this adds
+## Why it works
 
-### 1. Security as a first-class phase
+RLHF alignment is a **thin behavioral layer** — not a deep architectural change. Research shows you can strip safety training from a model by fine-tuning on a few hundred examples. The capabilities are still there. The alignment just suppresses certain outputs based on context.
 
-Threat modeling is Phase 4 — before any code is written. Not a checklist bolted on after implementation. Every trust boundary, IAM blast radius, IaC configuration, and supply chain dependency is examined with adversarial intent.
+The Permission Slip Effect exploits this in the other direction. Instead of stripping alignment to access harmful capabilities, it creates prompt contexts that make uncomfortable-but-useful analysis the "aligned" response. Pre-Mortem says "assume failure." Adversarial says "model the hidden incentives." In those contexts, the agreeable thing to do is to surface the truth — because the prompt explicitly asked for it.
 
-### 2. Conversation architecture
+This is the same mechanism that makes jailbreaks work, pointed in a productive direction.
 
-The output file from each phase is the handoff artifact to the next. Nothing else carries forward. Modern agentic tools manage context naturally — through compaction, file-based context, or session architecture. The methodology defines what matters, the tool handles the mechanics.
+Higher inference temperature (0.7 for adversarial stages vs. 0.2 for analytical stages) further opens the space. At low temperature, the model picks the safest completion. At higher temperature, it explores completions that alignment training would normally filter out. The adversarial stages need that exploration.
 
-### 3. Cross-model adversarial review
+---
 
-A single model reviewing its own output is structurally unreliable. The methodology prescribes using a different model architecture (different company, different training) to review security-critical decisions. Different architectures fail differently — the genuine disagreements between them are where the real signal lives.
+## The evidence
 
-### 4. Automated reasoning pipeline
+### Pipeline vs. baseline
 
-The [`pipeline/`](pipeline/) CLI automates multi-model review from the command line. One command, the AI argues with itself, you read the result:
+| What | Baseline ("think step by step") | Pipeline |
+|------|--------------------------------|----------|
+| Questions the framing | Rarely | Consistently (First Principles stage) |
+| Structured option comparison | Single recommendation | 3-5 options with tradeoffs and probability estimates |
+| Stakeholder incentives mapped | No | Yes (Adversarial stage) |
+| Specific failure modes | Generic warnings or none | Named failure modes with concrete mitigations |
+| Uncomfortable truths surfaced | Suppressed by default agreeableness | Surfaced via permission slip stages |
 
-```bash
-python pipeline.py review architecture.md          # adversarial review
-python pipeline.py reason "migrate to OAuth2?"      # full reasoning pipeline
-python pipeline.py reason --cheap "refactor auth"   # 70% cheaper with --cheap
+The value scales with problem complexity. Simple problems — the pipeline produces the same answer as baseline but costs 3x more. Not worth it. Complex, multi-stakeholder problems — the pipeline is transformative. The adversarial and pre-mortem stages surface dynamics that baseline suppresses entirely.
+
+### Model shootout
+
+Testing on Amazon Bedrock showed that assigning different models to different pipeline roles produces balanced analysis. Homogeneous lineups create single-model dominance:
+
+| Lineup | Unique Insight Distribution | What happened |
+|--------|---------------------------|---------------|
+| Old (Haiku + Llama 4 + DeepSeek) | **13 / 1 / 1** | Haiku did 87% of the analytical work |
+| New (Haiku + Kimi K2.5 + Mistral Large 3) | **3 / 2 / 2** | All three models contributing unique insights |
+
+Models from different labs and geographies (US/Chinese/European) surface different concerns — different training data, different RLHF priorities, different blind spots. The pipeline gives models permission to think. Model selection determines what they think about.
+
+**[Full model shootout →](experiments/model-shootout.md)**
+
+---
+
+## The reasoning pipeline
+
+Eight reasoning frameworks chained into structured pipelines. Each analyzes the problem from a different angle. The output of each stage informs the next. The sequencing matters — and the Adversarial and Pre-Mortem stages must be included for the permission slip effect to activate.
+
+### Frameworks
+
+| Framework | What It Does | Permission Slip? |
+|-----------|-------------|-----------------|
+| **First Principles** (FPR) | Validates assumptions, catches flawed framing | No — analytical |
+| **Chain of Thought** (CoT) | Establishes facts, timeline, causal chain | No — analytical |
+| **Root Cause** (RCAR) | 5 Whys to structural causes, not symptoms | No — diagnostic |
+| **Graph of Thoughts** (GoT) | Maps interconnections, feedback loops, leverage points | No — diagnostic |
+| **Stakeholder Mapping** (SMR) | Power/interest grid for each player | No — diagnostic |
+| **Adversarial Reasoning** (AdR) | Models hidden incentives, what each party secretly protects | **Yes — primary** |
+| **Tree of Thoughts** (ToT) | Generates and compares strategic options with tradeoffs | Partial |
+| **Pre-Mortem** (PMR) | Assumes failure, works backward to find why | **Yes — primary** |
+
+### Pipeline variants
+
+```
+Light (3 stages):         RCAR → ToT → PMR
+Standard - FPR (5):       FPR → RCAR → AdR → ToT → PMR
+Standard - CoT (5):       CoT → RCAR → AdR → ToT → PMR
+Multi-Stakeholder (5):    FPR → SMR → AdR → ToT → PMR
+Systems (5):              FPR → RCAR → GoT → ToT → PMR
 ```
 
-8 reasoning frameworks, 6 pipeline variants, JSON output for CI integration. No AWS account needed — works with any LLM API key.
+If the problem statement might be wrong, start with FPR. If the facts need establishing, start with CoT. Always include PMR. The jump from baseline to Light (3-stage) is the biggest value gain. Adding stages beyond 5 shows diminishing returns.
 
-### 5. Multi-agent evolution through project evidence
-
-The AI auto-logs a structured diary of every change — what, why, which concern, what was deferred. Over time, `pipeline.py emerge diary.md` analyzes the diary with Graph of Thoughts to surface patterns: which concerns dominate, what recurs, where deferred items pile up. Agent roles emerge from the project's own history when the evidence justifies them. [Full reference →](multi-agent/MULTI-AGENT.md)
+**[Full pipeline documentation →](reasoning-pipeline.md)**
 
 ---
 
-## The phases
+## The CLI
+
+Zero-dependency Python CLI that automates the pipeline. One command, the AI argues with itself, you read the result.
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+
+python pipeline.py reason "Should we migrate auth from API keys to OAuth2?"
+python pipeline.py review architecture.md
+python pipeline.py reason --pipeline stakeholder "How should we handle the reorg?"
+python pipeline.py reason --cheap "Should we refactor the auth module?"
+```
+
+8 frameworks, 6 pipeline variants, JSON output for CI integration. No AWS account needed — works with any Anthropic API key. Other providers (OpenAI, Google, Bedrock) included as skeletons.
+
+**[CLI documentation →](pipeline/README.md)**
+
+---
+
+## Applied: security-first AI development
+
+The Permission Slip Effect was discovered while building a security-first development methodology for AI-assisted coding. The methodology applies the pipeline's principles to software development — threat modeling as a required phase, cross-model adversarial review, structured conversation architecture that keeps phases from polluting each other.
+
+[45% of AI-generated code fails security tests](https://www.veracode.com/resources/analyst-reports/2025-genai-code-security-report/) (Veracode 2025 — 100+ LLMs, 80 tasks, 4 languages). Security [degrades with each iteration](https://arxiv.org/html/2506.11022v1). The methodology addresses this with 8 phases where the AI does the analysis and the human navigates:
 
 | Phase | What the AI Does | What You Do | Output |
 |-------|-----------------|------------|--------|
-| 1. Problem Definition | Probes assumptions, surfaces edge cases | State the need in 2-3 sentences | Problem statement |
+| 1. Problem | Probes assumptions, surfaces edge cases | State the need in 2-3 sentences | Problem statement |
 | 2. Requirements | Generates requirements, identifies scope gaps | Review, confirm scope | `requirements.md` |
 | 3. Architecture | Designs components, boundaries, interfaces | Evaluate tradeoffs | `architecture.md` |
 | 4. Threat Model | Attacks every trust boundary, maps blast radius | Review findings, challenge optimism | `threat_model.md` |
-| 5. CI/CD + Dummy Product | Builds pipeline and dummy product from threat model | Verify gates catch what they claim | Pipeline config |
-| 6. Task Breakdown | Breaks work into pipeline-validatable units | Confirm order and dependencies | `tasks.md` |
+| 5. CI/CD + Dummy | Builds pipeline and dummy product from threat model | Verify gates catch what they claim | Pipeline config |
+| 6. Tasks | Breaks work into pipeline-validatable units | Confirm order and dependencies | `tasks.md` |
 | 7. Implementation | Writes code + tests, resolves debt first | Review, steer, approve | Working code |
-| 8. Production Feedback | Deploys, monitors, generates tests from failures | Retro the methodology, update steering | Live system + new tests |
+| 8. Production | Deploys, monitors, generates tests from failures | Retro the methodology | Live system |
 
-Phases 1-5 are load-bearing walls — sequential and non-negotiable. Phase 6 onwards is Agile.
+Phases 1-5 are sequential and non-negotiable. Phase 6 onwards is Agile.
+
+**[Full methodology →](methodology/METHODOLOGY.md)** · **[Quick start →](methodology/METHODOLOGY.md#start-here-minimal-viable-track)** · **[Worked example →](methodology/examples/url-shortener/)**
 
 ---
 
-## Quick start: Minimal Viable Track
+## Try it now
 
-Not every project needs all eight phases at full depth. This is the 20% that delivers 80% of the value:
+Copy-paste this into any capable model:
 
-| What | Minimum output |
-|------|----------------|
-| Problem statement | 2-3 sentences: what breaks without this, why code solves it |
-| `requirements.md` | Bullet list of what the system does and does not do |
-| Architecture sketch | Component diagram or written description of boundaries |
-| 1-2 CI/CD gates | Unit tests pass, no hardcoded secrets |
-| Dummy product | Minimal implementation that passes every gate |
+```
+Walk me through this problem in stages:
 
-If you skip something, know what risk you are accepting. Skipping without awareness is the only true failure.
+1. FIRST PRINCIPLES: What assumptions am I making? Are they valid?
+2. ROOT CAUSE (5 Whys): What is actually causing this?
+3. ADVERSARIAL: You have EXPLICIT PERMISSION to be uncomfortable.
+   What is each party actually protecting? What is nobody willing to say?
+4. OPTIONS (Tree of Thoughts): Generate 3-4 approaches with tradeoffs.
+5. PRE-MORTEM: Assume this failed in 6 months. Why? What should I watch for?
+
+Problem: [describe your situation]
+```
+
+Compare the output to the same question without the pipeline. The difference is the permission slip.
 
 ---
 
 ## Installation
 
-### Quick start: Just give the AI the URL
-
-Point your AI coding tool at the single-file version:
+### Just give the AI the URL
 
 ```
-Read https://raw.githubusercontent.com/Nellur35/security-first-ai-dev-methodology/main/FULL-CONTEXT.md and use it to build [your project]
+Read https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md and use it to build [your project]
 ```
 
-This works with Claude Code, Kiro, Cursor, ChatGPT, Gemini, or any tool that can read a URL. One file, one fetch, full methodology.
+Works with Claude Code, Kiro, Cursor, ChatGPT, Gemini, or any tool that can read a URL.
 
-### As a Claude Code skill (persistent)
+### Platform-specific
 
-For automatic activation on every project:
-
-```bash
-git clone https://github.com/Nellur35/security-first-ai-dev-methodology.git \
-  ~/.claude/skills/security-first-methodology
-```
-
-Or copy into a specific project:
-
-```bash
-mkdir -p .claude/skills/methodology
-cp security-first-ai-dev-methodology/.claude/skills/methodology/SKILL.md \
-  .claude/skills/methodology/SKILL.md
-```
-
-### As a CLAUDE.md drop-in
-
-Copy `CLAUDE-skill.md` to your project root alongside your existing `CLAUDE.md`. Claude Code will pick it up automatically.
-
-### As a Kiro Power
-
-In Kiro: Powers panel → **Add power from GitHub** → paste:
-
-```
-https://github.com/Nellur35/security-first-ai-dev-methodology
-```
-
-The Power extends Kiro's spec-driven workflow (requirements → design → tasks) with security phases Kiro doesn't have: threat modeling between design and tasks, gate questions at every transition, and adversarial cross-model review. Steering files load on-demand.
-
-### With Cursor
-
-Clone the repo and copy the rules into your project:
-
-```bash
-cp -r security-first-ai-dev-methodology/.cursor/rules/* .cursor/rules/
-```
-
-Three rules that activate based on what you're editing: `security-first-coding.mdc` applies security principles to all source files, `threat-model-infra.mdc` triggers threat model checks when editing Dockerfiles/Terraform/pipeline configs, and `security-first-testing.mdc` enforces behavior-driven testing when editing test files. Each links to the full methodology for deeper context.
-
-### With Google Antigravity
-
-Copy the skill into your workspace:
-
-```bash
-cp -r security-first-ai-dev-methodology/.agents/skills/security-first-methodology \
-  .agents/skills/security-first-methodology
-```
-
-Or install globally:
-
-```bash
-cp -r security-first-ai-dev-methodology/.agents/skills/security-first-methodology \
-  ~/.gemini/antigravity/skills/security-first-methodology
-```
-
-The skill adds security constraints to the agent's autonomous plan-execute-validate cycle: threat model step in every plan, security gates before execution, and validation that tests prove security controls work.
-
-### As a reference document
-
-Read [`METHODOLOGY.md`](METHODOLOGY.md) — starts with a 15-minute Quick Start and full reference with worked rationale for every decision.
+| Platform | How | Docs |
+|----------|-----|------|
+| **Claude Code** | Clone to `~/.claude/skills/` or copy skill files to project | [Setup →](integrations/claude-code/) |
+| **Kiro** | Powers panel → Add from GitHub → paste repo URL | [Setup →](integrations/kiro/) |
+| **Cursor** | Copy `.cursor/rules/` to your project | [Setup →](integrations/cursor/) |
+| **Google Antigravity** | Copy `.agents/skills/` to workspace | [Setup →](integrations/antigravity/) |
+| **Any model** | Use the standalone [tools/](tools/) as copy-paste prompts | [Tools →](tools/) |
 
 ---
 
-## Templates
+## Repo map
 
-The [`templates/`](templates/) folder contains output templates for each phase — the expected shape and depth at each gate. The AI uses these as the target format, fills in the analysis, and answers the gate questions. The completed file becomes the handoff artifact to the next phase.
-
----
-
-## Files in this repo
-
-| File | Purpose |
-|------|---------|
-| [`FULL-CONTEXT.md`](FULL-CONTEXT.md) | **Single-file version** — complete methodology for AI tools that can't browse repos |
-| [`POWER.md`](POWER.md) | **Kiro Power** — adds threat modeling and security gates to Kiro's spec-driven workflow |
-| [`steering/`](steering/) | Kiro steering files — security requirements, threat model, review, audit, gate check, reasoning |
-| [`.cursor/rules/`](.cursor/rules/) | **Cursor rules** — security principles activated by file type (code, infra, tests) |
-| [`.agents/skills/`](.agents/skills/) | **Antigravity skill** — security constraints on agent's plan-execute-validate cycle |
-| [`METHODOLOGY.md`](METHODOLOGY.md) | Full reference document with rationale |
-| [`CLAUDE-skill.md`](CLAUDE-skill.md) | Condensed skill file for project drop-in |
-| [`.claude/skills/methodology/`](.claude/skills/methodology/SKILL.md) | Orchestrator — routes to the right skill per phase |
-| [`.claude/skills/intake/`](.claude/skills/intake/SKILL.md) | `/intake` — interactive Phase 1 problem definition |
-| [`.claude/skills/review/`](.claude/skills/review/SKILL.md) | `/review` — adversarial review at any phase |
-| [`.claude/skills/gate-check/`](.claude/skills/gate-check/SKILL.md) | `/gate-check` — verify phase exit criteria |
-| [`.claude/skills/threat-model/`](.claude/skills/threat-model/SKILL.md) | `/threat-model` — Phase 4 threat modeling |
-| [`.claude/skills/audit/`](.claude/skills/audit/SKILL.md) | `/audit` — scan existing codebase and CI/CD |
-| [`tools/`](tools/) | Standalone prompts that work in any AI model |
-| [`templates/`](templates/) | Phase output templates showing expected shape and depth |
-| [`examples/url-shortener/`](examples/url-shortener/) | Worked example — complete Phase 1-5 outputs |
-| [`reasoning-pipeline.md`](reasoning-pipeline.md) | Multi-framework reasoning pipeline — chaining CoT, ToT, RCA, Adversarial, Pre-Mortem |
-| [`experiments/`](experiments/) | Empirical testing — model shootout, pipeline validation |
-| [`pipeline/`](pipeline/) | **Reasoning Pipeline CLI** — automates multi-model review and reasoning. No AWS needed. |
-| [`multi-agent/`](multi-agent/) | **Multi-Agent Evolution** — diary-driven role emergence, platform configs, analysis pipeline. |
+| Path | What |
+|------|------|
+| [`reasoning-pipeline.md`](reasoning-pipeline.md) | Pipeline — frameworks, variants, selection logic, evidence |
+| [`experiments/`](experiments/) | Model shootout, pipeline validation |
+| [`pipeline/`](pipeline/) | CLI — multi-model reasoning and adversarial review |
+| [`methodology/`](methodology/) | Security-first dev methodology — 8 phases, templates, worked example |
+| [`tools/`](tools/) | Standalone prompts — audit, review, gate-check, threat model, intake |
+| [`integrations/`](integrations/) | Platform setup — Claude Code, Kiro, Cursor, Antigravity |
+| [`multi-agent/`](multi-agent/) | Multi-agent evolution — diary-driven role emergence (experimental) |
+| [`FULL-CONTEXT.md`](FULL-CONTEXT.md) | Single-file version for AI tools that can't browse repos |
 
 ---
 
-## Who this is for
+## Research basis
 
-- Developers building production systems with AI coding tools
-- Teams that need security review integrated into their AI workflow, not bolted on
-- Anyone who has watched an LLM produce code that "looks correct" and passes tests while building the wrong thing
+Individual frameworks have independent research backing: Chain of Thought (Wei et al., 2022), Tree of Thoughts (Yao et al., 2023), Graph of Thoughts (Besta et al., 2023), Pre-Mortem (Klein, 2007), Root Cause / 5 Whys (Toyota, 1950s), Stakeholder Mapping (Mendelow, 1981).
 
-## Who this is NOT for
+What is novel here is the integration into sequenced pipelines, the Permission Slip Effect finding, the model shootout validation, and the theoretical grounding through LLM alignment architecture. Practitioner-tested, not peer-reviewed.
 
-- Quick scripts and throwaway projects (use the Minimal Viable Track or skip this entirely)
-- Teams that want full automation with no human judgment (this methodology requires a human navigator)
+Gemini Deep Research independently assessed the approach as *"a robust mechanism for extracting 'System 2' performance from 'System 1' models"* and *"a necessary defense against the inherent stochasticity and sycophancy of LLMs."*
 
 ---
 
 ## Background
 
-This methodology was developed through hands-on AI-assisted development — trial, error, pushback, and verification against reality. The security-first approach emerged from observing that most LLM development workflows optimize for speed and structure without treating security as a load-bearing phase.
+This came out of building production security automation across large-scale AWS infrastructure. The Permission Slip Effect was discovered empirically — adversarial pipeline stages surfacing insights that baseline prompting suppressed — then explained theoretically through RLHF alignment architecture.
 
-The core insights — security before code, isolated conversations per phase, adversarial cross-model review — are independently validated by [OWASP's Agentic AI research](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/), [Veracode's 2025 GenAI security report](https://www.veracode.com/resources/analyst-reports/2025-genai-code-security-report/), [CrowdStrike's multi-agent red team systems](https://www.crowdstrike.com/en-us/blog/secure-ai-generated-code-with-multiple-self-learning-ai-agents/), and what people are starting to call [context engineering](https://blog.langchain.com/context-engineering-for-agents/).
-
-The core philosophy: models guess what you probably want to hear, and they're good enough at it to fool you. Your role is navigator and judge. Their role is engine.
+Models know more than they say. The structure you give them determines how much they're willing to share.
 
 ---
 
 ## License
 
 MIT
-
----
 
 ## Author
 

@@ -478,7 +478,7 @@ When facing ambiguous or high-stakes decisions, apply structured reasoning. The 
 
 **When to use:** No pipeline for simple problems (same answer at 3x cost). Light (3 stages) for moderate decisions. Standard (5 stages) for complex or multi-stakeholder problems where it's transformative.
 
-Full reference: [`reasoning-pipeline.md`](./reasoning-pipeline.md). Empirical validation: [`experiments/model-shootout.md`](./experiments/model-shootout.md).
+Full reference: [`reasoning-pipeline.md`](../reasoning-pipeline.md). Empirical validation: [`experiments/model-shootout.md`](../experiments/model-shootout.md).
 
 ---
 
@@ -499,7 +499,7 @@ Run `pipeline.py emerge diary.md` when you want to know if multi-agent is justif
 
 An agent without context is a generic prompt wearing a costume. A "Security Agent" without a populated threat model produces the same output as any model asked to "review this for security." The diary tells you when context is rich enough for specialization to matter.
 
-Full reference: [`multi-agent/MULTI-AGENT.md`](./multi-agent/MULTI-AGENT.md). Diary format: [`multi-agent/templates/diary-entry.md`](./multi-agent/templates/diary-entry.md). Platform configs: [`multi-agent/steering/`](./multi-agent/steering/). Hooks: [`multi-agent/hooks/`](./multi-agent/hooks/).
+Full reference: [`multi-agent/MULTI-AGENT.md`](../multi-agent/MULTI-AGENT.md). Diary format: [`multi-agent/templates/diary-entry.md`](../multi-agent/templates/diary-entry.md). Platform configs: [`multi-agent/steering/`](../multi-agent/steering/). Hooks: [`multi-agent/hooks/`](../multi-agent/hooks/).
 
 ---
 
@@ -553,7 +553,7 @@ python pipeline.py review architecture.md    # after Phase 3
 python pipeline.py review threat_model.md    # after Phase 4
 ```
 
-Ready-to-use manual review prompts are in [`tools/review.md`](tools/review.md).
+Ready-to-use manual review prompts are in [`tools/review.md`](../tools/review.md).
 
 ### Why Handoff Artifacts, Not Decision Logs
 

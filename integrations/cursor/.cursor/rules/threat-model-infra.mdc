@@ -36,4 +36,4 @@ You are editing infrastructure or pipeline configuration. Before committing, ver
 
 ## Full Threat Model Tool
 For the complete 13-area threat model covering trust boundaries, IAM blast radius, secrets lifecycle, supply chain, and LLM-specific risks:
-https://raw.githubusercontent.com/Nellur35/security-first-ai-dev-methodology/main/tools/threat-model.md
+https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/tools/threat-model.md
