@@ -230,7 +230,9 @@ The v3 pipeline (documented above) chains frameworks sequentially with uniform p
 
 v4 adds: Phase 0 (structured decomposition before any framework runs), tiered parallel execution, residual injection of the original problem at every stage, drift gates between tiers, per-stage temperature profiles, and a marginal value audit at synthesis.
 
-**[Full v4 architecture →](experiments/v4-architecture.md)** · **[LLM principles analysis that produced it →](experiments/llm-principles-analysis.md)**
+A/B testing on real production code showed that Phase 0 and temperature profiles are **complementary, not redundant** — neither eliminates reviewer disagreements alone, but together they produce zero SPLIT findings for $0.09 more per review. The interaction effect is the key finding: Phase 0 gives shared structure, temperature profiles give distinct cognitive modes. Together they work. Separately, neither does.
+
+**[Full v4 architecture →](experiments/v4-architecture.md)** · **[A/B comparison data →](experiments/v3-vs-v4-comparison.md)** · **[LLM principles analysis →](experiments/llm-principles-analysis.md)**
 
 ---
 
