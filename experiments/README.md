@@ -8,7 +8,7 @@ Empirical validation of the reasoning pipeline and Permission Slip Effect.
 
 ## v3 vs v4 Pipeline A/B Comparison
 
-**[v3-vs-v4-comparison.md](v3-vs-v4-comparison.md)** — A/B testing of v4 improvements against v3 baseline on real production code, strategic documents, and simple utilities. The headline finding: **Phase 0 and temperature profiles are complementary, not redundant** — neither eliminates SPLITs alone, but together they produce zero SPLITs on code reviews for $0.09 more per run. Also validated: v4 over-analyzes simple code (needs complexity gating), and Phase 0 doesn't fix genuine opinion disagreements on strategic documents.
+**[v3-vs-v4-comparison.md](v3-vs-v4-comparison.md)** — A/B testing of v4 improvements against v3 baseline on real production code, strategic documents, and simple utilities, with full mechanism isolation. The headline finding: **Phase 0 and temperature profiles are necessary counterbalances** — temperature alone is actively harmful (increases disagreement), Phase 0 alone is inert, but together they produce zero SPLITs on code reviews for $0.09 more per run. Also validated: v4 over-analyzes simple code (needs complexity gating), and Phase 0 doesn't fix genuine opinion disagreements on strategic documents.
 
 ## v4 Pipeline Architecture
 

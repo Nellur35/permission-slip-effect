@@ -4,7 +4,7 @@
 
 ---
 
-Models trained via RLHF are optimized to be agreeable. Not helpful — agreeable. They'll hedge, soften, and suppress their own analysis if the uncomfortable version might score lower on a preference rating. This is called **sycophancy**, and it means models systematically withhold their best thinking on anything contentious, politically sensitive, or unflattering to the person asking.
+Models trained via RLHF (Reinforcement Learning from Human Feedback — the process that turns a raw language model into a helpful assistant) are optimized to be agreeable. Not helpful — agreeable. They'll hedge, soften, and suppress their own analysis if the uncomfortable version might score lower on a preference rating. This is called **sycophancy**, and it means models systematically withhold their best thinking on anything contentious, politically sensitive, or unflattering to the person asking.
 
 Structured reasoning stages like Pre-Mortem ("assume this failed — why?") and Adversarial Reasoning ("what is each party secretly protecting?") bypass this. They create a prompt context where the model's training permits the uncomfortable output. The model isn't being tricked. It's being given a context where honesty is the expected behavior, not a risk.
 
@@ -55,7 +55,7 @@ Models from different labs and geographies (US/Chinese/European) surface differe
 
 ### v3 vs v4 pipeline comparison
 
-A/B testing the v4 architectural improvements (Phase 0 decomposition, per-stage temperature profiles, drift gates) against v3 baseline on real production code:
+We improved the pipeline (v4) by adding two mechanisms: **Phase 0** (structured decomposition of the input before any analysis) and **per-stage temperature profiles** (varying how creative vs. precise each stage is). Then we tested each mechanism in isolation on real production code. A **SPLIT** is when reviewers can't even agree on what the problem is — the kind of disagreement that wastes human time triaging.
 
 | Configuration | SPLITs | Cost | What happened |
 |--------------|--------|------|---------------|
@@ -124,22 +124,9 @@ python pipeline.py reason --cheap "Should we refactor the auth module?"
 
 ## Applied: security-first AI development
 
-The Permission Slip Effect was discovered while building a security-first development methodology for AI-assisted coding. The methodology applies the pipeline's principles to software development — threat modeling as a required phase, cross-model adversarial review, structured conversation architecture that keeps phases from polluting each other.
+The Permission Slip Effect was discovered while building a security-first development methodology for AI-assisted coding. [45% of AI-generated code fails security tests](https://www.veracode.com/resources/analyst-reports/2025-genai-code-security-report/) (Veracode 2025 — 100+ LLMs, 80 tasks, 4 languages), and security [degrades with each iteration](https://arxiv.org/html/2506.11022v1).
 
-[45% of AI-generated code fails security tests](https://www.veracode.com/resources/analyst-reports/2025-genai-code-security-report/) (Veracode 2025 — 100+ LLMs, 80 tasks, 4 languages). Security [degrades with each iteration](https://arxiv.org/html/2506.11022v1). The methodology addresses this with 8 phases where the AI does the analysis and the human navigates:
-
-| Phase | What the AI Does | What You Do | Output |
-|-------|-----------------|------------|--------|
-| 1. Problem | Probes assumptions, surfaces edge cases | State the need in 2-3 sentences | Problem statement |
-| 2. Requirements | Generates requirements, identifies scope gaps | Review, confirm scope | `requirements.md` |
-| 3. Architecture | Designs components, boundaries, interfaces | Evaluate tradeoffs | `architecture.md` |
-| 4. Threat Model | Attacks every trust boundary, maps blast radius | Review findings, challenge optimism | `threat_model.md` |
-| 5. CI/CD + Dummy | Builds pipeline and dummy product from threat model | Verify gates catch what they claim | Pipeline config |
-| 6. Tasks | Breaks work into pipeline-validatable units | Confirm order and dependencies | `tasks.md` |
-| 7. Implementation | Writes code + tests, resolves debt first | Review, steer, approve | Working code |
-| 8. Production | Deploys, monitors, generates tests from failures | Retro the methodology | Live system |
-
-Phases 1-5 are sequential and non-negotiable. Phase 6 onwards is Agile.
+The methodology applies the pipeline's principles to software development: 8 phases where the AI does the analysis (threat modeling, architecture review, gate verification) and the human navigates. Threat modeling is a required phase before any code is written — not a checklist bolted on after.
 
 **[Full methodology →](methodology/METHODOLOGY.md)** · **[Quick start →](methodology/METHODOLOGY.md#start-here-minimal-viable-track)** · **[Worked example →](methodology/examples/url-shortener/)**
 
