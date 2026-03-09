@@ -64,20 +64,20 @@ Small sample warning: 2 SPLIT findings is not enough for statistical confidence.
 
 | Activity | Cost | Value Delivered |
 |----------|------|-----------------|
-| Single council run | $0.07 | 32 findings, 4 SPLITs, 8 unique insights |
+| Single council run (3 models reviewing one artifact) | $0.07 | 32 findings, 4 SPLITs, 8 unique insights |
 | v4 pipeline run | $0.71 | 47 findings, 0 SPLITs, 19 unique insights |
 | Model shootout (8 models) | $0.48 | Lineup selection, 3-tier structure finding |
 | Role rotation (3x3) | $0.54 | Model vs role effect quantified |
 | Cross-domain test | $0.08 | Domain-specific quality gap confirmed |
 | Full v4 experiment (2x2) | ~$2.80 | Interaction effect confirmed |
 
-**Total research cost: ~$5.** Total value: validated methodology, optimized lineup, 5 confirmed findings. This is extremely cost-effective research.
+**Total research cost: ~$5.** Total value: validated methodology, optimized lineup, 6 confirmed findings. This is extremely cost-effective research.
 
 ---
 
 ## 5. The Principle Extends Beyond Reasoning: PBT Bug-Finding
 
-The Permission Slip Effect is a specific case of a broader principle: **structured constraints extract better output than open-ended requests.** Property-based testing is the same principle applied to code — instead of asking "does this work?" you constrain the test to a formal property and let the framework explore the space.
+The Permission Slip Effect is a specific case of a broader principle: **structured constraints extract better output than open-ended requests.** Property-based testing (PBT) is the same principle applied to code — instead of asking "does this work?" you constrain the test to a formal property and let a fuzzing framework (like Python's Hypothesis) explore the input space automatically.
 
 From the PBT census (measured subset):
 
@@ -85,7 +85,7 @@ From the PBT census (measured subset):
 |--------------|-----------|------|
 | Pure function properties | 3/5 | 60% |
 | Mocked properties | 0/3 | 0% |
-| CONFIDENCE properties | 0/24 | 0% |
+| High-confidence properties (expected to pass) | 0/24 | 0% |
 | **Total measured** | **3/27** | **11%** |
 
 Plus a subsequent session caught a real edge case in a utility function (duplicate name handling in a list filter). That's 4 bugs total across ~30 measured properties = **13%**.

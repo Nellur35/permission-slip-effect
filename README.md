@@ -70,11 +70,11 @@ The headline: **Phase 0 and temperature profiles are necessary counterbalances.*
 
 ### Research cost
 
-The entire research program — model shootout, role rotation, cross-domain testing, full v4 factorial experiment — cost ~$5 in API calls. A single council run costs $0.07. A full v4 pipeline run costs $0.71.
+The entire research program — model shootout, role rotation, cross-domain testing, full v4 factorial experiment — cost ~$5 in API calls. A single council run (3 models independently reviewing the same artifact, then comparing findings) costs $0.07. A full v4 pipeline run costs $0.71.
 
 | Activity | Cost | What it produced |
 |----------|------|-----------------|
-| Single council run | $0.07 | 32 findings, 4 SPLITs, 8 unique insights |
+| Single council run (3 models, 1 artifact) | $0.07 | 32 findings, 4 SPLITs, 8 unique insights |
 | v4 pipeline run | $0.71 | 47 findings, 0 SPLITs, 19 unique insights |
 | Model shootout (8 models) | $0.48 | Lineup selection, 3-tier structure finding |
 | Role rotation (3x3) | $0.54 | Model vs role effect quantified |
