@@ -2,6 +2,10 @@
 
 Empirical validation of the reasoning pipeline and Permission Slip Effect.
 
+## Research Synthesis
+
+**[research-synthesis.md](research-synthesis.md)** — What the data actually shows across all experiments. Six findings, the complete build-measure-diagnose-fix-verify loop, and a $5 total research cost. The headline: the interaction effect (Phase 0 + temperature profiles) is the strongest quantitative finding, and SPLIT disagreements are where all the value lives — 100% ACTED rate vs ~0% for consensus findings.
+
 ## Model Shootout
 
 **[model-shootout.md](model-shootout.md)** — Multi-model benchmark on Amazon Bedrock proving that role-based model assignment (Challenger / Architect / Debugger) produces balanced insight distribution vs. single-model dominance. Key result: switching from a homogeneous lineup to a geographically diverse lineup shifted unique insight distribution from **13/1/1** to **3/2/2**.
