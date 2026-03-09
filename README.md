@@ -68,6 +68,23 @@ The headline: **Phase 0 and temperature profiles are necessary counterbalances.*
 
 **[Full A/B comparison →](experiments/v3-vs-v4-comparison.md)**
 
+### Research cost
+
+The entire research program — model shootout, role rotation, cross-domain testing, full v4 factorial experiment — cost ~$5 in API calls. A single council run costs $0.07. A full v4 pipeline run costs $0.71.
+
+| Activity | Cost | What it produced |
+|----------|------|-----------------|
+| Single council run | $0.07 | 32 findings, 4 SPLITs, 8 unique insights |
+| v4 pipeline run | $0.71 | 47 findings, 0 SPLITs, 19 unique insights |
+| Model shootout (8 models) | $0.48 | Lineup selection, 3-tier structure finding |
+| Role rotation (3x3) | $0.54 | Model vs role effect quantified |
+| Cross-domain test | $0.08 | Domain-specific quality gap confirmed |
+| Full v4 experiment (2x2) | ~$2.80 | Interaction effect confirmed |
+
+The complete loop: build tools → build tools to review tools → measure whether review tools work → diagnose why they sometimes don't → design automated fixes → plan measurement of whether fixes work. Total: **~$5**.
+
+**[Full research synthesis →](experiments/research-synthesis.md)**
+
 ---
 
 ## The reasoning pipeline
@@ -180,7 +197,7 @@ Works with Claude Code, Kiro, Cursor, ChatGPT, Gemini, or any tool that can read
 | Path | What |
 |------|------|
 | [`reasoning-pipeline.md`](reasoning-pipeline.md) | Pipeline — frameworks, variants, selection logic, evidence |
-| [`experiments/`](experiments/) | Model shootout, pipeline validation |
+| [`experiments/`](experiments/) | Model shootout, pipeline validation, research synthesis |
 | [`pipeline/`](pipeline/) | CLI — multi-model reasoning and adversarial review |
 | [`methodology/`](methodology/) | Security-first dev methodology — 8 phases, templates, worked example |
 | [`tools/`](tools/) | Standalone prompts — audit, review, gate-check, threat model, intake |
@@ -203,6 +220,8 @@ Gemini Deep Research independently assessed the approach as *"a robust mechanism
 ## Background
 
 This started with reading about Chain of Thought, Tree of Thoughts, and other reasoning frameworks — then experimenting with them directly. The Permission Slip Effect was discovered empirically — adversarial pipeline stages surfacing insights that baseline prompting suppressed — then explained theoretically through RLHF alignment architecture.
+
+The deepest finding wasn't about models — it was about process. Every tool in the project was built to compensate for a known weakness, and every weakness persisted because the tool wasn't consistently applied to the situations it was built for. The fix is architectural: you don't solve activation energy with willpower — you remove the decision point.
 
 Models know more than they say. The structure you give them determines how much they're willing to share.
 
