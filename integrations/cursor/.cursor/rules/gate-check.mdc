@@ -1,0 +1,63 @@
+---
+description: "Verify exit criteria before moving to the next development phase. Invoke with @gate-check followed by the phase name or number. Covers all 8 phases from problem definition through production feedback."
+alwaysApply: false
+---
+
+# Gate Check Tool
+
+Verify you have met the exit criteria for any phase before moving forward.
+
+**Input:** The phase you are checking (or "all" for a full audit).
+**Output:** Pass/fail status for each gate question, with gaps identified.
+
+## Phase 1 — Define the Problem
+
+- [ ] What breaks in the real world if this is not built?
+- [ ] Why is code the right solution and not a process change or existing tool?
+
+## Phase 2 — Requirements
+
+- [ ] Is every requirement testable? (If you cannot write a test for it, it is not a requirement.)
+- [ ] What is explicitly out of scope?
+- [ ] What does done look like in reality, not on a dashboard?
+
+## Phase 3 — Architecture & Design
+
+- [ ] Can every component be tested in isolation?
+- [ ] Where are the external dependencies and how are they mocked in tests?
+- [ ] Does the architecture reflect the problem domain or what was easy to build?
+
+## Phase 4 — Threat Modeling
+
+- [ ] What is the worst thing an adversary can do at each trust boundary?
+- [ ] If the execution role is compromised, what is the blast radius?
+- [ ] Does the infrastructure have the same threat coverage as the application code?
+
+## Phase 5 — CI/CD Pipeline Design
+
+- [ ] What does a passing pipeline actually prove?
+- [ ] Which gate catches which failure mode?
+
+## Phase 6 — Task Breakdown
+
+- [ ] Does every task produce a component the pipeline can validate?
+- [ ] Are acceptance criteria tied to specific pipeline gates?
+
+## Phase 7 — Implementation
+
+- [ ] Are all acceptance criteria checked off?
+- [ ] Does the full pipeline pass (not just locally)?
+- [ ] Zero new warnings or regressions?
+
+## Phase 8 — Production Feedback
+
+- [ ] Are production failures being converted into new tests?
+- [ ] Is the pipeline becoming more comprehensive over time?
+
+## How to Use
+
+1. Pick the phase you are about to leave.
+2. Answer every gate question with specifics, not "yes."
+3. If any answer is vague or missing, you are not ready to move forward.
+
+Gates are exit criteria, not a formality. A gate you cannot answer concretely is a gap you will pay for later.

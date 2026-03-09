@@ -186,7 +186,7 @@ Works with Claude Code, Kiro, Cursor, ChatGPT, Gemini, or any tool that can read
 |----------|-----|------|
 | **Claude Code** | Clone to `~/.claude/skills/` or copy skill files to project | [Setup →](integrations/claude-code/) |
 | **Kiro** | Powers panel → Add from GitHub → paste repo URL | [Setup →](integrations/kiro/) |
-| **Cursor** | Copy `.cursor/rules/` to your project | [Setup →](integrations/cursor/) |
+| **Cursor** | Light (3 auto rules) or Full (+ 7 manual `@rules`) | [Setup →](integrations/cursor/) |
 | **Google Antigravity** | Copy `.agents/skills/` to workspace | [Setup →](integrations/antigravity/) |
 | **Any model** | Use the standalone [tools/](tools/) as copy-paste prompts | [Tools →](tools/) |
 
