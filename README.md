@@ -177,7 +177,7 @@ Compare the output to the same question without the pipeline. The difference is 
 ```
 Read https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md
 
-Based on this methodology, build rules/skills/powers that fit this project and how I work. Ask me if I want just automatic guardrails or the full security methodology.
+Based on this methodology, build rules/skills/powers that fit this project and how you work. Ask me if I want just automatic guardrails or the full security methodology.
 ```
 
 Works with any AI coding tool — Claude Code, Kiro, Cursor, Antigravity, ChatGPT, Gemini, or anything that can read a URL. The AI reads the methodology and generates whatever its platform needs: `.mdc` rules, skills, powers, or steering files. Every project gets different output based on language, stack, and workflow.

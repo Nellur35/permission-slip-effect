@@ -7,7 +7,7 @@ Point Cursor at the repo and let it build rules that fit your project:
 ```
 Read https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md
 
-Based on this methodology, build .cursor/rules/ for my project. Create rules that fit how I work and what this project needs. Ask me if I want just automatic guardrails (light) or the full security methodology with manual @rules I can invoke.
+Based on this methodology, build .cursor/rules/ for my project. Create rules that fit how you work and what this project needs. Ask me if I want just automatic guardrails (light) or the full security methodology with manual @rules I can invoke.
 
 Here are examples of rules others have built from this methodology:
 https://github.com/Nellur35/permission-slip-effect/tree/main/integrations/cursor/.cursor/rules/
