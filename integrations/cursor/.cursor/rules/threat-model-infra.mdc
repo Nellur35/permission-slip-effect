@@ -1,6 +1,6 @@
 ---
-description: Threat modeling checklist for infrastructure, CI/CD, and configuration files. Activates when editing Dockerfiles, Terraform, CloudFormation, pipeline configs, or IAM policies to ensure security is considered.
-globs: ["**/Dockerfile*", "**/*.tf", "**/*.tfvars", "**/template.yaml", "**/template.yml", "**/*cloudformation*", "**/.github/workflows/**", "**/Jenkinsfile", "**/*pipeline*", "**/docker-compose*", "**/iam*", "**/policy*"]
+description: Threat modeling checklist for infrastructure and CI/CD configuration files. Activates when editing Dockerfiles, Terraform, CloudFormation, GitHub Actions, or docker-compose files.
+globs: ["**/Dockerfile*", "**/*.tf", "**/*.tfvars", "**/template.yaml", "**/template.yml", "**/*cloudformation*", "**/.github/workflows/**", "**/Jenkinsfile", "**/docker-compose*", "**/.gitlab-ci.yml"]
 alwaysApply: false
 ---
 
@@ -34,6 +34,7 @@ You are editing infrastructure or pipeline configuration. Before committing, ver
 - Base image pinned to digest, not just tag?
 - No secrets copied into the image layer?
 
-## Full Threat Model Tool
-For the complete 13-area threat model covering trust boundaries, IAM blast radius, secrets lifecycle, supply chain, and LLM-specific risks:
+## Reference
+
+The complete 13-area threat model (trust boundaries, IAM blast radius, secrets lifecycle, supply chain, LLM-specific risks) is available at the Permission Slip Effect repository. Do NOT fetch this URL unless the user explicitly asks for the full threat model:
 https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/tools/threat-model.md

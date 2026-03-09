@@ -1,6 +1,6 @@
 ---
 description: Security-first testing principles. Activates when writing or editing test files. Ensures tests verify behavior against requirements, not just execute code paths.
-globs: ["**/*test*", "**/*spec*", "**/__tests__/**", "**/tests/**", "**/test_*"]
+globs: ["**/*.test.*", "**/*.spec.*", "**/__tests__/**", "**/tests/**", "**/test_*.py", "**/*_test.py", "**/*_test.go", "**/*_test.rs"]
 alwaysApply: false
 ---
 
@@ -29,10 +29,7 @@ Ask: "What requirement does this test prove is met?" If you can't name the requi
 - **Weakening tests to make them pass.** If the test fails, the code is wrong. Never loosen assertions to get green.
 - **Testing only the happy path.** An attacker never sends valid input.
 
-## Pipeline Gate Principle
+## Reference
 
-Every CI/CD gate should prove something meaningful. "Tests pass" means nothing unless you can answer: which tests? Testing what behavior? Against which requirements?
-
-## Full Gate Check Tool
-For exit criteria across all 8 development phases:
+Exit criteria for all 8 development phases are available at the Permission Slip Effect repository. Do NOT fetch this URL unless the user explicitly asks for the full gate check:
 https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/tools/gate-check.md

@@ -27,11 +27,13 @@ Three rules activated by file type:
 
 | Rule | Triggers on | What it does |
 |------|------------|-------------|
-| `security-first-coding.mdc` | Source files (.py, .js, .ts, .go, etc.) | Applies security principles — input validation, least privilege, never-do list |
-| `threat-model-infra.mdc` | Dockerfiles, Terraform, pipeline configs, IAM policies | Triggers threat model checks — trust boundaries, blast radius, secrets |
-| `security-first-testing.mdc` | Test files | Enforces behavior-driven testing — test requirements not coverage, PBT for security logic |
+| `security-first-coding.mdc` | Source files (.py, .js, .ts, .go, etc.) | Security principles — enforces secrets/destructive-action rules, flags other issues as TODOs during prototyping |
+| `threat-model-infra.mdc` | Dockerfiles, Terraform, GitHub Actions, docker-compose, CloudFormation | Threat model checklist — trust boundaries, IAM blast radius, secrets, container security |
+| `security-first-testing.mdc` | Test files (*.test.*, *.spec.*, __tests__/, test_*.py) | Behavior-driven testing — test requirements not coverage, PBT for security logic |
 
 Rules use `alwaysApply: false` with glob triggers, so they only fire when relevant files are open. The `.mdc` format is compatible with Cursor 2.2+.
+
+**Won't interfere with normal work.** Rules only activate on matching files. During prototyping, security concerns are flagged as TODO comments instead of blocking your flow. Reference URLs in the rules are marked "do not fetch" — Cursor won't pull the full methodology unless you ask.
 
 ## Full methodology
 
