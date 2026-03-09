@@ -172,23 +172,27 @@ Compare the output to the same question without the pipeline. The difference is 
 
 ## Installation
 
-### Just give the AI the URL
+### Give the AI the repo and let it build what fits
 
 ```
-Read https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md and use it to build [your project]
+Read https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md
+
+Based on this methodology, build rules/skills/powers that fit this project and how I work. Ask me if I want just automatic guardrails or the full security methodology.
 ```
 
-Works with Claude Code, Kiro, Cursor, ChatGPT, Gemini, or any tool that can read a URL.
+Works with any AI coding tool — Claude Code, Kiro, Cursor, Antigravity, ChatGPT, Gemini, or anything that can read a URL. The AI reads the methodology and generates whatever its platform needs: `.mdc` rules, skills, powers, or steering files. Every project gets different output based on language, stack, and workflow.
 
-### Platform-specific
+### Platform-specific examples
 
-| Platform | How | Docs |
-|----------|-----|------|
-| **Claude Code** | Clone to `~/.claude/skills/` or copy skill files to project | [Setup →](integrations/claude-code/) |
-| **Kiro** | Powers panel → Add from GitHub → paste repo URL | [Setup →](integrations/kiro/) |
-| **Cursor** | Point Cursor at the repo — it builds rules for your project | [Setup →](integrations/cursor/) |
-| **Google Antigravity** | Copy `.agents/skills/` to workspace | [Setup →](integrations/antigravity/) |
-| **Any model** | Use the standalone [tools/](tools/) as copy-paste prompts | [Tools →](tools/) |
+Each platform has pre-built examples of what the AI typically generates. Use them as-is, or let the AI use them as reference when building your own.
+
+| Platform | Examples | Docs |
+|----------|----------|------|
+| **Claude Code** | Skills for `~/.claude/skills/` or project-level | [Examples →](integrations/claude-code/) |
+| **Kiro** | Power + steering files (or: Powers panel → Add from GitHub → paste repo URL) | [Examples →](integrations/kiro/) |
+| **Cursor** | 10 `.mdc` rules — 3 automatic, 7 manual `@rules` | [Examples →](integrations/cursor/) |
+| **Google Antigravity** | Agent skills for `.agents/skills/` | [Examples →](integrations/antigravity/) |
+| **Any model** | Standalone [tools/](tools/) as copy-paste prompts | [Tools →](tools/) |
 
 ---
 
@@ -201,7 +205,7 @@ Works with Claude Code, Kiro, Cursor, ChatGPT, Gemini, or any tool that can read
 | [`pipeline/`](pipeline/) | CLI — multi-model reasoning and adversarial review |
 | [`methodology/`](methodology/) | Security-first dev methodology — 8 phases, templates, worked example |
 | [`tools/`](tools/) | Standalone prompts — audit, review, gate-check, threat model, intake |
-| [`integrations/`](integrations/) | Platform setup — Claude Code, Kiro, Cursor, Antigravity |
+| [`integrations/`](integrations/) | Platform examples — pre-built rules/skills/powers for Claude Code, Kiro, Cursor, Antigravity |
 | [`multi-agent/`](multi-agent/) | Multi-agent evolution — diary-driven role emergence (experimental) |
 | [`FULL-CONTEXT.md`](FULL-CONTEXT.md) | Single-file version for AI tools that can't browse repos |
 
