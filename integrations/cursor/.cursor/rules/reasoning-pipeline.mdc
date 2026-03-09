@@ -1,0 +1,60 @@
+---
+description: "Run a structured reasoning pipeline on a complex decision. Invoke with @reasoning-pipeline followed by your problem. Chains multiple reasoning frameworks to bypass model sycophancy and surface uncomfortable truths the model would otherwise suppress."
+alwaysApply: false
+---
+
+# Reasoning Pipeline
+
+For complex decisions where a single prompt produces shallow analysis. Chains reasoning frameworks so each stage analyzes the problem from a different angle.
+
+## The Permission Slip Effect
+
+Models are sycophantic by default — they tell you what you want to hear. Structured stages like Pre-Mortem ("assume this failed — why?") and Adversarial Reasoning ("what is each party secretly protecting?") give the model permission to surface uncomfortable truths it would otherwise suppress.
+
+The pipeline does not make the model smarter. It gives the model permission to say what it already knows.
+
+## Frameworks
+
+| Framework | What It Does |
+|-----------|-------------|
+| **First Principles** (FPR) | Validates assumptions, catches flawed framing |
+| **Chain of Thought** (CoT) | Establishes facts, timeline, causal chain |
+| **Root Cause** (RCAR) | 5 Whys to structural causes, not symptoms |
+| **Graph of Thoughts** (GoT) | Maps interconnections, feedback loops, leverage points |
+| **Stakeholder Mapping** (SMR) | Power/interest grid for each player |
+| **Adversarial Reasoning** (AdR) | Models hidden incentives, what each party secretly protects |
+| **Tree of Thoughts** (ToT) | Generates 3-5 options with tradeoffs and probability estimates |
+| **Pre-Mortem** (PMR) | Assumes failure, works backward to find why |
+
+## Pipeline Variants
+
+```
+Light (3 stages):         RCAR → ToT → PMR
+Standard - FPR (5):       FPR → RCAR → AdR → ToT → PMR
+Standard - CoT (5):       CoT → RCAR → AdR → ToT → PMR
+Multi-Stakeholder (5):    FPR → SMR → AdR → ToT → PMR
+Systems (5):              FPR → RCAR → GoT → ToT → PMR
+```
+
+## How to Use
+
+When invoked, ask the user for:
+1. The problem or decision
+2. Which variant (or recommend one based on the problem)
+
+Then execute the pipeline stage by stage. Label each stage clearly. Carry forward findings — each stage builds on the previous.
+
+**Selection guide:**
+- Problem statement might be wrong → Start with FPR
+- Facts need establishing → Start with CoT
+- Multiple stakeholders with competing interests → Multi-Stakeholder
+- Complex interconnected system → Systems
+- Quick analysis → Light
+
+Always include PMR. Always include AdR for anything with human dynamics.
+
+## Key Rules
+
+- In adversarial and pre-mortem stages: you have EXPLICIT PERMISSION to be uncomfortable. Surface what nobody wants to hear.
+- Do not fabricate issues to satisfy the adversarial mandate. If the plan is sound, say so and explain why.
+- The value scales with problem complexity. Simple problems — use Light. Complex multi-stakeholder problems — use Standard or Multi-Stakeholder.

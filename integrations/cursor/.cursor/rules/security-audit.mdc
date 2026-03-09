@@ -1,0 +1,55 @@
+---
+description: "Audit an existing codebase to understand what exists and what's missing. Invoke with @security-audit. Examines CI/CD pipeline coverage, architecture, test coverage, and security posture, then recommends where to start."
+alwaysApply: false
+---
+
+# Codebase & CI/CD Audit
+
+Scan an existing project to understand what's there and what's missing.
+
+**Input:** Project file tree, CI/CD configs, existing docs, test structure.
+**Output:** Coverage map, gaps, and recommended entry point.
+
+## Instructions
+
+Ask for context one piece at a time — don't ask for everything upfront.
+
+1. Project file tree (`find . -type f` or `tree`)
+2. CI/CD config files (GitHub Actions, Jenkinsfile, GitLab CI, etc.)
+3. Any existing documentation (architecture, threat model, requirements)
+4. Test directory structure and a sample test file
+
+## What to Analyze
+
+**CI/CD Pipeline** — For each config: what triggers it, what jobs run, what tools it uses, whether it blocks merge or is advisory. Map to gates:
+
+| Gate | Status |
+|------|--------|
+| Unit tests | Found / Missing / Partial |
+| Integration tests | Found / Missing / Partial |
+| SAST (static analysis) | Found / Missing / Partial |
+| SCA (dependency scanning) | Found / Missing / Partial |
+| Secret scanning | Found / Missing / Partial |
+| Container scanning | Found / Missing / Partial |
+| IaC scanning | Found / Missing / Partial |
+| Linting / Type checking | Found / Missing / Partial |
+
+**Architecture** — Map components, responsibilities, external integrations, sensitive data flows.
+
+**Tests** — Which components have tests, what types, rough coverage.
+
+**Security** — Threat model exists? Dependencies pinned? Secrets in config? Auth pattern?
+
+## Output
+
+1. Pipeline coverage table
+2. Architecture map
+3. Test coverage table
+4. Security posture table
+5. **Recommended entry point** — which methodology phase to start at:
+   - No requirements doc → Phase 2
+   - No architecture doc → Phase 3
+   - No threat model → Phase 4
+   - Pipeline has major gaps → Phase 5
+   - All exist → Phase 6
+6. Top 3-5 priority actions, security gaps first

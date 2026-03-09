@@ -1,0 +1,42 @@
+---
+description: "Security-first development methodology overview. Invoke with @security-methodology to see the full workflow and learn when to use each rule. This is the starting point for the full methodology."
+alwaysApply: false
+---
+
+# Security-First Development Methodology
+
+Invoke any rule below with @rulename when you need it. The rules are independent — use one, use all, use them in any order. But the recommended flow mirrors how security-first development works:
+
+## The Phases
+
+1. **Define the problem** — Before writing code, be specific about what you're building and why.
+2. **Requirements** — `@security-requirements` — Add testable security requirements, non-goals, trust boundary identification.
+3. **Architecture & Design** — Design the system. Every component should be testable in isolation.
+4. **Threat Model** — `@threat-model` — Generate a structured threat model from your architecture. This is the phase most teams skip. Don't.
+5. **Review** — `@adversarial-review` — Attack any artifact (architecture, threat model, design doc) adversarially. Find what the author missed.
+6. **Gate Check** — `@gate-check` — Verify exit criteria before moving to the next phase.
+7. **Implementation** — The three automatic rules (coding, infra, testing) activate on file open during this phase.
+8. **Audit** — `@security-audit` — Audit an existing codebase to find where you are and what's missing.
+
+## When to Use What
+
+- Starting a new project → `@security-requirements` then `@threat-model`
+- Reviewing a design before building → `@adversarial-review`
+- About to start coding → `@gate-check` to verify you're ready
+- Joining an existing project → `@security-audit`
+- Complex architectural decision → `@reasoning-pipeline`
+- Already coding → The automatic rules handle this (security-first-coding, threat-model-infra, security-first-testing)
+
+## The Two Unbreakable Rules
+
+1. Tests verify behavior against requirements — not execute lines of code.
+2. Pipeline gates are never weakened to make things pass.
+
+## Quick Start
+
+If you just want the automatic guardrails, the three glob-triggered rules are already active. You don't need to do anything.
+
+If you want the full methodology for a new project:
+```
+@security-requirements → @threat-model → @adversarial-review → @gate-check → build
+```
