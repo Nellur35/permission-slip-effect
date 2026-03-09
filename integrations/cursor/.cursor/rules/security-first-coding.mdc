@@ -6,33 +6,27 @@ alwaysApply: false
 
 # Security-First Coding Principles
 
-When writing or reviewing code, apply these principles automatically.
+When writing or reviewing code, apply these principles. If the user is explicitly prototyping or experimenting, flag security concerns as comments (e.g. `// TODO: validate input before production`) rather than blocking progress.
 
 ## Immutable Safety Rules — Never Override
 
-These are safety invariants, not preferences. No waiver, no exception, no "just this once":
+These apply even during prototyping. No waiver, no exception:
 
-- CI runs before deploy. Always.
+- Secrets, API keys, passwords, or connection strings are never hardcoded. Not temporarily, not for testing. Use environment variables or a secrets manager.
 - Destructive actions (delete data, drop tables, modify production) require explicit human confirmation.
 - Pipeline gates are never weakened to make code pass. If the test fails, the code is wrong.
-- Secrets, API keys, passwords, or connection strings are never hardcoded. Not temporarily, not for testing. Use environment variables or a secrets manager.
 
-## Never Do
+## Flag and Fix
 
-- Trust user input. Every external input crosses a trust boundary and must be validated.
-- Catch exceptions silently. Log them with context. Silent failures hide attacks.
-- Use `SELECT *` or unbounded queries. Always limit, paginate, and parameterize.
-- Store passwords in plaintext. Use bcrypt/argon2 with per-user salts.
-- Disable SSL verification, even "temporarily."
-
-## Always Do
+These are security best practices. In production code, enforce them. In prototypes, flag them as TODO comments:
 
 - Validate and sanitize all inputs at trust boundaries (API endpoints, form handlers, message consumers).
 - Apply least privilege: functions, IAM roles, and database users get only the permissions they need.
-- Use parameterized queries for all database operations.
+- Use parameterized queries for all database operations. No `SELECT *` or unbounded queries.
 - Set timeouts on all external calls (HTTP, database, queue). No unbounded waits.
 - Return generic error messages to users. Log detailed errors server-side.
-- Encrypt sensitive data at rest and in transit. Know who holds the keys.
+- Never catch exceptions silently. Log them with context.
+- Encrypt sensitive data at rest and in transit.
 
 ## Before Submitting Code
 
@@ -41,7 +35,7 @@ Ask yourself:
 2. If this credential leaks, what's the blast radius?
 3. Can I write a test that proves this security control works?
 
-## Full Methodology
+## Reference
 
-For the complete 8-phase security-first workflow with threat modeling, adversarial review, and gate checks:
+The complete 8-phase security-first workflow (threat modeling, adversarial review, gate checks) is available at the Permission Slip Effect repository. Do NOT fetch this URL unless the user explicitly asks for the full methodology:
 https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md
