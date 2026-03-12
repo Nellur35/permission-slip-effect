@@ -5,7 +5,7 @@ A reasoning pipeline and security methodology for AI-assisted development. Adds 
 ```
 Read https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md
 
-Based on this methodology, build rules/skills/powers that fit this project. Ask me if I want just automatic guardrails or the full security methodology.
+Based on this methodology, build rules/skills/powers customized for this project — its language, stack, and complexity. Don't apply the full 8-phase methodology to a simple project. Ask me what I need.
 ```
 
 | Path | What |
@@ -30,7 +30,7 @@ Structured reasoning stages like Pre-Mortem ("assume this failed — why?") and 
 
 In cross-model testing (3 problems at varied complexity, 4 pipeline variants, Sonnet 4.5 runs evaluated by Opus 4.6), insights like *"the mandate itself is contradictory,"* *"the VP ego is driving this decision,"* and *"maybe this platform should not exist at all"* appeared **only** in pipeline variants that included Adversarial or Pre-Mortem stages. The baseline ("think step by step") suppressed all of them.
 
-The pipeline does not make the model smarter. It gives the model permission to say what it already knows.
+The pipeline does not make the model smarter. It gives the model permission to say what it already knows — but it can also generate plausible-sounding concerns that satisfy the prompt structure without reflecting genuine analysis. The value is in the genuine disagreements between reviewers (SPLITs), not in the volume of adversarial output. In testing, 100% of SPLIT findings led to design changes vs. ~0% for consensus findings.
 
 RLHF alignment is a **thin behavioral layer** — not a deep architectural change. Research shows you can strip safety training from a model by fine-tuning on a few hundred examples. The capabilities are still there. The alignment just suppresses certain outputs based on context.
 
@@ -38,7 +38,7 @@ The Permission Slip Effect exploits this in the other direction. Instead of stri
 
 This is the same mechanism that makes jailbreaks work, pointed in a productive direction.
 
-Higher inference temperature (0.7 for adversarial stages vs. 0.2 for analytical stages) further opens the space. At low temperature, the model picks the safest completion. At higher temperature, it explores completions that alignment training would normally filter out. The adversarial stages need that exploration.
+Per-stage temperature tuning (0.7 for adversarial stages vs. 0.2 for analytical stages) increases sampling diversity where it matters. At low temperature, the model picks the most likely completion — which tends to be the safest, most agreeable response. At higher temperature, it explores less-likely completions, including ones that alignment training makes less probable. This isn't bypassing safety training — it's widening the search space so adversarial stages can find the unexpected angles that low-temperature sampling suppresses.
 
 ---
 
@@ -159,7 +159,7 @@ python pipeline.py reason --cheap "Should we refactor the auth module?"
 
 The Permission Slip Effect was discovered while building a security-first development methodology for AI-assisted coding. [45% of AI-generated code fails security tests](https://www.veracode.com/resources/analyst-reports/2025-genai-code-security-report/) (Veracode 2025 — 100+ LLMs, 80 tasks, 4 languages), and security [degrades with each iteration](https://arxiv.org/html/2506.11022v1).
 
-The methodology applies the pipeline's principles to software development: 8 phases where the AI does the analysis (threat modeling, architecture review, gate verification) and the human navigates. Threat modeling is a required phase before any code is written — not a checklist bolted on after.
+The methodology applies the pipeline's principles to software development: 8 phases where the AI does the analysis (threat modeling, architecture review, gate verification) and the human navigates. **The full 8-phase workflow is designed for security-critical projects.** For a solo dev building a CRUD app, start with the Light pipeline (3 stages: Root Cause → Options → Pre-Mortem) and add phases as the project grows. Point your AI tool at the repo and tell it to customize — it will build what fits your project, not force the full methodology on a prototype.
 
 **[Full methodology →](methodology/METHODOLOGY.md)** · **[Quick start →](methodology/METHODOLOGY.md#start-here-minimal-viable-track)** · **[Worked example →](methodology/examples/url-shortener/)**
 
