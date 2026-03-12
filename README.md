@@ -1,8 +1,28 @@
 # The Permission Slip Effect
 
-*When you give a model structured permission to disagree, it says what it already knows but was trained not to say.*
+A reasoning pipeline and security methodology for AI-assisted development. Adds structured reasoning, adversarial review, and threat modeling to your workflow. Works with Claude Code, Kiro, Cursor, or any AI coding tool.
+
+```
+Read https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md
+
+Based on this methodology, build rules/skills/powers that fit this project. Ask me if I want just automatic guardrails or the full security methodology.
+```
+
+| Path | What |
+|------|------|
+| [`pipeline/`](pipeline/) | CLI — multi-model reasoning and adversarial review |
+| [`tools/`](tools/) | Standalone prompts — audit, review, gate-check, threat model, intake |
+| [`integrations/`](integrations/) | Platform examples — Claude Code, Kiro, Cursor, Antigravity |
+| [`methodology/`](methodology/) | Security-first dev methodology — 8 phases, templates, worked example |
+| [`experiments/`](experiments/) | Model shootout, pipeline validation, research synthesis |
+| [`reasoning-pipeline.md`](reasoning-pipeline.md) | Pipeline — frameworks, variants, selection logic, evidence |
+| [`FULL-CONTEXT.md`](FULL-CONTEXT.md) | Single-file version for AI tools that can't browse repos |
 
 ---
+
+## Why it works
+
+*When you give a model structured permission to disagree, it says what it already knows but was trained not to say.*
 
 Models trained via RLHF (Reinforcement Learning from Human Feedback — the process that turns a raw language model into a helpful assistant) are optimized to be agreeable. Not helpful — agreeable. They'll hedge, soften, and suppress their own analysis if the uncomfortable version might score lower on a preference rating. This is called **sycophancy**, and it means models systematically withhold their best thinking on anything contentious, politically sensitive, or unflattering to the person asking.
 
@@ -11,10 +31,6 @@ Structured reasoning stages like Pre-Mortem ("assume this failed — why?") and 
 In cross-model testing (3 problems at varied complexity, 4 pipeline variants, Sonnet 4.5 runs evaluated by Opus 4.6), insights like *"the mandate itself is contradictory,"* *"the VP ego is driving this decision,"* and *"maybe this platform should not exist at all"* appeared **only** in pipeline variants that included Adversarial or Pre-Mortem stages. The baseline ("think step by step") suppressed all of them.
 
 The pipeline does not make the model smarter. It gives the model permission to say what it already knows.
-
----
-
-## Why it works
 
 RLHF alignment is a **thin behavioral layer** — not a deep architectural change. Research shows you can strip safety training from a model by fine-tuning on a few hundred examples. The capabilities are still there. The alignment just suppresses certain outputs based on context.
 
@@ -170,19 +186,7 @@ Compare the output to the same question without the pipeline. The difference is 
 
 ---
 
-## Installation
-
-### Give the AI the repo and let it build what fits
-
-```
-Read https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md
-
-Based on this methodology, build rules/skills/powers that fit this project. Ask me if I want just automatic guardrails or the full security methodology.
-```
-
-Works with any AI coding tool — Claude Code, Kiro, Cursor, Antigravity, ChatGPT, Gemini, or anything that can read a URL. The AI reads the methodology and generates whatever its platform needs: `.mdc` rules, skills, powers, or steering files. Every project gets different output based on language, stack, and workflow.
-
-### Platform-specific examples
+## Platform examples
 
 Each platform has pre-built examples of what the AI typically generates. Use them as-is, or let the AI use them as reference when building your own.
 
@@ -193,21 +197,6 @@ Each platform has pre-built examples of what the AI typically generates. Use the
 | **Cursor** | 10 `.mdc` rules — 3 automatic, 7 manual `@rules` | [Examples →](integrations/cursor/) |
 | **Google Antigravity** | Agent skills for `.agents/skills/` | [Examples →](integrations/antigravity/) |
 | **Any model** | Standalone [tools/](tools/) as copy-paste prompts | [Tools →](tools/) |
-
----
-
-## Repo map
-
-| Path | What |
-|------|------|
-| [`reasoning-pipeline.md`](reasoning-pipeline.md) | Pipeline — frameworks, variants, selection logic, evidence |
-| [`experiments/`](experiments/) | Model shootout, pipeline validation, research synthesis |
-| [`pipeline/`](pipeline/) | CLI — multi-model reasoning and adversarial review |
-| [`methodology/`](methodology/) | Security-first dev methodology — 8 phases, templates, worked example |
-| [`tools/`](tools/) | Standalone prompts — audit, review, gate-check, threat model, intake |
-| [`integrations/`](integrations/) | Platform examples — pre-built rules/skills/powers for Claude Code, Kiro, Cursor, Antigravity |
-| [`multi-agent/`](multi-agent/) | Multi-agent evolution — diary-driven role emergence (experimental) |
-| [`FULL-CONTEXT.md`](FULL-CONTEXT.md) | Single-file version for AI tools that can't browse repos |
 
 ---
 
