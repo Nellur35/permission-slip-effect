@@ -36,7 +36,7 @@ RLHF alignment is a **thin behavioral layer** — not a deep architectural chang
 
 The Permission Slip Effect exploits this in the other direction. Instead of stripping alignment to access harmful capabilities, it creates prompt contexts that make uncomfortable-but-useful analysis the "aligned" response. Pre-Mortem says "assume failure." Adversarial says "model the hidden incentives." In those contexts, the agreeable thing to do is to surface the truth — because the prompt explicitly asked for it.
 
-This is the same mechanism that makes jailbreaks work, pointed in a productive direction.
+This is the same mechanism that makes jailbreaks work, pointed in a productive direction. Or it might be simpler than that — models might just produce better output with more structured prompts regardless of the "permission" framing. The RLHF bypass explanation is plausible and consistent with the data, but it's a hypothesis, not a proven causal mechanism. What's measured is the effect: adversarial stages surface insights that baseline prompting suppresses. Why it works is still an open question.
 
 Per-stage temperature tuning (0.7 for adversarial stages vs. 0.2 for analytical stages) increases sampling diversity where it matters. At low temperature, the model picks the most likely completion — which tends to be the safest, most agreeable response. At higher temperature, it explores less-likely completions, including ones that alignment training makes less probable. This isn't bypassing safety training — it's widening the search space so adversarial stages can find the unexpected angles that low-temperature sampling suppresses.
 
@@ -105,7 +105,26 @@ The complete loop: build tools → build tools to review tools → measure wheth
 
 ## The reasoning pipeline
 
-Eight reasoning frameworks chained into structured pipelines. Each analyzes the problem from a different angle. The output of each stage informs the next. The sequencing matters — and the Adversarial and Pre-Mortem stages must be included for the permission slip effect to activate.
+Eight reasoning frameworks, chained into pipelines of varying depth. **Start with Light (3 stages) — it's where most of the value is.** The jump from baseline to Light is the biggest gain. Add stages only when the problem demands it.
+
+### Start here: Light pipeline
+
+```
+Light (3 stages):         RCAR → ToT → PMR
+```
+
+Root Cause finds the real problem. Tree of Thoughts generates options. Pre-Mortem assumes failure and works backward. Three stages, covers most decisions.
+
+### When you need more
+
+| Variant | Stages | Use when |
+|---------|--------|----------|
+| Standard - FPR | FPR → RCAR → AdR → ToT → PMR | The problem statement might be wrong |
+| Standard - CoT | CoT → RCAR → AdR → ToT → PMR | The facts need establishing first |
+| Multi-Stakeholder | FPR → SMR → AdR → ToT → PMR | Competing interests, multiple parties |
+| Systems | FPR → RCAR → GoT → ToT → PMR | Complex interconnected systems |
+
+Adding stages beyond 5 shows diminishing returns.
 
 ### Frameworks
 
@@ -119,18 +138,6 @@ Eight reasoning frameworks chained into structured pipelines. Each analyzes the 
 | **Adversarial Reasoning** (AdR) | Models hidden incentives, what each party secretly protects | **Yes — primary** |
 | **Tree of Thoughts** (ToT) | Generates and compares strategic options with tradeoffs | Partial |
 | **Pre-Mortem** (PMR) | Assumes failure, works backward to find why | **Yes — primary** |
-
-### Pipeline variants
-
-```
-Light (3 stages):         RCAR → ToT → PMR
-Standard - FPR (5):       FPR → RCAR → AdR → ToT → PMR
-Standard - CoT (5):       CoT → RCAR → AdR → ToT → PMR
-Multi-Stakeholder (5):    FPR → SMR → AdR → ToT → PMR
-Systems (5):              FPR → RCAR → GoT → ToT → PMR
-```
-
-If the problem statement might be wrong, start with FPR. If the facts need establishing, start with CoT. Always include PMR. The jump from baseline to Light (3-stage) is the biggest value gain. Adding stages beyond 5 shows diminishing returns.
 
 **[Full pipeline documentation →](reasoning-pipeline.md)**
 
