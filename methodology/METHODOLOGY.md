@@ -22,6 +22,8 @@
 
 Phases 1-5 are sequential and non-negotiable. Phase 6 onwards is Agile. The output file from each phase is the only context that carries forward. Phase re-entry is the norm — going back is the process working, not failing. Some rules are waivable with documentation; safety invariants (CI before deploy, no hardcoded secrets, gates never weakened, destructive actions need human confirmation) are never waivable.
 
+**Artifacts are living documents.** Every phase produces an artifact. No phase maintains previous artifacts. Without deliberate upkeep, requirements drift from architecture, architecture drifts from threat model, and downstream phases operate on stale context. At every phase transition: verify that upstream artifacts still reflect current decisions. If they don't, update them before moving forward. This is not optional housekeeping — stale artifacts cascade errors through every subsequent phase.
+
 ---
 
 ## Start Here: Minimal Viable Track

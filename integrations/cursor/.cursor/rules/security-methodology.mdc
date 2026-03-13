@@ -26,6 +26,7 @@ Invoke any rule below with @rulename when you need it. The rules are independent
 - Joining an existing project → `@security-audit`
 - Complex architectural decision → `@reasoning-pipeline`
 - Already coding → The automatic rules handle this (security-first-coding, threat-model-infra, security-first-testing)
+- **At every session start and phase transition** → verify upstream artifacts (requirements, architecture, threat model) still reflect current decisions. Stale artifacts cascade errors silently.
 
 ## The Two Unbreakable Rules
 
