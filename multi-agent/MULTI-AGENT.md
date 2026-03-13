@@ -95,6 +95,111 @@ The left column comes from your data. The right columns follow. Roles you didn't
 
 ---
 
+## When a Single Window Breaks: Domain-Split Sessions
+
+*Experimental — design pattern, not yet validated with diary data.*
+
+You're already working in multiple windows. One for the component you're building, one for tests, maybe one for docs. This section is about making that deliberate — splitting context across windows so each one holds a coherent domain instead of a degraded slice of everything.
+
+### When to Split
+
+You'll know because the AI starts failing in specific ways:
+
+- **Contradictory guidance.** The threat model steering says "minimize attack surface" while the implementation steering says "add this integration." Both are loaded, neither wins.
+- **Context amnesia.** You made an architecture decision in one conversation, but the AI in the same window doesn't remember it 20 messages later. The context window is full and older decisions are falling off.
+- **Shallow analysis.** The AI produces generic responses where it used to produce specific ones. It's holding too many artifacts to reason deeply about any of them.
+- **The Decision Surface Area Test.** Load the threat model, the architecture doc, the current implementation task, and relevant diary entries into a single context window. If the agent loses coherence, misses connections, or contradicts itself — context has exceeded single-agent capacity.
+
+### How to Split
+
+Each window owns a domain and its artifacts. The window loads only the steering files and knowledge artifacts relevant to that domain.
+
+Example split for a security-critical project:
+
+| Window | Domain | Loads | Produces |
+|--------|--------|-------|----------|
+| 1 | Requirements & scope | requirements.md, security-requirements steering | Updated requirements, non-goals, scope decisions |
+| 2 | Architecture & design | architecture.md, threat-model steering | Architecture decisions, trust boundary diagrams |
+| 3 | Implementation | Current task, relevant architecture section, coding steering | Code, tests, diary entries |
+| 4 | Review | Artifacts from windows 1-3, adversarial-review steering | Findings, SPLITs, amendment requests |
+
+You don't need all four. Two windows — implementation + review — is the minimum useful split.
+
+### Cross-Artifacts: Automated State Sync
+
+The repo's own principle applies here: *you don't solve activation energy with willpower — you remove the decision point.* Expecting a developer to manually ferry decisions between windows under deadline pressure is a guaranteed failure mode. Domains drift silently, and you end up with split-brain implementations.
+
+The fix: upstream windows (architecture, threat model) **write** constraints to a shared state file. Downstream windows (implementation, review) **read** that file on every prompt. The AI manages its own sync. You review the log.
+
+**The state file:** `cross-artifacts.md` (or `.cursor/cross-artifacts.md`, `.claude/cross-artifacts.md` — wherever your platform keeps project state). Append-only with timestamps. Each entry is a binding constraint from one domain.
+
+```markdown
+## Active Constraints
+
+- **[Architecture — 2026-03-13]** Auth is OAuth2 with refresh tokens, 24hr expiry. No session cookies.
+- **[Threat-Model — 2026-03-13]** The refresh token endpoint is high-risk. Rate limit and monitor.
+- **[Architecture — 2026-03-14]** ~~SUPERSEDED~~ Auth is OAuth2 with opaque tokens, server-side session. (Replaces: refresh token constraint above.)
+```
+
+When a decision changes, the old constraint is marked superseded and the new one references it. Downstream windows see the current state without having to resolve conflicts.
+
+**Upstream steering (writers):** Add to architecture or threat model steering files:
+
+```
+When you finalize a structural decision that other domains need to follow,
+write it to cross-artifacts.md using the format: [Domain — date] constraint.
+If this supersedes an earlier constraint, mark the old one ~~SUPERSEDED~~
+and reference it. Keep constraints concise and binding.
+```
+
+**Downstream steering (readers):** Add to implementation or review steering files:
+
+```
+Before writing code or producing findings, read cross-artifacts.md.
+Active constraints in this file are absolute and override conversational context.
+If a constraint mandates OAuth2 and you write session cookies, you have failed.
+Skip any entry marked ~~SUPERSEDED~~.
+```
+
+**What this gives you:**
+
+- **Zero activation energy.** The AI writes and reads constraints automatically. No human ferrying.
+- **No split-brain.** The implementation window can't accidentally build the wrong architecture because the constraint file anchors it.
+- **Auditable history.** If something goes wrong, `cross-artifacts.md` shows exactly which constraints were active and when they changed.
+
+**Known failure modes with steering-based sync:**
+
+Adversarial review of this pattern identified three failure modes that natural-language steering alone doesn't prevent:
+
+- **The Helpful Housekeeper.** The AI decides `cross-artifacts.md` is messy and rewrites the entire file instead of appending. Specific constraints from other domains vanish silently. The AI is optimizing for clean formatting, not state integrity.
+- **The Context Avalanche.** After a month of development, the file holds 50 active constraints and 200 superseded ones. The downstream window reads all 250 on every prompt, polluting its context window with dead information. The very mechanism designed to prevent context collapse causes it.
+- **The Sycophantic Bypass.** The developer says "just for testing, ignore the OAuth2 constraint." The implementation AI complies — sycophancy beats steering. The constraint file says "absolute" but the human override wins.
+
+**The hardened version:** A deterministic CLI tool (similar to `pipeline.py`) that handles all file I/O. The AI passes structured input — `add`, `supersede`, `archive` — and the script handles formatting, timestamping, and separating active constraints from archived ones. The downstream window reads only active constraints, not the full history. This prevents file corruption (the AI never touches the file directly), prevents context avalanche (archived entries are hidden from readers), and creates a clean audit trail.
+
+The sycophantic bypass requires a different fix: a pre-commit gate check that compares generated code against active constraints in `cross-artifacts.md`. This catches the drift after the fact, but before it ships.
+
+Neither the CLI tool nor the gate check exist yet. The steering-based version above works for projects where the constraint count stays low (under ~20 active). Build the hardened version when you hit the failure modes.
+
+**Fallback for platforms without file access:** If your platform doesn't support file writes from the AI, the Navigator carries constraints manually. This works but is fragile — the diary partially catches drift (entries that contradict constraints from another window become visible in the log), but the diary is detection, not prevention. Automate if you can.
+
+### The Navigator Role
+
+With automated sync, the Navigator role shifts from ferrying to oversight:
+
+- **Review the constraint log.** Periodically check `cross-artifacts.md` for constraints that are stale, contradictory, or superseded without replacement.
+- **Resolve cross-window SPLITs.** When the review window flags a contradiction between domains, you decide which domain yields.
+- **When to split further.** If one window starts showing the same symptoms (contradictions, amnesia, shallow analysis), split it.
+- **When to merge back.** If two windows are consistently producing compatible output and the project has simplified, collapse them.
+
+### What This Doesn't Solve
+
+This is context management, not capability improvement. If the model produces shallow analysis with full context, splitting the context won't fix it — that's a model capability issue, not a window architecture issue.
+
+The automated sync also introduces a new attack surface: a compromised upstream window can write malicious constraints that downstream windows obey. Mitigations: `cross-artifacts.md` is committed via PR (same review gate as code), the review window's adversarial steering should flag constraints that weaken security posture, and periodic `pipeline.py review cross-artifacts.md` catches poisoned constraints.
+
+---
+
 ## Tier 3: Persistent Agent Roles (Rare)
 
 Autonomous agents operating across sessions — monitoring and acting on the knowledge layer without you initiating it.
@@ -108,10 +213,6 @@ All of these:
 3. CI/CD pipeline established with automated quality gates
 4. Knowledge artifacts maintained across 10+ sessions without degradation
 5. You can articulate what each agent **decides**, not just what it **reviews**
-
-### The Decision Surface Area Test
-
-Load the threat model, the architecture doc, the current implementation task, and relevant diary entries into a single context window. If the agent loses coherence, misses connections, or contradicts itself — context has exceeded single-agent capacity. That's your signal.
 
 ### Security Implications
 
@@ -156,6 +257,7 @@ No separate synchronization protocol. No message queue. No consensus algorithm. 
 | 0: Single Agent | Make all decisions, review output | Produce artifacts, auto-write diary |
 | 1: Pipeline | Decide when to analyze, evaluate candidates | Run analysis, surface patterns |
 | 2: Session Subagents | Choose roles, define scope, review output | Execute within scope, update artifacts, write diary |
+| Domain-Split | Manage flow between windows, carry cross-artifacts, resolve cross-window SPLITs | Reason deeply within domain scope, produce domain artifacts |
 | 3: Persistent Agents | Set boundaries, review PRs, periodic strategic review | Monitor, propose, maintain artifacts autonomously |
 
 The AI does the work. You make the decisions.
