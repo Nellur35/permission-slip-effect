@@ -2,11 +2,7 @@
 
 A reasoning pipeline and security methodology for AI-assisted development. Adds structured reasoning, adversarial review, and threat modeling to your workflow. Works with Claude Code, Kiro, Cursor, or any AI coding tool.
 
-```
-Read https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md
-
-Based on this methodology, build rules/skills/powers customized for this project — its language, stack, and complexity. Don't apply the full 8-phase methodology to a simple project. Ask me what I need.
-```
+Use it for architecture reviews, security decisions, and multi-stakeholder problems where the cost of being wrong is high. Skip the full pipeline for simple tasks — on straightforward work it adds cost without much value.
 
 | Path | What |
 |------|------|
@@ -17,6 +13,12 @@ Based on this methodology, build rules/skills/powers customized for this project
 | [`experiments/`](experiments/) | Model shootout, pipeline validation, research synthesis |
 | [`reasoning-pipeline.md`](reasoning-pipeline.md) | Pipeline — frameworks, variants, selection logic, evidence |
 | [`FULL-CONTEXT.md`](FULL-CONTEXT.md) | Single-file version for AI tools that can't browse repos |
+
+```
+Read https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md
+
+Based on this methodology, build rules/skills/powers customized for this project — its language, stack, and complexity. Don't apply the full 8-phase methodology to a simple project. Ask me what I need.
+```
 
 ---
 
@@ -30,7 +32,7 @@ Structured reasoning stages like Pre-Mortem ("assume this failed — why?") and 
 
 In cross-model testing (3 problems at varied complexity, 4 pipeline variants, Sonnet 4.5 runs evaluated by Opus 4.6), insights like *"the mandate itself is contradictory,"* *"the VP ego is driving this decision,"* and *"maybe this platform should not exist at all"* appeared **only** in pipeline variants that included Adversarial or Pre-Mortem stages. The baseline ("think step by step") suppressed all of them.
 
-The pipeline does not make the model smarter. It gives the model permission to say what it already knows — but it can also generate plausible-sounding concerns that satisfy the prompt structure without reflecting genuine analysis. The value is in the genuine disagreements between reviewers (SPLITs), not in the volume of adversarial output. In testing, 100% of SPLIT findings led to design changes vs. ~0% for consensus findings.
+The pipeline does not make the model smarter. It gives the model permission to say what it already knows — but it can also generate plausible-sounding concerns that satisfy the prompt structure without reflecting genuine analysis. The value is in the genuine disagreements between reviewers — **SPLITs** (where reviewers can't even agree on what the problem is) — not in the volume of adversarial output. In testing, 100% of SPLIT findings led to design changes vs. ~0% for consensus findings.
 
 RLHF alignment is a **thin behavioral layer** — not a deep architectural change. Research shows you can strip safety training from a model by fine-tuning on a few hundred examples. The capabilities are still there. The alignment just suppresses certain outputs based on context.
 
