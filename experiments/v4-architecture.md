@@ -173,6 +173,30 @@ This runs on the cheapest model, temperature 0.1, max 100 tokens. It's the pipel
 
 ---
 
+## The Interaction Effect: Controlled Divergence
+
+Phase 0 and per-stage temperature profiles are designed to work together. The interaction is nonlinear — neither mechanism alone improves output, and temperature alone is actively harmful.
+
+The mechanism:
+
+- **Phase 0 reduces interpretation variance.** Without it, reviewers parse the same raw input differently. Disagreements happen at the problem-definition level, not the analysis level.
+- **Temperature increases reasoning variance.** Higher temperature at adversarial stages explores less-probable analytical paths — different angles on the same problem.
+- **Together: controlled divergence.** Reviewers start from the same structured interpretation but explore different analytical trajectories. Disagreements that survive are genuine analytical differences, not parsing artifacts.
+
+This is why the 2x2 factorial produced a clear interaction: Phase 0 standardizes the input, temperature diversifies the analysis. Remove either and the mechanism breaks.
+
+## Failure Mode: Forced Cynicism
+
+Adversarial and Pre-Mortem stages can generate plausible-sounding concerns that satisfy the prompt structure without reflecting genuine analysis. The model produces "insights" because the stage asked for insights, not because the insights are grounded in the input.
+
+This is visible in the data: CONSENSUS findings have ~0% ACTED rate. Most consensus output is noise — concerns generated to fill the adversarial mandate, not real analytical disagreements.
+
+Phase 0 partially addresses this by giving adversarial stages real structure to disagree *about*. Without shared structure, the model falls back on generic concerns. With it, adversarial output is anchored to specific decomposed elements of the problem.
+
+The remaining defense is the SPLIT/CONSENSUS distinction itself: genuine disagreements (where reviewers can't reconcile their positions) are where the value lives. Consensus findings should be treated as low-signal by default.
+
+---
+
 ## Marginal Value Audit
 
 Each framework has a tendency to justify its own existence. FPR will find first principles even when the problem doesn't need them. AdR will find adversarial dynamics even in collaborative situations. This is proxy objective gaming — optimizing the local task rather than the global goal.

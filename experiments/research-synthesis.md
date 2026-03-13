@@ -117,6 +117,8 @@ The fix is architectural, not motivational. Rules with concrete triggers (specif
 
 ## Key Takeaways
 
+**The core research claim:** Standardizing problem decomposition before increasing sampling temperature improves reasoning diversity while maintaining analytical coherence in multi-model review.
+
 1. **Multi-model review works, but only with the right lineup.** The 13/1/1 → 3/2/2 shift proves model selection matters more than model count.
 
 2. **The interaction effect (Phase 0 + temperature) is the strongest finding.** Neither mechanism alone reduces SPLITs. This is publishable if replicated.
