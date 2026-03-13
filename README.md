@@ -34,7 +34,7 @@ The pipeline does not make the model smarter. It gives the model permission to s
 
 RLHF alignment is a **thin behavioral layer** — not a deep architectural change. Research shows you can strip safety training from a model by fine-tuning on a few hundred examples. The capabilities are still there. The alignment just suppresses certain outputs based on context.
 
-The Permission Slip Effect exploits this in the other direction. Instead of stripping alignment to access harmful capabilities, it creates prompt contexts that make uncomfortable-but-useful analysis the "aligned" response. Pre-Mortem says "assume failure." Adversarial says "model the hidden incentives." In those contexts, the agreeable thing to do is to surface the truth — because the prompt explicitly asked for it.
+The Permission Slip Effect exploits this in the other direction. Instead of stripping alignment to access harmful capabilities, it creates prompt contexts where the model cooperates by criticizing. Pre-Mortem says "assume failure." Adversarial says "model the hidden incentives." In those contexts, the agreeable thing to do is to surface the truth — because the prompt explicitly asked for it.
 
 This is the same mechanism that makes jailbreaks work, pointed in a productive direction. Or it might be simpler than that — models might just produce better output with more structured prompts regardless of the "permission" framing. The RLHF bypass explanation is plausible and consistent with the data, but it's a hypothesis, not a proven causal mechanism. What's measured is the effect: adversarial stages surface insights that baseline prompting suppresses. Why it works is still an open question.
 
@@ -80,7 +80,11 @@ We improved the pipeline (v4) by adding two mechanisms: **Phase 0** (structured 
 | Temp profiles only (no Phase 0) | 6 | $0.64 | **Worse** — distinct angles on unstructured input increase disagreement |
 | v4 full (Phase 0 + temp profiles) | **0** | $0.71 | Zero disagreements on problem definition |
 
-The headline: **Phase 0 and temperature profiles are necessary counterbalances.** Temperature alone is actively harmful — it increases disagreement by putting reviewers in different cognitive modes while they interpret raw input differently. Phase 0 alone is inert — shared structure with uniform cognition doesn't reduce existing disagreements. Only together do they work.
+The headline: **Phase 0 and temperature profiles are necessary counterbalances.**
+
+- **Temperature alone:** reviewers interpret the input differently AND analyze differently. All noise — disagreement at the problem-definition level, not the analysis level.
+- **Phase 0 alone:** reviewers interpret the same way AND analyze the same way. No new signal — shared structure with uniform cognition just produces the same answers.
+- **Both together:** reviewers interpret the same way BUT analyze differently. That's controlled divergence — and it's where the value is.
 
 **[Full A/B comparison →](experiments/v3-vs-v4-comparison.md)**
 
