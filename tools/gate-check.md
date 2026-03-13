@@ -108,5 +108,6 @@ Verify you have met the exit criteria for any phase before moving forward.
 2. Answer every gate question with specifics, not "yes."
 3. If any answer is vague or missing, you are not ready to move forward.
 4. For phases 3, 4, and 5: run an adversarial review (`tools/review.md`) before proceeding.
+5. **At every phase transition:** are upstream artifacts (requirements, architecture, threat model) still current? If any upstream artifact contradicts decisions made in the current phase, update it before moving forward. Stale artifacts cascade errors downstream.
 
 The gates are exit criteria, not a formality. A gate you cannot answer concretely is a gap you will pay for later.

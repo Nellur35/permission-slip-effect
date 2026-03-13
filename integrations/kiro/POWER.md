@@ -109,6 +109,10 @@ Other gates can be waived with documentation. These cannot.
 
 At the start of every implementation session, check for and resolve the highest-priority technical debt item before new feature work. Zero critical debt items is a gate for new features.
 
+## Artifact Currency
+
+At the start of every session and at every phase transition: verify that upstream artifacts (requirements, architecture, threat model) still reflect current decisions. If any artifact contradicts what you're about to build, update it first. Stale artifacts poison every downstream phase silently.
+
 ## The Multi-Model Review
 
 For security-critical design decisions, use different models in assigned roles:
