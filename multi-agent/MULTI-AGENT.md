@@ -8,11 +8,11 @@ Entry format: [`templates/diary-entry.md`](templates/diary-entry.md) · Platform
 
 ## Tier 0: Single Agent (Default)
 
-One navigator, one AI. All 8 phases work as documented. The diary auto-collects in the background.
+One navigator, one AI. All 8 phases work as documented. Two things from day one:
 
-**Do:** Add the diary steering instruction and hook to your project. That's it.
+**The Diary.** Add the diary steering instruction and hook to your project. Auto-collects in the background. Skip this and multi-agent is theater.
 
-**Skip this and multi-agent is theater.**
+**The Librarian.** Knowledge management is not a later concern — it's infrastructure. The moment artifacts start accumulating (diary entries, requirements, architecture decisions), someone has to keep them current, prune stale content, flag contradictions, and archive superseded decisions. Every other role produces artifacts. Nobody maintains them. Without the Librarian, downstream quality degrades silently as stale or contradictory artifacts accumulate. This can be a dedicated window, a periodic task, or a steering instruction that triggers cleanup at session start — but it must exist from day one.
 
 ---
 
@@ -78,8 +78,6 @@ Different projects split differently:
 | Solo CRUD app | Implementation · Review (minimum useful split) |
 
 Each window loads only the steering files and artifacts for its domain. The diary reveals which domains need separation — the same way it reveals which roles need agents in Tier 2. Don't predefine the split. Let the friction tell you.
-
-**One role doesn't emerge — it's mandatory.** The moment you split into multiple windows producing artifacts that other windows consume, you need a **Librarian**: a dedicated window (or periodic task) that keeps artifacts current, prunes stale content, flags contradictions between documents, and archives superseded decisions. Every other role produces artifacts. Nobody maintains them. Without the Librarian, context window poisoning happens at the source — downstream windows consume stale or contradictory artifacts and the quality of every domain degrades silently.
 
 ### Cross-Artifact Sync
 
