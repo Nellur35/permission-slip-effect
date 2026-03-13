@@ -79,6 +79,8 @@ Different projects split differently:
 
 Each window loads only the steering files and artifacts for its domain. The diary reveals which domains need separation — the same way it reveals which roles need agents in Tier 2. Don't predefine the split. Let the friction tell you.
 
+**One role doesn't emerge — it's mandatory.** The moment you split into multiple windows producing artifacts that other windows consume, you need a **Librarian**: a dedicated window (or periodic task) that keeps artifacts current, prunes stale content, flags contradictions between documents, and archives superseded decisions. Every other role produces artifacts. Nobody maintains them. Without the Librarian, context window poisoning happens at the source — downstream windows consume stale or contradictory artifacts and the quality of every domain degrades silently.
+
 ### Cross-Artifact Sync
 
 *You don't solve activation energy with willpower — you remove the decision point.*
