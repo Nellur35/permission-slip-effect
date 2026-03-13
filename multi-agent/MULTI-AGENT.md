@@ -63,16 +63,21 @@ You're already working in multiple windows. This makes it deliberate — each wi
 - **Shallow analysis.** Generic responses where specific ones used to appear.
 - **Decision Surface Area Test.** Load threat model + architecture + current task + diary into one window. If the agent loses coherence — split.
 
-### Architecture
+### How to Split
 
-| Window | Domain | Produces |
-|--------|--------|----------|
-| Requirements | requirements.md, security-requirements | Scope decisions, non-goals |
-| Architecture | architecture.md, threat-model steering | Architecture decisions, trust boundaries |
-| Implementation | Current task, coding steering | Code, tests, diary entries |
-| Review | Artifacts from other windows, adversarial steering | Findings, SPLITs, amendment requests |
+The split follows the same principle as Tier 2 role emergence — the project's own complexity determines the domains, not a predetermined template. Look at where the diary clusters, where context conflicts appear, and where the AI's quality degrades.
 
-Minimum useful split: two windows (implementation + review).
+Different projects split differently:
+
+| Project type | Likely domains |
+|---|---|
+| Security-critical backend | Threat model · Implementation · Review |
+| Full-stack app | Frontend · Backend · Testing · Knowledge |
+| Data pipeline | Ingestion · Transformation · Serving |
+| Infrastructure | IaC · Security policy · Monitoring |
+| Solo CRUD app | Implementation · Review (minimum useful split) |
+
+Each window loads only the steering files and artifacts for its domain. The diary reveals which domains need separation — the same way it reveals which roles need agents in Tier 2. Don't predefine the split. Let the friction tell you.
 
 ### Cross-Artifact Sync
 
