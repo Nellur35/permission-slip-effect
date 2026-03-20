@@ -56,6 +56,12 @@ Exit criteria checklist for all 8 phases. Each gate lists what it proves and wha
 **Input:** The phase number you are checking
 **Output:** Pass/fail for each gate question, with gaps identified
 
+### `session-retro.md`
+Structured feedback loop for any work session. Three stages: root cause analysis of what happened (not just what broke), retrospective on patterns and deltas, and executable lessons learned that modify your process directly.
+
+**Input:** Describe what happened this session — bug fix, feature, tech debt, investigation, anything
+**Output:** RCA with causal chains, retrospective with pattern analysis, lessons learned with executable actions and targets
+
 ## Skills vs Tools
 
 **Skills** (`.claude/skills/`) are Claude Code commands: `/intake`, `/review`, `/gate-check`, `/threat-model`, `/audit`. They auto-detect context, read project files, and generate output directly. Use these if you work in Claude Code.

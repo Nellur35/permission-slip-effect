@@ -297,8 +297,6 @@ Pipeline gate: [which gate gets this new test]
 
 The tests derived from real failure modes will always be better than tests written before production.
 
-**Methodology retro:** After every non-trivial session, review the process itself. What broke in the workflow? What was slow? What should change in steering files or rules? Lessons that work get kept. Rules that don't get pruned. Encode operational lessons into persistent context (CLAUDE.md, steering files, rules).
-
 ---
 
 ## Context Handoff
@@ -333,6 +331,28 @@ When any phase surfaces an upstream flaw:
 4. Propagate changes forward through all downstream phases
 
 Document what triggered the re-entry and what changed — one sentence is enough.
+
+---
+
+## Session Feedback Loop
+
+*The methodology improves because it processes its own output — not because someone remembers to update it.*
+
+Every work session produces signal — bug fix, feature, refactor, investigation, tech debt, anything. This is not a postmortem. This runs after any session where work was done, across all phases.
+
+**Quick filter:** Session involved a decision, surprise, or recognized pattern → full loop. Routine execution → one-line summary to `diary.md`.
+
+**Three stages, strictly sequential:**
+
+**Stage 1 — RCA.** What happened and what caused it? For each event: causal chain (5 Whys), enabling condition (if it restates the event, go deeper), decision point, recurrence.
+
+**Stage 2 — Retrospective.** Start with what worked well (same causal rigor as problems). Then: patterns repeating? Expected vs. actual delta? New understanding? Friction?
+
+**Stage 3 — Lessons Learned.** Executable actions only — "add check X to gate Y," not "be more careful." Tactical (apply in 2 min, do now) vs. strategic (log and schedule). Before applying: conflict check against existing rules. If a lesson contradicts a rule — do not apply, escalate to Graph of Thoughts analysis against `diary.md` to find the shared root.
+
+**Diary:** Append to the existing `diary.md` (same corpus used for agent emergence). Do not create a separate file.
+
+**Hook trigger:** Session ending → offer to run. Concrete trigger, not discipline. Full tool with templates: `tools/session-retro.md`.
 
 ---
 
@@ -1231,6 +1251,27 @@ Verify you have met the exit criteria for any phase before moving forward.
 4. For phases 3, 4, and 5: run an adversarial review (`tools/review.md`) before proceeding.
 
 The gates are exit criteria, not a formality. A gate you cannot answer concretely is a gap you will pay for later.
+
+---
+
+## Tool: session-retro
+
+# Session Feedback Loop
+
+Run a structured retrospective after any work session. Not just when things break — after every session where work was done. This is not a postmortem. This runs on everything.
+
+**Input:** Describe what happened this session. Bug fix, new feature, tech debt, investigation, refactor, configuration change — anything.
+**Output:** Root cause analysis, retrospective, and executable lessons learned that feed back into your process.
+
+**Quick filter:** Full loop when the session involved a decision, surprise, recognized pattern, or unclear takeaway. Quick summary for routine execution — one paragraph to `diary.md`.
+
+**Stage 1 — RCA.** For each significant event: what happened (factual) → causal chain (5 Whys) → enabling condition (if this restates the event, go deeper) → decision point → recurring or new (check `diary.md`).
+
+**Stage 2 — Retrospective.** What worked well and why (same causal depth as problems)? Patterns repeating? Expected vs. actual delta? New understanding? Friction?
+
+**Stage 3 — Lessons Learned.** Executable actions only. Tactical (apply in 2 min) vs. strategic (log and schedule). Conflict check: if a lesson contradicts an existing rule — do not apply, do not waive. Escalate to GoT analysis against `diary.md`. Resolution comes from the shared root. Append diary entry after each run.
+
+Full templates and output formats: `tools/session-retro.md`.
 
 ---
 
