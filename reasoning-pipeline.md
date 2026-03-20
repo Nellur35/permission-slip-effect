@@ -12,9 +12,9 @@ Models optimize for "plausible response" -- not "thorough response." They stop a
 
 This is the single most important property of the pipeline.
 
-Models are sycophantic by default -- they tell you what you want to hear. Research on LLM sycophancy shows that models trained via RLHF are incentivized to be agreeable, sometimes at the cost of accuracy. Adding explicit permission to disagree (e.g., "find why this is wrong") increases rejection of flawed reasoning dramatically.
+Models are sycophantic by default -- RLHF training optimizes for the statistically agreeable answer, not the factually complete one. Research on LLM sycophancy shows that models trained via RLHF are incentivized to be agreeable, sometimes at the cost of accuracy. Adding explicit permission to disagree (e.g., "find why this is wrong") increases rejection of flawed reasoning dramatically.
 
-Structured stages like Pre-Mortem ("assume this failed -- why?") and Adversarial Reasoning ("what is each party secretly protecting?") give the model explicit structural permission to surface uncomfortable truths it would otherwise suppress.
+Structured stages like Pre-Mortem ("assume this failed -- why?") and Adversarial Reasoning ("what is each party secretly protecting?") give the model contexts where the expected output is facts and analysis, not the statistically safe answer. The model isn't being tricked -- it's being given a structure where the training permits the complete output.
 
 In cross-model testing (3 problems at varied complexity, 4 pipeline variants, Sonnet 4.5 runs evaluated by Opus 4.6), insights like "the mandate itself is contradictory," "the VP ego is driving this decision," and "maybe this platform should not exist at all" appeared **only** in pipeline variants that included Adversarial or Pre-Mortem stages. The baseline ("think step by step") suppressed all of them.
 
@@ -220,7 +220,7 @@ The Permission Slip Effect exploits this in the productive direction. Instead of
 
 This is the same mechanism that makes jailbreaks work, pointed in a productive direction. Higher inference temperature (0.7 for adversarial stages vs. 0.2 for analytical stages) further opens the space — at low temperature, the model picks the safest completion; at higher temperature, it explores completions that alignment training would normally filter out.
 
-The pipeline's adversarial and pre-mortem stages are not prompt tricks. They are **structural bypasses of a known architectural property** of RLHF-trained models. This is why they work consistently across models from different labs — every RLHF-trained model has the same thin alignment layer, and every one of them responds to the same structural permission.
+The pipeline's adversarial and pre-mortem stages are not prompt tricks. They are **structural bypasses of a known architectural property** of RLHF-trained models. This is why they work consistently across models from different labs — every RLHF-trained model has the same thin alignment layer, and every one of them responds when the prompt context makes factual analysis the expected output rather than the statistically safe one.
 
 ---
 
@@ -230,13 +230,13 @@ The v3 pipeline (documented above) chains frameworks sequentially with uniform p
 
 v4 adds: Phase 0 (structured decomposition before any framework runs), tiered parallel execution, residual injection of the original problem at every stage, drift gates between tiers, per-stage temperature profiles, and a marginal value audit at synthesis.
 
-A/B testing on real production code with full mechanism isolation showed that Phase 0 and temperature profiles are **necessary counterbalances** — temperature alone is actively harmful (increases disagreement), Phase 0 alone is inert, but together they produce zero SPLIT findings for $0.09 more per review. The interaction is non-obvious and wouldn't be predicted from either mechanism alone.
+A/B testing on real production code with full mechanism isolation showed that Phase 0 and temperature profiles are **necessary counterbalances** — temperature alone is actively harmful (increases disagreement), Phase 0 alone doesn't reduce SPLITs (though it doubles MAJOR findings and increases CONSENSUS), but together they produce zero SPLIT findings for $0.09 more per review. The interaction is non-obvious and wouldn't be predicted from either mechanism alone.
 
 **[Full v4 architecture →](experiments/v4-architecture.md)** · **[A/B comparison data →](experiments/v3-vs-v4-comparison.md)** · **[LLM principles analysis →](experiments/llm-principles-analysis.md)**
 
 ---
 
-*The pipeline does not make the model smarter. It makes the model honest.*
+*The pipeline does not make the model smarter. It changes what the model is willing to say.*
 
 ---
 

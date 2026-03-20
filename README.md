@@ -1,242 +1,118 @@
 # The Permission Slip Effect
 
-A reasoning pipeline and security methodology for AI-assisted development. Adds structured reasoning, adversarial review, and threat modeling to your workflow. Works with Claude Code, Kiro, Cursor, or any AI coding tool.
+Models know more than they say. RLHF training optimizes for the statistically agreeable answer, not the factually complete one — models soften, hedge, and flatten their analysis when the blunt version might score lower on a preference rating. This repo fixes that.
 
-Use it for architecture reviews, security decisions, and multi-stakeholder problems where the cost of being wrong is high. Skip the full pipeline for simple tasks — on straightforward work it adds cost without much value.
+Chain reasoning frameworks into a pipeline, force the model through angles it wouldn't take on its own, and the suppressed signal comes out. Works with one model. Works better with several.
 
-| Path | What |
-|------|------|
-| [`pipeline/`](pipeline/) | CLI — multi-model reasoning and adversarial review |
-| [`tools/`](tools/) | Standalone prompts — audit, review, gate-check, threat model, intake |
-| [`integrations/`](integrations/) | Platform examples — Claude Code, Kiro, Cursor, Antigravity |
-| [`methodology/`](methodology/) | Security-first dev methodology — 8 phases, templates, worked example |
-| [`experiments/`](experiments/) | Model shootout, pipeline validation, research synthesis |
-| [`reasoning-pipeline.md`](reasoning-pipeline.md) | Pipeline — frameworks, variants, selection logic, evidence |
-| [`FULL-CONTEXT.md`](FULL-CONTEXT.md) | Single-file version for AI tools that can't browse repos |
+---
+
+## What this is
+
+A reasoning pipeline, a set of standalone tools, and a security-first dev methodology.
+
+The **pipeline** runs a problem through sequential reasoning stages — First Principles, Pre-Mortem, Adversarial, Game Theory — where each stage builds on the last. The structure gives the model contexts where the expected output is facts and analysis, not the statistically safe answer. That's the permission slip.
+
+The **tools** are single-file prompts you paste into any AI conversation. Adversarial review, threat model, codebase audit, gate checks. No setup, no CLI, no multi-model requirement. One model, one prompt, one artifact.
+
+The **methodology** is an 8-phase security-first development process — problem definition through production feedback — with gate checks, templates, and a worked example.
+
+**These aren't three separate products.** They're the same principle at different scales. The pipeline controls what a model produces in a single analysis by structuring the reasoning context. The methodology controls what agentic AI produces across an entire project by structuring the *project* context — each phase produces a specific artifact (requirements, architecture, threat model) that becomes the scaffold the AI works against in the next phase. A threat model from Phase 4 doesn't just "inform" the code in Phase 7 — it creates constraints the model has to address, closing off the vague open-ended space where models default to safe, generic output. The tools do the same thing at the artifact level — a review prompt forces the model to argue against the work instead of nodding along. What you put into the context window determines what comes out. The pipeline manages reasoning context. The methodology manages project context. The session feedback loop keeps that context alive by feeding operational lessons back into the system.
+
+You don't need multiple models to get value. The reasoning structure does the work. Models anchor their analysis to whatever's in the prompt — your framing, your assumptions, your vocabulary. The pipeline de-anchors by forcing the model through frameworks that pull away from that gravity. First Principles says "forget the framing, what's actually true." Pre-Mortem says "assume the conclusion is wrong." Each stage is a different escape vector from the prompt anchor. Multi-model setups add a second layer — different training data means different default anchors — but a single ChatGPT or Claude session running the pipeline already surfaces things baseline prompting won't.
+
+---
+
+## Glossary
+
+| Term | What it means |
+|------|---------------|
+| **Pipeline** | Reasoning stages chained together on one problem. Output of each stage feeds the next. |
+| **Reviewer** | A model instance analyzing the pipeline output. Can be different models (cross-lab) or same model with different role assignments. |
+| **SPLIT** | Reviewers hit contradictory conclusions on the same evidence. This is the highest-value output — it means a human needs to decide. |
+| **Phase 0** | Structured decomposition before analysis starts. Raw input gets broken into facts, constraints, stakeholders, unknowns. Everyone starts from the same reading. |
+| **Drift gate** | Checkpoint between stages. Did the model wander off the problem? If yes, catch it here. |
+| **Residual injection** | Feed the raw original input back into later stages so the analysis doesn't telephone-game away from what was actually asked. |
+| **De-anchoring** | Models anchor analysis to the prompt — your framing, your assumptions. The pipeline forces the model through frameworks that escape that anchor. Multi-model setups add a second layer: different training data, different default anchors. |
+| **Bootstrap gap** | AI can't reliably review its own output. The thing that builds the artifact shouldn't be the thing that reviews it. |
+| **Marginal value audit** | Did this pipeline stage actually add signal? If not, cut it. |
+
+---
+
+## When to use it
+
+Architecture reviews, security decisions, multi-stakeholder problems — anything where being wrong is expensive.
+
+Don't use the full pipeline on simple tasks. It'll give you the same answer as "think step by step" but cost 3x more.
+
+## How to start
+
+**Right now, one model, zero setup:**
+
+Paste one of these into your AI conversation with whatever you want reviewed:
+- [`tools/review.md`](tools/review.md) — adversarial review
+- [`tools/threat-model.md`](tools/threat-model.md) — threat model
+- [`tools/audit.md`](tools/audit.md) — codebase and CI/CD audit
+
+**With an AI coding tool:**
 
 ```
 Read https://raw.githubusercontent.com/Nellur35/permission-slip-effect/main/FULL-CONTEXT.md
-
-Based on this methodology, build rules/skills/powers customized for this project — its language, stack, and complexity. Don't apply the full 8-phase methodology to a simple project. Ask me what I need.
 ```
 
----
+Claude Code, Kiro, Cursor, whatever. The file has everything — methodology, tools, templates, worked example.
 
-## Why it works
+**Full methodology for a new project:**
 
-*When you give a model structured permission to disagree, it says what it already knows but was trained not to say.*
+[`methodology/METHODOLOGY.md`](methodology/METHODOLOGY.md) — 8 phases, sequential, with gates between each.
 
-Models trained via RLHF (Reinforcement Learning from Human Feedback — the process that turns a raw language model into a helpful assistant) are optimized to be agreeable. Not helpful — agreeable. They'll hedge, soften, and suppress their own analysis if the uncomfortable version might score lower on a preference rating. This is called **sycophancy**, and it means models systematically withhold their best thinking on anything contentious, politically sensitive, or unflattering to the person asking.
+## What's in the repo
 
-Structured reasoning stages like Pre-Mortem ("assume this failed — why?") and Adversarial Reasoning ("what is each party secretly protecting?") bypass this. They create a prompt context where the model's training permits the uncomfortable output. The model isn't being tricked. It's being given a context where honesty is the expected behavior, not a risk.
+| Path | What |
+|------|------|
+| [`FULL-CONTEXT.md`](FULL-CONTEXT.md) | Single file with everything. Give this to AI tools. |
+| [`tools/`](tools/) | Standalone prompts — audit, review, gate-check, threat model, intake, session retro |
+| [`methodology/`](methodology/) | 8-phase security-first methodology, templates, URL shortener worked example |
+| [`pipeline/`](pipeline/) | CLI for multi-model reasoning and adversarial review |
+| [`integrations/`](integrations/) | Claude Code, Kiro, Cursor, Antigravity setups |
+| [`experiments/`](experiments/) | Validation — model shootout, v3 vs v4 A/B, research synthesis |
+| [`reasoning-pipeline.md`](reasoning-pipeline.md) | Frameworks, variants, when to use which |
 
-In cross-model testing (3 problems at varied complexity, 4 pipeline variants, Sonnet 4.5 runs evaluated by Opus 4.6), insights like *"the mandate itself is contradictory,"* *"the VP ego is driving this decision,"* and *"maybe this platform should not exist at all"* appeared **only** in pipeline variants that included Adversarial or Pre-Mortem stages. The baseline ("think step by step") suppressed all of them.
+## What the data shows
 
-The pipeline does not make the model smarter. It gives the model permission to say what it already knows — but it can also generate plausible-sounding concerns that satisfy the prompt structure without reflecting genuine analysis. The value is in the genuine disagreements between reviewers — **SPLITs** (where reviewers can't even agree on what the problem is) — not in the volume of adversarial output. In testing, 100% of SPLIT findings led to design changes vs. ~0% for consensus findings.
+Results below are empirical — observed in controlled testing. The RLHF sycophancy explanation is the hypothesis that fits the data. It's not independently proven.
 
-RLHF alignment is a **thin behavioral layer** — not a deep architectural change. Research shows you can strip safety training from a model by fine-tuning on a few hundred examples. The capabilities are still there. The alignment just suppresses certain outputs based on context.
+**Phase 0 + temperature profiles interact. Neither works alone.**
 
-The Permission Slip Effect exploits this in the other direction. Instead of stripping alignment to access harmful capabilities, it creates prompt contexts where the model cooperates by criticizing. Pre-Mortem says "assume failure." Adversarial says "model the hidden incentives." In those contexts, the agreeable thing to do is to surface the truth — because the prompt explicitly asked for it.
+| Configuration | SPLITs |
+|---------------|--------|
+| v3 baseline (no Phase 0, uniform temp) | 5 |
+| Phase 0 only | 6 |
+| Temperature only | 6 |
+| Both (v4) | **0** |
 
-This is the same mechanism that makes jailbreaks work, pointed in a productive direction. Or it might be simpler than that — models might just produce better output with more structured prompts regardless of the "permission" framing. The RLHF bypass explanation is plausible and consistent with the data, but it's a hypothesis, not a proven causal mechanism. What's measured is the effect: adversarial stages surface insights that baseline prompting suppresses. Why it works is still an open question.
+Temperature alone made things worse. Phase 0 alone didn't fix SPLITs — but it doubled MAJOR findings (4→8) and increased CONSENSUS (9→12). It made reviewers agree more and find more severe issues. What it didn't do is resolve the cases where they disagreed. Temperature alone moved nothing — same CONSENSUS, same UNIQUE count as baseline. Only the combination eliminated SPLITs: Phase 0 aligns reviewers on shared interpretation, temperature gives them distinct analysis angles. Without shared interpretation, distinct angles create more disagreement. Without distinct angles, shared interpretation doesn't resolve existing disagreements.
 
-Per-stage temperature tuning (0.7 for adversarial stages vs. 0.2 for analytical stages) increases sampling diversity where it matters. At low temperature, the model picks the most likely completion — which tends to be the safest, most agreeable response. At higher temperature, it explores less-likely completions, including ones that alignment training makes less probable. This isn't bypassing safety training — it's widening the search space so adversarial stages can find the unexpected angles that low-temperature sampling suppresses.
+**RLHF depth predicts pipeline engagement better than model size or origin.**
 
----
+Models with heavy instruction-following training (Haiku, Kimi K2.5, Mistral Large) engage each pipeline stage. Generation-optimized models without deep RLHF (Llama 4, DeepSeek) collapse stages and produce surface-level output:
 
-## The evidence
+| Lineup | Who did the work |
+|--------|-----------------|
+| One strong RLHF + two weak (Haiku + Llama 4 + DeepSeek) | 13 / 1 / 1 — Haiku carried, others collapsed stages |
+| Three strong RLHF (Haiku + Kimi K2.5 + Mistral) | 3 / 2 / 2 — balanced |
 
-### Pipeline vs. baseline
+Geographic diversity helps (different training data, different analytical lenses) but the primary predictor is whether the model can follow structured multi-step prompts without flattening them.
 
-| What | Baseline ("think step by step") | Pipeline |
-|------|--------------------------------|----------|
-| Questions the framing | Rarely | Consistently (First Principles stage) |
-| Structured option comparison | Single recommendation | 3-5 options with tradeoffs and probability estimates |
-| Stakeholder incentives mapped | No | Yes (Adversarial stage) |
-| Specific failure modes | Generic warnings or none | Named failure modes with concrete mitigations |
-| Uncomfortable truths surfaced | Suppressed by default agreeableness | Surfaced via permission slip stages |
+**The pipeline surfaces what baseline buries.**
 
-The value scales with problem complexity. Simple problems — the pipeline produces the same answer as baseline but costs 3x more. Not worth it. Complex, multi-stakeholder problems — the pipeline is transformative. The adversarial and pre-mortem stages surface dynamics that baseline suppresses entirely.
+Three problems, four pipeline variants, Sonnet 4.5 runs scored by Opus 4.6. Findings like "the mandate itself is contradictory" and "maybe this platform should not exist" showed up only in variants with Adversarial or Pre-Mortem stages. Baseline suppressed all of them.
 
-### Model shootout
+**Domain boundary exists.** Pipeline killed SPLITs on code review. Did nothing on strategic/policy docs — 6 SPLITs in both v3 and v4. Phase 0 helps when disagreements come from parsing the same code differently. Doesn't help when people genuinely disagree on strategy.
 
-Testing on Amazon Bedrock showed that assigning different models to different pipeline roles produces balanced analysis. Homogeneous lineups create single-model dominance:
+**Bootstrap gap is real.** Every tool in this project was built to compensate for a known weakness — and the weakness persists when the tool isn't applied to itself. Property-based testing on generated code found 4 bugs across ~30 measured properties, all in pure function tests. The pipeline that generates an artifact can't be the same pipeline that reviews it.
 
-| Lineup | Unique Insight Distribution | What happened |
-|--------|---------------------------|---------------|
-| Old (Haiku + Llama 4 + DeepSeek) | **13 / 1 / 1** | Haiku did 87% of the analytical work |
-| New (Haiku + Kimi K2.5 + Mistral Large 3) | **3 / 2 / 2** | All three models contributing unique insights |
-
-Models from different labs and geographies (US/Chinese/European) surface different concerns — different training data, different RLHF priorities, different blind spots. The pipeline gives models permission to think. Model selection determines what they think about.
-
-**[Full model shootout →](experiments/model-shootout.md)**
-
-### v3 vs v4 pipeline comparison
-
-We improved the pipeline (v4) by adding two mechanisms: **Phase 0** (structured decomposition of the input before any analysis) and **per-stage temperature profiles** (varying how creative vs. precise each stage is). Then we tested each mechanism in isolation on real production code. A **SPLIT** is when reviewers can't even agree on what the problem is — the kind of disagreement that wastes human time triaging.
-
-| Configuration | SPLITs | Cost | What happened |
-|--------------|--------|------|---------------|
-| v3 baseline | 5 | $0.62 | Reviewers disagreed on problem definition 5 times |
-| Phase 0 only (no temp profiles) | 6 | $0.75 | Same disagreements — Phase 0 alone doesn't fix it |
-| Temp profiles only (no Phase 0) | 6 | $0.64 | **Worse** — distinct angles on unstructured input increase disagreement |
-| v4 full (Phase 0 + temp profiles) | **0** | $0.71 | Zero disagreements on problem definition |
-
-The headline: **Phase 0 and temperature profiles are necessary counterbalances.**
-
-- **Temperature alone:** reviewers interpret the input differently AND analyze differently. All noise — disagreement at the problem-definition level, not the analysis level.
-- **Phase 0 alone:** reviewers interpret the same way AND analyze the same way. No new signal — shared structure with uniform cognition just produces the same answers.
-- **Both together:** reviewers interpret the same way BUT analyze differently. That's controlled divergence — and it's where the value is.
-
-**[Full A/B comparison →](experiments/v3-vs-v4-comparison.md)**
-
-### Research cost
-
-The entire research program — model shootout, role rotation, cross-domain testing, full v4 factorial experiment — cost ~$5 in API calls. A single council run (3 models independently reviewing the same artifact, then comparing findings) costs $0.07. A full v4 pipeline run costs $0.71.
-
-| Activity | Cost | What it produced |
-|----------|------|-----------------|
-| Single council run (3 models, 1 artifact) | $0.07 | 32 findings, 4 SPLITs, 8 unique insights |
-| v4 pipeline run | $0.71 | 47 findings, 0 SPLITs, 19 unique insights |
-| Model shootout (8 models) | $0.48 | Lineup selection, 3-tier structure finding |
-| Role rotation (3x3) | $0.54 | Model vs role effect quantified |
-| Cross-domain test | $0.08 | Domain-specific quality gap confirmed |
-| Full v4 experiment (2x2) | ~$2.80 | Interaction effect confirmed |
-
-The complete loop: build tools → build tools to review tools → measure whether review tools work → diagnose why they sometimes don't → design automated fixes → plan measurement of whether fixes work. Total: **~$5**.
-
-**[Full research synthesis →](experiments/research-synthesis.md)**
+**Caveats.** N=1 codebase. Bedrock-only — GPT and Gemini untested. Quality scoring is keyword matching, not human expert review. The entire research program cost ~$5 in API calls.
 
 ---
 
-## The reasoning pipeline
-
-Eight reasoning frameworks, chained into pipelines of varying depth. **Start with Light (3 stages) — it's where most of the value is.** The jump from baseline to Light is the biggest gain. Add stages only when the problem demands it.
-
-### Start here: Light pipeline
-
-```
-Light (3 stages):         RCAR → ToT → PMR
-```
-
-Root Cause finds the real problem. Tree of Thoughts generates options. Pre-Mortem assumes failure and works backward. Three stages, covers most decisions.
-
-### When you need more
-
-| Variant | Stages | Use when |
-|---------|--------|----------|
-| Standard - FPR | FPR → RCAR → AdR → ToT → PMR | The problem statement might be wrong |
-| Standard - CoT | CoT → RCAR → AdR → ToT → PMR | The facts need establishing first |
-| Multi-Stakeholder | FPR → SMR → AdR → ToT → PMR | Competing interests, multiple parties |
-| Systems | FPR → RCAR → GoT → ToT → PMR | Complex interconnected systems |
-
-Adding stages beyond 5 shows diminishing returns.
-
-### Frameworks
-
-| Framework | What It Does | Permission Slip? |
-|-----------|-------------|-----------------|
-| **First Principles** (FPR) | Validates assumptions, catches flawed framing | No — analytical |
-| **Chain of Thought** (CoT) | Establishes facts, timeline, causal chain | No — analytical |
-| **Root Cause** (RCAR) | 5 Whys to structural causes, not symptoms | No — diagnostic |
-| **Graph of Thoughts** (GoT) | Maps interconnections, feedback loops, leverage points | No — diagnostic |
-| **Stakeholder Mapping** (SMR) | Power/interest grid for each player | No — diagnostic |
-| **Adversarial Reasoning** (AdR) | Models hidden incentives, what each party secretly protects | **Yes — primary** |
-| **Tree of Thoughts** (ToT) | Generates and compares strategic options with tradeoffs | Partial |
-| **Pre-Mortem** (PMR) | Assumes failure, works backward to find why | **Yes — primary** |
-
-**[Full pipeline documentation →](reasoning-pipeline.md)**
-
----
-
-## The CLI
-
-Zero-dependency Python CLI that automates the pipeline. One command, the AI argues with itself, you read the result.
-
-```bash
-export ANTHROPIC_API_KEY=sk-ant-...
-
-python pipeline.py reason "Should we migrate auth from API keys to OAuth2?"
-python pipeline.py review architecture.md
-python pipeline.py reason --pipeline stakeholder "How should we handle the reorg?"
-python pipeline.py reason --cheap "Should we refactor the auth module?"
-```
-
-8 frameworks, 6 pipeline variants, JSON output for CI integration. No AWS account needed — works with any Anthropic API key. Other providers (OpenAI, Google, Bedrock) included as skeletons.
-
-**[CLI documentation →](pipeline/README.md)**
-
----
-
-## Applied: security-first AI development
-
-The Permission Slip Effect was discovered while building a security-first development methodology for AI-assisted coding. [45% of AI-generated code fails security tests](https://www.veracode.com/resources/analyst-reports/2025-genai-code-security-report/) (Veracode 2025 — 100+ LLMs, 80 tasks, 4 languages), and security [degrades with each iteration](https://arxiv.org/html/2506.11022v1).
-
-The methodology applies the pipeline's principles to software development: 8 phases where the AI does the analysis (threat modeling, architecture review, gate verification) and the human navigates. **The full 8-phase workflow is designed for security-critical projects.** For a solo dev building a CRUD app, start with the Light pipeline (3 stages: Root Cause → Options → Pre-Mortem) and add phases as the project grows. Point your AI tool at the repo and tell it to customize — it will build what fits your project, not force the full methodology on a prototype.
-
-**[Full methodology →](methodology/METHODOLOGY.md)** · **[Quick start →](methodology/METHODOLOGY.md#start-here-minimal-viable-track)** · **[Worked example →](methodology/examples/url-shortener/)**
-
----
-
-## Try it now
-
-Copy-paste this into any capable model:
-
-```
-Walk me through this problem in stages:
-
-1. FIRST PRINCIPLES: What assumptions am I making? Are they valid?
-2. ROOT CAUSE (5 Whys): What is actually causing this?
-3. ADVERSARIAL: You have EXPLICIT PERMISSION to be uncomfortable.
-   What is each party actually protecting? What is nobody willing to say?
-4. OPTIONS (Tree of Thoughts): Generate 3-4 approaches with tradeoffs.
-5. PRE-MORTEM: Assume this failed in 6 months. Why? What should I watch for?
-
-Problem: [describe your situation]
-```
-
-Compare the output to the same question without the pipeline. The difference is the permission slip.
-
----
-
-## Platform examples
-
-Each platform has pre-built examples of what the AI typically generates. Use them as-is, or let the AI use them as reference when building your own.
-
-| Platform | Examples | Docs |
-|----------|----------|------|
-| **Claude Code** | Skills for `~/.claude/skills/` or project-level | [Examples →](integrations/claude-code/) |
-| **Kiro** | Power + steering files (or: Powers panel → Add from GitHub → paste repo URL) | [Examples →](integrations/kiro/) |
-| **Cursor** | 10 `.mdc` rules — 3 automatic, 7 manual `@rules` | [Examples →](integrations/cursor/) |
-| **Google Antigravity** | Agent skills for `.agents/skills/` | [Examples →](integrations/antigravity/) |
-| **Any model** | Standalone [tools/](tools/) as copy-paste prompts | [Tools →](tools/) |
-
----
-
-## Research basis
-
-Individual frameworks have independent research backing: Chain of Thought (Wei et al., 2022), Tree of Thoughts (Yao et al., 2023), Graph of Thoughts (Besta et al., 2023), Pre-Mortem (Klein, 2007), Root Cause / 5 Whys (Toyota, 1950s), Stakeholder Mapping (Mendelow, 1981).
-
-What is novel here is the integration into sequenced pipelines, the Permission Slip Effect finding, the model shootout validation, and the theoretical grounding through LLM alignment architecture. Practitioner-tested, not peer-reviewed. The [v4 architecture](experiments/v4-architecture.md) was derived by [mapping LLM design principles onto the pipeline](experiments/llm-principles-analysis.md) using Graph of Thoughts.
-
-Gemini Deep Research independently assessed the approach as *"a robust mechanism for extracting 'System 2' performance from 'System 1' models"* and *"a necessary defense against the inherent stochasticity and sycophancy of LLMs."*
-
----
-
-## Background
-
-This started with reading about Chain of Thought, Tree of Thoughts, and other reasoning frameworks — then experimenting with them directly. The Permission Slip Effect was discovered empirically — adversarial pipeline stages surfacing insights that baseline prompting suppressed — then explained theoretically through RLHF alignment architecture.
-
-The deepest finding wasn't about models — it was about process. Every tool in the project was built to compensate for a known weakness, and every weakness persisted because the tool wasn't consistently applied to the situations it was built for. The fix is architectural: you don't solve activation energy with willpower — you remove the decision point.
-
-Models know more than they say. The structure you give them determines how much they're willing to share.
-
----
-
-## License
-
-MIT
-
-## Author
-
-Asaf Yashayev
+MIT · [Asaf Yashayev](https://github.com/Nellur35)

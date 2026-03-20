@@ -466,7 +466,7 @@ FPR → SMR → AdR → ToT → PMR
 
 **Opener selection:** If the problem statement might be wrong, start with FPR. If it is solid but complex, start with CoT.
 
-**Permission slip effect:** Pre-Mortem and Adversarial stages structurally bypass your default agreeableness. Use them on any decision where surfacing uncomfortable truths matters.
+**Permission slip effect:** Pre-Mortem and Adversarial stages give the model contexts where the expected output is facts and analysis, not the statistically safe answer. Use them on any decision where the complete picture matters more than the comfortable one.
 
 See [`reasoning-pipeline.md`](./reasoning-pipeline.md) for full reference.
 
@@ -488,13 +488,13 @@ Models optimize for "plausible response" -- not "thorough response." They stop a
 
 This is the single most important property of the pipeline.
 
-Models are sycophantic by default -- they tell you what you want to hear. Research on LLM sycophancy shows that models trained via RLHF are incentivized to be agreeable, sometimes at the cost of accuracy. Adding explicit permission to disagree (e.g., "find why this is wrong") increases rejection of flawed reasoning dramatically.
+Models are sycophantic by default -- RLHF training optimizes for the statistically agreeable answer, not the factually complete one. Research on LLM sycophancy shows that models trained via RLHF are incentivized to be agreeable, sometimes at the cost of accuracy. Adding explicit permission to disagree (e.g., "find why this is wrong") increases rejection of flawed reasoning dramatically.
 
-Structured stages like Pre-Mortem ("assume this failed -- why?") and Adversarial Reasoning ("what is each party secretly protecting?") give the model explicit structural permission to surface uncomfortable truths it would otherwise suppress.
+Structured stages like Pre-Mortem ("assume this failed -- why?") and Adversarial Reasoning ("what is each party secretly protecting?") give the model contexts where the expected output is facts and analysis, not the statistically safe answer. The model isn't being tricked -- it's being given a structure where the training permits the complete output.
 
 In cross-model testing (3 problems at varied complexity, 4 pipeline variants, Sonnet 4.5 runs evaluated by Opus 4.6), insights like "the mandate itself is contradictory," "the VP ego is driving this decision," and "maybe this platform should not exist at all" appeared **only** in pipeline variants that included Adversarial or Pre-Mortem stages. The baseline ("think step by step") suppressed all of them.
 
-The pipeline does not make the model smarter. It gives the model permission to say what it already knows.
+The pipeline does not make the model smarter. It changes what the model is willing to say.
 
 ---
 
@@ -688,7 +688,7 @@ The value scales with problem complexity:
 
 ---
 
-*The pipeline does not make the model smarter. It makes the model honest.*
+*The pipeline does not make the model smarter. It changes what the model is willing to say.*
 
 ---
 
