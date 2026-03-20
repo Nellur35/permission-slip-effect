@@ -404,15 +404,6 @@ Pipeline gate: [which gate gets this new test]
 
 Do this. The tests you write before production will never be as good as the tests derived from real failure modes.
 
-### Methodology Retro
-
-After every non-trivial session, review the process itself — not just the code:
-- What broke in the workflow? Which phase was underspecified?
-- What was slow? Which gate added friction without catching real issues?
-- What should change in your steering files, rules, or templates?
-
-Lessons that work get kept. Rules that don't get pruned. The methodology is a living document — not a reference manual. Encode operational lessons (environment quirks, CI gotchas, cost-saving patterns) into your tool's persistent context: steering files (Kiro), CLAUDE.md (Claude Code), rules (Cursor), or knowledge base (Antigravity).
-
 ---
 
 ## The Multi-Model Review System
@@ -560,6 +551,42 @@ Ready-to-use manual review prompts are in [`tools/review.md`](../tools/review.md
 ### Why Handoff Artifacts, Not Decision Logs
 
 A growing Decision Log eventually consumes the context window. Handoff artifacts carry forward only what matters. If a decision is important enough to carry forward, it belongs in the output file. If it's not in the output file, it doesn't carry forward.
+
+---
+
+## Session Feedback Loop
+
+*The methodology improves because it processes its own output — not because someone remembers to update it.*
+
+Every work session produces signal. Bug fix, feature, refactor, investigation, tech debt, configuration change — all of it has causal structure worth capturing. This is not a postmortem. Postmortems are for incidents. This runs after any session where work was done.
+
+This section is not part of Phase 8. Phase 8 covers production feedback — failures the pipeline missed, new tests derived from real errors. The session feedback loop wraps all phases. A requirements session, an architecture decision, a threat modeling exercise, an implementation sprint — all of them produce signal that improves the methodology, the tools, and the steering rules.
+
+**When to run the full loop vs. quick summary.** Not every session needs three full stages. If the session involved a decision with tradeoffs, something surprising, or a recognized pattern — run the full loop. If it was routine execution with no decisions or surprises — write a one-line summary ("what happened, anything surprising, any lesson") and append to `diary.md`. If you are not sure, run the full loop. The cost of running it unnecessarily is 10 minutes. The cost of skipping it when it mattered is a lost insight.
+
+**Three stages, strictly sequential. Each feeds the next.**
+
+**Stage 1 — Root Cause Analysis.** What happened this session, and what caused it to happen that way? For each significant event: trace the causal chain (5 Whys if the chain is not obvious), identify the enabling condition (process, tooling, knowledge, environment), locate the decision point, and flag whether this is a new pattern or a recurring one. No judgment — just causation. If the enabling condition is a restatement of the event, you have not gone deep enough.
+
+**Stage 2 — Retrospective.** Read the RCA outputs. Start with what worked well — same causal rigor as problems. What structural condition enabled the success, and how do you protect it? Then: what patterns are visible within this session and across previous sessions? What was the delta between what you expected and what actually happened? What do you understand now that you did not before? Where did friction exist?
+
+**Stage 3 — Lessons Learned.** The only stage that produces prescriptive output. For each finding from the retrospective, decide: does this require a rule change, a process change, a tool change, a knowledge update, or nothing?
+
+Every lesson must be executable — not "be more careful about X" but "add check for X to gate Y" or "update steering rule W with this condition." If you cannot name a specific target file or rule, it is a strategic finding, not a tactical lesson — log it and schedule it concretely.
+
+**Conflict detection.** Before applying any lesson, check: does it contradict an existing rule, gate, or constraint? If yes — do not apply, do not waive. A lesson-rule conflict means either the rule is wrong, the lesson is wrong, or both are symptoms of a deeper structural issue. Escalate to a Graph of Thoughts analysis with `diary.md` as the input corpus. The GoT maps the dependency structure of both — when each was created, what evidence supports each, where their causal chains converge. The resolution comes from the shared root, not from choosing between the leaf nodes. This is not a Waiver Pattern situation — waivers are for consciously skipping a gate you know exists. A conflict is "the system is telling me two contradictory things and I need to find which one is wrong, or whether both are symptoms of something else."
+
+**Tactical vs. strategic.** Tactical lessons apply in under 2 minutes — a rule addition, a constraint appended, a config change. These get applied before the session ends. Strategic findings inform future planning — an architecture decision, a process restructuring. These get logged in `diary.md` with a scheduled session, not "someday."
+
+**The output is not a document. It is a set of changes to your working system.** A lesson that says "add constraint to the review tool" is not done until the review tool is updated. Lessons that sit in a backlog decay. Apply immediately or schedule concretely.
+
+**Hook trigger.** End of any session where work was produced. When the session is ending, offer to run the feedback loop. If the session was routine with no decisions or surprises, a one-line summary is sufficient. This is a concrete trigger — not a discipline-based rule. Concrete triggers get near-100% compliance. "Remember to check" does not. If you are using Kiro, Claude Code, or Cursor, encode this as a hook or steering rule that activates on session close or task completion.
+
+**Diary.** The methodology already maintains a diary — a structured log auto-collected via steering files and hooks (see Multi-Agent Evolution). After each feedback loop run (full or quick summary), append a diary entry: date, one-line description, key finding, lessons applied, strategic findings logged, any escalated conflicts. The diary is the corpus that Graph of Thoughts runs against — for conflict resolution and for agent emergence. Feedback loop entries become part of that corpus. Do not create a separate file.
+
+**What accumulates:** Over time, the lessons modify your methodology, tools, steering rules, and templates. You do not maintain a separate knowledge base — the system you work in *is* the knowledge base, because every session's output changed it. The methodology is a living document not because someone says so, but because there is a mechanism that makes it so.
+
+**Standalone tool:** See `tools/session-retro.md` for the full templates and output formats. Use it independently of the methodology or as part of the full workflow.
 
 ---
 
