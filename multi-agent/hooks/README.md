@@ -145,8 +145,11 @@ This runs as a PR check. It warns but doesn't fail the build. The ratio of chang
 | Layer | Mechanism | Enforcement Level |
 |---|---|---|
 | Platform hook | Fires on save/compact/commit, writes entry deterministically | **Primary** — doesn't compete with coding instructions |
+| Skill telemetry | Logs skill activations, outputs, overrides, reruns via PreToolUse/PostToolExecution hooks | **Observability** — feeds session retro Stage 2.5 |
 | Steering file | AI instruction to write entries after each change | Secondary — works ~90% of the time but drifts in long sessions |
 | Git pre-commit | Warns if code changed but diary didn't | Advisory — navigator sees the gap |
 | CI check | PR-level coverage check | Team governance — optional |
 
 **Use hooks when your platform supports them** (Kiro, Claude Code). Fall back to steering-only on platforms without hook support (Cursor, Windsurf). Add CI checks if you're running a team.
+
+See [`telemetry.md`](telemetry.md) for skill telemetry setup — PreToolUse hooks that log which skills fire, how often, and whether the navigator overrides the output.

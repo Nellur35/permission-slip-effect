@@ -167,3 +167,13 @@ Top 3-5 gaps to close, ranked by impact:
 - Be specific about file paths where you found things.
 - If you can't determine something without running the suite, say so.
 - The audit is a snapshot, not a verdict. It tells you where to start.
+
+## Gotchas
+
+**Overwhelming output without prioritization.** The audit can produce 50+ findings across CI/CD, test coverage, security controls, and architecture. Without prioritization, the navigator can't act on it. The output should lead with: "Start here: [top 3 gaps that carry the most risk]." Everything else is reference.
+
+**Misses custom tooling.** The audit globs for known CI/CD patterns (GitHub Actions, Jenkins, GitLab CI). Custom build scripts, Makefiles with non-standard targets, or internal CLI wrappers get missed. If the audit finds no CI/CD but the project clearly deploys somewhere, ask — don't report "no pipeline found."
+
+**Reports "Missing" when it's "Different."** The methodology expects specific artifacts (architecture.md, threat_model.md). Existing projects often have equivalent content under different names or in different locations (DESIGN.md, security-review.pdf, architecture decisions in ADR format). The audit should recognize equivalent artifacts, not just pattern-match filenames.
+
+**Doesn't distinguish advisory from blocking.** Some gaps are critical (no secret scanning on a project with API keys). Others are nice-to-have (no property-based tests on a CRUD app). The audit output should distinguish: "Fix before any new work" vs. "Add when practical." Without this, the navigator either fixes everything (expensive) or nothing (risky).

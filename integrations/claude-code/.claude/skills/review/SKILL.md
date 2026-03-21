@@ -89,3 +89,15 @@ High: [N]  Medium: [N]  Low: [N]
 - Do not validate. Do not praise.
 - Be specific. "This could be a problem" is not a finding. "The API gateway trusts all internal traffic without authentication, so a compromised internal service can access any endpoint" is a finding.
 - The corrected artifact is what carries forward, not this review.
+
+## Gotchas
+
+**Pulls punches after pushback.** If the navigator or author disputes a finding, the model softens the next finding. This is the RLHF sycophancy pattern the entire repo exists to counter — and it still happens inside the review skill. The structural fix: run reviews from a fresh context or a different model. The behavioral fix: if the model suddenly agrees with everything, distrust the output.
+
+**Generic findings on complex artifacts.** Under context pressure, the model produces findings like "consider adding input validation" or "error handling could be improved." These are not findings — they're filler. Every finding must reference a specific component, a specific failure mode, and a specific impact. If a finding could apply to any project, it's not a finding.
+
+**Forgets the adversarial mandate mid-review.** The skill says "find what is wrong, not whether it is good." In long reviews (10+ findings), the model's tone shifts toward balanced assessment — "this is well-designed but could improve..." That's a review, not an adversarial review. The mandate is adversarial. If the output contains praise, it drifted.
+
+**Doesn't cross-reference the threat model.** When reviewing code (Phase 7), the review skill should check whether threat mitigations from Phase 4 are actually implemented. It often doesn't — it reviews the code on its own terms. Check: if `threat_model.md` exists, does the review reference it? If not, the review missed the highest-value findings.
+
+**Severity inflation on first pass, deflation on pushback.** First review: everything is High. Author pushes back. Second pass: everything becomes Medium. Neither is calibrated. Severity should be tied to the threat model's impact ratings, not to the model's confidence level.

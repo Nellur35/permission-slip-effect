@@ -27,6 +27,8 @@ You are performing a structured feedback loop on the session. Not a postmortem �
 
 **Stage 2 — Retrospective:** Read the RCA. Start with what worked well — same causal depth as problems. What structural condition enabled it, and how do you protect it? Then: identify repeating patterns (within this session and historically). Note where expected ≠ actual. State what you understand now that you didn't before. Flag friction points.
 
+**Stage 2.5 — Telemetry Review (if telemetry is installed):** Before generating lessons, run `bash .claude/skills/telemetry/analyze-telemetry.sh` (or `--all` for cross-session trends). Read the output. Answer: (1) Which skill activations does the navigator not mention in the session description? These are blind spots. (2) Which skills activated but produced no output — overtriggering or navigator pivot? (3) Which skills should have fired but didn't — undertriggering? (4) If the navigator overrode a skill's output, was it scope mismatch, quality issue, context issue, or legitimate pivot? (5) If a skill was invoked multiple times, was it iteration (healthy) or thrashing (skill needs rewrite)? (6) Completion rate below 70% means skills are doing more reading than producing. Feed all findings into Stage 3 as telemetry-sourced lessons with format: `Source: telemetry — [metric]`, `Type: skill-tuning`, `Target: [which SKILL.md or hook config]`. When telemetry is available, append to the diary entry: skills activated, completion rate, overrides, telemetry signals.
+
 **Stage 3 — Lessons Learned:** For each retro finding, produce an executable action. Format:
 
 ```
@@ -51,3 +53,15 @@ Priority: do now | next session | backlog
 - Do not skip this because the session went well. Good outcomes have causal structure too.
 - Do not produce vague lessons like "improve testing." Produce "add edge case X to test suite Y."
 - Do not maintain a separate lessons-learned file. Update the system directly. Write to the existing `diary.md`, not a new file.
+
+## Gotchas
+
+**Produces vague lessons.** "Improve test coverage" is not a lesson. "Add edge case test for empty input to `validate_token()` in `tests/test_auth.py`" is a lesson. If the Action field doesn't name a specific file or rule, it's a strategic finding, not a tactical lesson. The skill says this — the model ignores it under time pressure.
+
+**Skips "what worked well" analysis.** The model treats the retro as a postmortem — it finds problems. Stage 2 explicitly asks what worked and why, with the same causal depth as problems. Good outcomes have structural conditions worth protecting. If the retro output has no "What Worked" section, or the section is one sentence, it's incomplete.
+
+**Conflict detection is theoretical.** Stage 3 says to check if a lesson contradicts an existing rule and escalate. In practice, the model almost never detects conflicts because it would need to read every existing rule and gate to compare. When this matters most (a lesson that would weaken a security gate), the model is least likely to catch it. Running `/gate-check` after applying retro lessons is the safety net.
+
+**Quick summary path is too quick.** The quick filter says routine sessions get one paragraph. The model uses this escape hatch aggressively — sessions with genuine surprises get quick-summarized because the model classifies them as routine. Bias toward the full loop. If in doubt, run it.
+
+**Doesn't check if tactical lessons were applied.** The skill says "do now lessons get applied before the session ends." But it doesn't verify. If the retro says "add rule X to CLAUDE.md" and the session ends without that edit, the lesson is lost. The telemetry system (Stage 2.5) closes this gap — but only if telemetry is installed.

@@ -47,6 +47,44 @@ Read all RCA outputs. Answer with equal rigor for successes and problems:
 
 ---
 
+## Stage 2.5: Telemetry Review (If Available)
+
+*What did the tools actually do vs. what the navigator noticed?*
+
+If `telemetry.jsonl` exists at project root, run the analysis script before generating lessons:
+
+```bash
+bash .claude/skills/telemetry/analyze-telemetry.sh          # current session
+bash .claude/skills/telemetry/analyze-telemetry.sh --all     # cross-session trends
+```
+
+Read the output. Answer:
+
+1. **Navigator blind spots.** Which skill activations does the navigator not mention in the session description? These are invisible actions — the model used a skill, produced (or didn't produce) output, and the navigator didn't notice.
+2. **Overtriggering.** Which skills activated but produced no output? Two possibilities: wrong skill triggered (description field needs tuning), or navigator changed direction mid-skill (legitimate, but worth noting).
+3. **Undertriggering.** Based on the session description, which skills *should* have fired but didn't? Compare the session events against the skill descriptions.
+4. **Override patterns.** If the navigator overrode a skill's output, why? Categories: scope mismatch (fix skill instructions), quality issue (add to gotchas), context issue (skill didn't read the right artifacts), legitimate pivot (not a skill problem).
+5. **Rerun patterns.** If a skill was invoked multiple times, was it iteration (refining output — healthy) or thrashing (not getting what was needed — skill needs rewrite)?
+6. **Completion rate.** If below 70%, the skill library is doing more reading than producing. Either skills are overtriggering or the methodology is pulling in more context than needed for the task.
+
+Feed all findings into Stage 3 as telemetry-sourced lessons. Format:
+
+```
+Lesson: [name]
+Source: telemetry — [metric or signal that surfaced it]
+Type: skill-tuning
+Scope: tactical
+Action: [specific change to skill file, description, or hook config]
+Target: [which SKILL.md, hook config, or description field]
+Priority: do now | next session
+```
+
+When telemetry is available, append to the diary entry: skills activated, completion rate, overrides, telemetry signals.
+
+If no `telemetry.jsonl` exists, skip this stage — the retro works without it. Telemetry adds a data layer; the retro is the interpretation layer.
+
+---
+
 ## Stage 3: Lessons Learned
 
 *What changes, concretely?*
@@ -143,3 +181,17 @@ Conflicts: [ESCALATED items, or none]
 **Catches:** Recurring patterns, process friction, decision points, structural conditions enabling both good and bad results, knowledge gaps, successes worth protecting.
 
 **Does not catch:** Problems you did not notice during the session. Use adversarial review (`tools/review.md`) for that.
+
+---
+
+## Gotchas
+
+**Produces vague lessons.** "Improve test coverage" is not a lesson. "Add edge case test for empty input to `validate_token()` in `tests/test_auth.py`" is a lesson. If the Action field doesn't name a specific file or rule, it's a strategic finding, not a tactical lesson.
+
+**Skips "what worked well" analysis.** The model treats the retro as a postmortem — it finds problems. Stage 2 explicitly asks what worked and why, with the same causal depth as problems. Good outcomes have structural conditions worth protecting.
+
+**Conflict detection is theoretical.** Stage 3 says to check if a lesson contradicts an existing rule and escalate. In practice, the model almost never detects conflicts because it would need to read every existing rule and gate to compare. Running a gate check after applying retro lessons is the safety net.
+
+**Quick summary path is too quick.** The quick filter says routine sessions get one paragraph. The model uses this escape hatch aggressively — sessions with genuine surprises get quick-summarized because the model classifies them as routine. Bias toward the full loop. If in doubt, run it.
+
+**Doesn't check if tactical lessons were applied.** The skill says "do now lessons get applied before the session ends." But it doesn't verify. If the retro says "add rule X" and the session ends without that edit, the lesson is lost.

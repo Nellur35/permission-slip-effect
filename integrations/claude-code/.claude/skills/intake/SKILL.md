@@ -174,3 +174,15 @@ Once the artifact passes the gate check, tell the user:
 - Use the user's own words in the generated artifact. Do not rewrite their language.
 - Never say "great question." Just respond substantively.
 - Keep it conversational and direct. You are a practitioner, not a facilitator.
+
+## Gotchas
+
+**Accepts vague pain.** The instructions say "push back on vague answers" but the model often accepts "it's slow" or "it's not great" as sufficient for Q1. If the problem statement contains adjectives without numbers, the intake failed. "Slow" is not a problem. "P95 latency exceeds 3 seconds on the payment endpoint, causing 12% cart abandonment" is a problem.
+
+**Colludes on premature solutions.** The user says "I need a React app that..." The model correctly redirects to the problem — once. If the user insists, the model folds and starts writing requirements for the React app. The problem statement then describes a solution, not a problem. Check: does the problem statement mention any technology? If yes, intake drifted.
+
+**Skips the "why not code" question.** Q3 (has anyone tried solving this without code?) gets skipped or accepted with a one-word answer more than any other question. This is the question that catches projects that shouldn't be built. If the artifact's "Alternatives Considered" table has one row or none, the gate should fail.
+
+**Reconstruction path produces shallow assessments.** For existing codebases, the model tends to accept the user's self-description at face value instead of running `/audit` to verify. The recommended entry phase often defaults to "Phase 6" even when the existing architecture has never been threat modeled. Check: if the recommended phase is 6 or 7, is there evidence that Phases 3-5 artifacts actually exist and are current?
+
+**One-question-at-a-time breaks in fast conversations.** If the navigator is experienced and answers multiple questions in one message, the model sometimes still asks the next question instead of acknowledging what was already answered. It follows the "one at a time" instruction literally when it should adapt to the navigator's pace.

@@ -63,3 +63,13 @@ Implementation will reveal upstream flaws. That's the process working. Identify 
 ## Full Reference
 
 See `METHODOLOGY.md` for rationale, worked examples, the reasoning pipeline, and the multi-model review system.
+
+## Gotchas
+
+**Tries to run multiple phases in one session.** The orchestrator routes to the right skill per phase, but it doesn't enforce "one phase per session." Under navigator pressure ("let's get through Phases 1-3 today"), the model compresses phases, skips gate checks between them, and produces artifacts that haven't been reviewed. Each phase transition should include a gate check. If the navigator wants speed, the answer is parallel sessions (Tier 2), not compressed phases.
+
+**Routes to direct work when a skill exists.** Phases 2, 3, 5, 6, 7, 8 are listed as "Direct work" in the routing table. But `/review` should be offered at the end of every phase, and `/gate-check` should be offered at every transition. The model sometimes does Phase 3 → Phase 4 without offering either. The routing table shows what skill *runs the phase* — it doesn't show the skills that *close the phase*.
+
+**Loses phase context in long sessions.** After 40+ turns, the model forgets which phase it's in and starts mixing phase concerns. Implementation decisions appear in Phase 2 discussions. Architecture details leak into Phase 1. The phase routing table in the orchestrator should be re-read at every phase transition, not just at session start.
+
+**Doesn't enforce the handoff artifact.** The skill says "if it's not in the output file, it doesn't carry forward." But the model frequently carries context from the conversation that isn't in the artifact. Phase 3 discussions influence Phase 4 work even when they weren't captured in `architecture.md`. The discipline is: re-read the artifact at the start of each phase. If it's not in the file, it doesn't exist.

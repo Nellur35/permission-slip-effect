@@ -4,11 +4,13 @@
 >
 > Source repo: https://github.com/Nellur35/permission-slip-effect
 >
+> **New to this repo?** Start with Part 6 (guide) — it routes you to the right entry point.
 > **Building a new project or feature:** Start with Part 1 (methodology) — follow phases 1-8.
 > **Analyzing a complex decision (not code):** Skip to Part 2 (reasoning pipeline) — chain frameworks into structured analysis.
 > **Reviewing or auditing existing code:** Skip to Part 3 (tools) — standalone prompts for audit, review, threat model.
 > **Phase output templates:** Part 4.
 > **Worked example:** Part 5.
+> **Known failure modes:** Part 7 (gotchas) — where Claude breaks and how to catch it.
 
 ---
 
@@ -1269,6 +1271,8 @@ Run a structured retrospective after any work session. Not just when things brea
 
 **Stage 2 — Retrospective.** What worked well and why (same causal depth as problems)? Patterns repeating? Expected vs. actual delta? New understanding? Friction?
 
+**Stage 2.5 — Telemetry Review (if available).** If `telemetry.jsonl` exists, run `analyze-telemetry.sh` before generating lessons. Compare what skills actually fired vs. what the navigator noticed. Check for: blind spots (activations the navigator didn't mention), overtriggering (skills read but no output), undertriggering (skills that should have fired but didn't), override patterns, rerun patterns, completion rate. Feed findings into Stage 3 as skill-tuning lessons. See `multi-agent/hooks/telemetry.md`.
+
 **Stage 3 — Lessons Learned.** Executable actions only. Tactical (apply in 2 min) vs. strategic (log and schedule). Conflict check: if a lesson contradicts an existing rule — do not apply, do not waive. Escalate to GoT analysis against `diary.md`. Resolution comes from the shared root. Append diary entry after each run.
 
 Full templates and output formats: `tools/session-retro.md`.
@@ -2192,3 +2196,146 @@ The dummy product is intentionally simple. It returns hardcoded responses where 
 
 ---
 
+
+# Part 6: Guide
+
+## What This Is
+
+Three things, same principle:
+
+1. **Reasoning pipeline** — chain frameworks (First Principles → Pre-Mortem → Adversarial → Game Theory) on one problem. Forces the model past the statistically safe answer. Works with one model. Better with several.
+2. **Standalone tools** — single-file prompts. Paste into any AI conversation. No setup.
+3. **Security-first methodology** — 8-phase dev process. Problem definition through production feedback. Gate checks between phases. Templates for every artifact.
+
+They're the same idea at different scales. The pipeline manages reasoning context. The methodology manages project context. The tools work at the artifact level.
+
+## Route by Intent
+
+| "I want to..." | Go to |
+|---|---|
+| Review something right now | Part 3 → Tool: review |
+| Threat model an architecture | Part 3 → Tool: threat-model |
+| Scan an existing codebase | Part 3 → Tool: audit |
+| Check if a phase is done | Part 3 → Tool: gate-check |
+| Define a problem properly | Part 3 → Tool: intake |
+| Run a session retrospective | Part 3 → Tool: session-retro |
+| Analyze a complex decision | Part 2 → Reasoning Pipeline |
+| Start a new project | Part 1 → Phase 1 |
+| See a worked example | Part 5 |
+| Set up multi-agent | `multi-agent/MULTI-AGENT.md` — start with Tier 0 first |
+
+## Don't Use For
+
+- Simple tasks where "think step by step" works
+- Tasks where being wrong is cheap
+- Throwaway scripts (use standalone tools, not the full methodology)
+
+## Key Terms (Only If Asked)
+
+| Term | One-line explanation |
+|------|---------------------|
+| Permission Slip | Structured context that makes the model produce what RLHF training suppresses |
+| Phase 0 | Decomposition before analysis — facts, constraints, stakeholders, unknowns |
+| SPLIT | Reviewers hit contradictory conclusions — highest-value output, human decides |
+| De-anchoring | Forcing the model past the prompt anchor through framework rotation |
+| Bootstrap gap | The thing that builds the artifact can't be the thing that reviews it |
+| Diary | Auto-collected project log — feeds emergence analysis and retro |
+| Emergence | Multi-agent roles earned through diary data, not assigned upfront |
+
+---
+
+# Part 7: Known Gotchas
+
+Known failure modes — where Claude breaks when using this methodology. Built from observed failures, not speculation.
+
+## System-Level Gotchas
+
+### The Complexity Cliff
+
+One terminal, one context window, one navigator — and the project needs what amounts to multiple teams. The skills start pulling in different directions. The threat model skill wants to expand coverage. The implementation skill wants to ship. The review skill wants to block.
+
+**When it hits:** Projects with 3+ major components, cross-cutting concerns, or anything where the threat model alone exceeds ~30% of the context window.
+
+**What to do:** This is the Tier 0 → Tier 2 transition point. The diary should show the symptoms: recurring `[BOTTLENECK]` tags, skills reading the same files repeatedly, shallow analysis where earlier sessions produced depth. When you see it — split. Read `multi-agent/MULTI-AGENT.md`.
+
+### Context Window Amnesia
+
+Long sessions where early artifacts (problem statement, requirements) fall out of the context window. The model stops referencing them. Implementation drifts from requirements.
+
+**What to do:** Residual injection — explicitly re-read the upstream artifact before each phase transition. Run `/gate-check` before compaction so the summary includes gate status.
+
+### Sycophancy Under Pressure
+
+The model agrees with the navigator instead of maintaining its adversarial stance. This is the core problem the entire repo exists to solve — and it still happens inside the repo's own skills when the navigator pushes back hard enough.
+
+**Most vulnerable:** Review and threat model skills. If the navigator says "that's not a real risk" twice, the model starts softening subsequent findings.
+
+**Structural fix:** Bootstrap gap — the model that builds the artifact shouldn't review it. Use a fresh context or `pipeline.py review` with a different model. **Behavioral fix:** If the model suddenly agrees with everything, that's the signal to distrust the output.
+
+### Skill Activation Collision
+
+Multiple skills match the same request. Common collisions: `methodology` + `threat-model`, `review` + `gate-check`, `audit` + `review`. The model reads two skills, gets conflicting instructions, and either merges them badly or picks one arbitrarily.
+
+### Template Drift
+
+Skills produce output that technically follows the template but fills it with generic content. The threat model has all 13 areas but half say "low risk — standard mitigations apply." The review has findings but they're all Medium severity with vague impact.
+
+### Feedback Loop Stall
+
+The retro produces lessons. The lessons say "update SKILL.md with X." Nobody updates the skill. Next session, same failure. The loop captures information but never closes. Tactical lessons must be applied before the session ends.
+
+## Per-Tool Gotchas
+
+### intake
+
+- Accepts vague pain ("it's slow") without pushing for numbers
+- Colludes on premature solutions after one redirect attempt
+- Skips the "why not code" question — the one that catches projects that shouldn't be built
+- Reconstruction path defaults to "Phase 6" even when Phases 3-5 artifacts don't exist
+
+### review
+
+- Pulls punches after navigator pushback — the RLHF sycophancy pattern
+- Generic findings under context pressure ("consider adding input validation")
+- Forgets adversarial mandate mid-review — output shifts to balanced assessment
+- Doesn't cross-reference threat model when reviewing code
+- Severity inflation on first pass, deflation on pushback — neither calibrated
+
+### threat-model
+
+- "Standard mitigations apply" filler on 5-7 of 13 areas
+- Skips infrastructure when architecture doc focuses on code
+- Generates textbook threats that don't apply to the actual system
+- Misses LLM-specific area even when the project is built with AI tools
+- Trust boundary diagram doesn't match the threat analysis table
+
+### gate-check
+
+- Rubber-stamps by quoting the artifact back as evidence
+- Defaults to PASS when navigator signals they want to proceed
+- Doesn't read upstream artifacts for cross-phase verification
+- Non-actionable FAILs ("requirements need more detail")
+- Skips Phase 3.5 even when architecture contains unverified assumptions
+
+### audit
+
+- Overwhelming output without prioritization — no "start here" guidance
+- Misses custom build tooling and non-standard CI/CD patterns
+- Reports "Missing" for artifacts that exist under different names
+- No distinction between blocking gaps and nice-to-have improvements
+
+### session-retro
+
+- Produces vague lessons ("improve testing") under time pressure
+- Skips "what worked well" — treats retro as postmortem
+- Conflict detection is theoretical — model doesn't read all existing rules to compare
+- Quick summary escape hatch used too aggressively on sessions with real surprises
+- Doesn't verify whether tactical lessons were actually applied
+
+## Skill Telemetry
+
+Telemetry hooks log which skills fire, how often, and what happens after. The diary captures what the navigator noticed. Telemetry captures what actually happened. Diff the two and you find blind spots.
+
+Setup: `multi-agent/hooks/telemetry.md`. Analysis feeds into session retro Stage 2.5.
+
+---

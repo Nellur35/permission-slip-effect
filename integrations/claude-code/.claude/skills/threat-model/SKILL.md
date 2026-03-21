@@ -124,3 +124,15 @@ If any answer is missing or vague, go back and fill it in.
 - Be specific. "Data could be intercepted" is not a threat. "Unencrypted PII in transit between the API gateway and the Lambda can be intercepted via a compromised VPC endpoint" is a threat.
 - Don't skip areas. Don't soften findings.
 - Treat infrastructure with the same rigor as application code.
+
+## Gotchas
+
+**"Standard mitigations apply" on half the areas.** The template has 13+ areas. The model fills all 13 but treats 5-7 as boilerplate: "Low risk. Use standard encryption/authentication/input validation." If the mitigation column doesn't reference a specific component from the architecture, it's filler. Every mitigation must name what it applies to.
+
+**Skips infrastructure for code-heavy architectures.** If the architecture doc focuses on application code and only mentions infrastructure briefly, the model mirrors that emphasis. IAM blast radius, IaC configuration, and runtime security get shallow treatment. The areas the architecture doc spends the least time on are usually the most dangerous — the model should spend more time there, not less.
+
+**Produces threats the architecture doesn't have.** The model sometimes generates textbook threats that don't apply to the actual system. "SQL injection" for a system that doesn't use SQL. "Container escape" for a serverless architecture. Every threat must trace to a specific component in the architecture. If the architecture doesn't have containers, there's no container escape threat.
+
+**Misses the LLM-specific area.** Area 14 (LLM-Specific) was added because AI-assisted development introduces supply chain risks the model doesn't naturally consider — hallucinated dependencies, insecure code suggestions, prompt injection via generated code. The model frequently skips this area or treats it as "N/A" even when the project is being built with AI tools. If you're using this methodology, you're using AI tools. This area is never N/A.
+
+**Trust boundary diagram is decorative.** The ASCII diagram often doesn't match the threat analysis that follows. Components appear in the diagram but not the threat table, or vice versa. The diagram should be the source of truth — every component and boundary in the diagram gets a row in the threat analysis. If the counts don't match, something was skipped.

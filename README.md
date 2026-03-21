@@ -74,6 +74,7 @@ Claude Code, Kiro, Cursor, whatever. The file has everything — methodology, to
 | [`methodology/`](methodology/) | 8-phase security-first methodology, templates, URL shortener worked example |
 | [`pipeline/`](pipeline/) | CLI for multi-model reasoning and adversarial review |
 | [`integrations/`](integrations/) | Claude Code, Kiro, Cursor, Antigravity setups |
+| [`gotchas/`](gotchas/) | Known failure modes — system-level and per-skill. Where Claude breaks and how to catch it |
 | [`experiments/`](experiments/) | Validation — model shootout, v3 vs v4 A/B, research synthesis |
 | [`reasoning-pipeline.md`](reasoning-pipeline.md) | Frameworks, variants, when to use which |
 

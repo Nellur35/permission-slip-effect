@@ -126,3 +126,15 @@ Read the artifact for the detected phase.
 - Answer gates with specifics from the artifact, not "yes."
 - If a gate can't be answered concretely, it's not met.
 - A gate you can't answer is a gap you'll pay for later.
+
+## Gotchas
+
+**Rubber-stamps with restated evidence.** The model says "PASS" and quotes the artifact back as evidence. That's not verification — that's echo. Evidence should come from evaluating the artifact against the gate question, not restating what the artifact already says. "Requirements are testable" requires checking each requirement for testability, not noting that the artifact contains a section called "Requirements."
+
+**Defaults to PASS under navigator pressure.** If the navigator says "I think we're ready to move on" before running the gate check, the model anchors to that expectation. Gate checks should be run without signaling the expected outcome. The skill can't fix this — it's a navigator discipline issue — but recognizing the pattern helps.
+
+**Doesn't read upstream artifacts.** Phase 5 gate check should verify that the pipeline covers threat model risks. This requires reading both the pipeline config AND `threat_model.md`. The model often only reads the current phase's artifact and checks gates in isolation. Cross-phase verification is where gate checks are most valuable and most frequently skipped.
+
+**"FAIL" without actionable gaps.** When gates fail, the output should say exactly what's missing and what to do. "FAIL — requirements need more detail" is not actionable. "FAIL — requirement R3 ('system handles high load') has no testable threshold. Define a specific number (requests/second, P95 latency)" is actionable.
+
+**Skips Phase 3.5 gate entirely.** The Discovery Spike gate exists but is optional, so the model almost always skips it even when the architecture contains unverified assumptions. If architecture.md mentions "assuming the API supports X" or "pending confirmation of Y," Phase 3.5 should be triggered, not skipped.
